@@ -31,6 +31,7 @@ $path   //= '/usr/local';
 $prefix //= 'iov-';
 $dist   //= '';
 
+my $dest      = dir 'yum';
 my $tmp       = dir +File::Spec->tmpdir;
 my $branch    = find_branch();
 my $hash_file = $tmp->file("${prefix}perl$dist-$branch.hash");
@@ -42,8 +43,26 @@ my %specs = map {
     $rpm => $_
 } grep { !$_->is_dir && $_->basename =~ /[.]spec$/ } -e $hash_file && !$all ? do {
     my $prev_hash = $hash_file->slurp(chomp => 1);
-    map {; chomp; file $_ } capturex qw(git diff --name-only --diff-filter=ACMR), $prev_hash, '--', 'SPECS';
+
+    # Clean up deleted RPMs.
+    if (-e $dest) {
+        for my $rm (capturex qw(git diff --name-only --diff-filter=D), $prev_hash, '--', 'SPECS') {
+            chomp $rm;
+            (my $rpm = $prefix . file($rm)->basename) =~ s/[.]spec$//;
+            rm_rpms($rpm);
+        }
+    } else {
+        $dest->mkpath;
+    }
+
+    # Get a list of only modifed SPEC files.
+    map {; chomp; file $_ } capturex(
+        qw(git diff --name-only --diff-filter=ACMR), $prev_hash, '--', 'SPECS'
+    );
 } : do {
+    # Gonna rebuild everything.
+    $dest->rmtree;
+    $dest->mkpath;
     dir('SPECS')->children;
 };
 
@@ -139,18 +158,8 @@ sub build {
         say "* Downloading sources for $rpm";
         runx qw(spectool -S -C SOURCES -g), @params;
 
-        my $dir = dir 'yum';
-        if (-e $dir) {
-            say "* Removing previous builds for $rpm";
-            my $name_re = qr/^\Q$rpm\E-/;
-            for my $rpm_file ($dir->children) {
-                next if $rpm_file->is_dir || $rpm_file->basename !~ $name_re;
-                say "    rm $rpm_file";
-                $rpm_file->remove;
-            }
-        } else {
-            $dir->mkpath;
-        }
+        # Remove previous builds.
+        rm_rpms($rpm);
 
         say "* Building $rpm";
         my $cwd = cwd;
@@ -162,7 +171,7 @@ sub build {
             my $bn = $f->basename;
             return if $f->is_dir || $bn !~ /[.]rpm$/;
             say "  - Collecting and installing $bn";
-            my $archive = $dir->file($bn);
+            my $archive = $dest->file($bn);
             rename $f, $archive;
             runx qw(sudo yum install), $archive;
         });
@@ -170,6 +179,17 @@ sub build {
         warn $_;
         $failed{$rpm} = 1;
     };
+}
+
+sub rm_rpms {
+    my $rpm = shift;
+    say "* Removing previous builds for $rpm";
+    my $name_re = qr/^\Q$rpm\E-/;
+    for my $rpm_file ($dest->children) {
+        next if $rpm_file->is_dir || $rpm_file->basename !~ $name_re;
+        say "    rm $rpm_file";
+        $rpm_file->remove;
+    }
 }
 
 sub save_hash {
