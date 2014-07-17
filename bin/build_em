@@ -1,0 +1,207 @@
+#!/usr/bin/perl -w
+
+use strict;
+use warnings;
+use Path::Class;
+use Getopt::Long;
+use Try::Tiny;
+use Cwd;
+use List::Util qw(first);
+use IPC::System::Simple qw(runx capturex);
+use v5.10.1;
+
+# Specify all RPMs required by this script.
+# RPM: rpm-build
+# RPM: spectool
+# RPM: perl
+# RPM: perl(IPC::System::Simple)
+# RPM: perl(Path::Class)
+# RPM: perl(Try::Tiny)
+# RPM: perl(List::Util)
+
+Getopt::Long::Configure (qw(bundling));
+Getopt::Long::GetOptions(
+    'path|p=s'   => \my $path,
+    'prefix|f=s' => \my $prefix,
+    'dist|d=s'   => \my $dist,
+    'all'        => \my $all,
+);
+
+$path   //= '/usr/local';
+$prefix //= 'iov-';
+$dist   //= '';
+
+my $tmp       = dir +File::Spec->tmpdir;
+my $branch    = find_branch();
+my $hash_file = $tmp->file("${prefix}perl$dist-$branch.hash");
+my $git_hash  = capturex qw(git log --format=%H -1);
+chomp $git_hash;
+
+my %specs = map {
+    (my $rpm = $prefix . $_->basename) =~ s/[.]spec$//;
+    $rpm => $_
+} grep { !$_->is_dir && $_->basename =~ /[.]spec$/ } -e $hash_file && !$all ? do {
+    my $prev_hash = $hash_file->slurp(chomp => 1);
+    map {; chomp; file $_ } capturex qw(git diff --name-only --diff-filter=ACMR), $prev_hash, '--', 'SPECS';
+} : do {
+    dir('SPECS')->children;
+};
+
+unless (%specs) {
+    say "No spec files updated since $git_hash, nothing to do";
+    save_hash();
+    exit 0;
+}
+
+# http://cpansearch.perl.org/src/CWEST/ppt-0.14/bin/tsort
+my (%failed, %pairs, %npred, %succ);
+for my $rpm (sort keys %specs) {
+    my $spec = $specs{$rpm};
+    say "* Determining dependencies specified in ", $spec->basename;
+
+    # Open the spec file.
+    my $fh = $spec->open('<:encoding(UTF_8)') or do {
+        warn "Cannot open $spec: $!\n";
+        $failed{$rpm} = 1;
+        next;
+    };
+
+    # Find dependencies.
+    while (<$fh>) {
+        next unless s/^(?:Build)?Requires:\s+//i;
+        (my $dep = $_) =~ s/\s+$//;
+        next if defined $pairs{$rpm}{$dep};
+        $pairs{$rpm}{$dep}++;
+        $npred {$rpm} += 0;
+        ++$npred{$dep};
+        push @{$succ{$rpm}}, $dep;
+    }
+}
+
+# create a list of RPMs without predecessors
+my @list = grep {!$npred{$_}} keys %npred;
+
+my @prereqs;
+while (@list) {
+    my $next = pop @list;
+    push @prereqs => $next;
+    foreach my $child (@{$succ{$next}}) {
+        # depth-first
+        push @list, $child unless --$npred{$child};
+    }
+}
+
+while (@prereqs) {
+    my @to_install;
+    while (@prereqs) {
+        my $req = shift @prereqs;
+        if (my $spec = delete $specs{$req}) {
+            # It's something we need to build.
+            if (@to_install) {
+                # Install prereqs.
+                runx qw(sudo yum install -y), @to_install;
+                @to_install = ();
+            }
+            # Build it.
+            build($req => $spec);
+        } else {
+            # Add it to the list of dependencies to build.
+            push @to_install => $req;
+        }
+    }
+}
+
+# Build any remaining RPMs.
+build($_ => $specs{$_}) for keys %specs;
+
+# Wrap things up.
+if (%failed) {
+    say "FAILED: $_" for sort keys %failed;
+    exit +(keys %failed) + 0;
+} else {
+    save_hash();
+    exit 0;
+}
+
+sub build {
+    my ($rpm, $spec) = @_;
+    return if $failed{$rpm};
+
+    my @params = (
+        '--define', "_prefix $path",
+        '--define', "iov_prefix $prefix",
+        ($dist ? ('--define' => "dist $dist") : ()),
+        $spec,
+    );
+
+    try {
+        # Download sources.
+        say "* Downloading sources for $rpm";
+        runx qw(spectool -S -C SOURCES -g), @params;
+
+        my $dir = dir 'yum';
+        if (-e $dir) {
+            say "* Removing previous builds for $rpm";
+            my $name_re = qr/^\Q$rpm\E-/;
+            for my $rpm_file ($dir->children) {
+                next if $rpm_file->is_dir || $rpm_file->basename !~ $name_re;
+                say "    rm $rpm_file";
+                $rpm_file->remove;
+            }
+        } else {
+            $dir->mkpath;
+        }
+
+        say "* Building $rpm";
+        my $cwd = cwd;
+        runx qw(rpmbuild -ba --define), "_topdir $cwd", @params;
+
+        # Find all new RPMs and put them into the yum directory.
+        dir('RPMS')->recurse(callback => sub {
+            my $f = shift;
+            my $bn = $f->basename;
+            return if $f->is_dir || $bn !~ /[.]rpm$/;
+            say "  - Collecting and installing $bn";
+            my $archive = $dir->file($bn);
+            rename $f, $archive;
+            runx qw(sudo yum install), $archive;
+        });
+    } catch {
+        warn $_;
+        $failed{$rpm} = 1;
+    };
+}
+
+sub save_hash {
+    my $fh = $hash_file->openw;
+    print $fh $git_hash;
+    $fh->close;
+}
+
+sub find_branch {
+    my @lines = capturex 'git', qw(branch -a --contains HEAD)
+        or die "Cannot detect current git branch; use --git-branch\n";
+
+    if (my $line = first {/^[*]\s.+$/ } @lines) {
+        # Return the branch unless it's detached.
+        chomp $line;
+        $line =~ s/^[*]\s//;
+        return $line unless $line eq '(no branch)';
+    }
+
+    if (my $line = first { $_ !~ m{/} && $_ !~ /^[*]/ } @lines) {
+        # HEAD is from a local branch.
+        chomp $line;
+        $line =~ s/^\s+//;
+        return $line;
+    }
+
+    if (my $line = first { m{/} && $_ !~ /^[*]/ } @lines) {
+        # It's a remote branch. Keep only the last part of the name.
+        chomp $line;
+        $line =~ s/^\s+//;
+        return $1 if $line =~ m{([^/]+)$};
+    }
+
+    die "Cannot detect current git branch; use --git-branch\n"
+}
