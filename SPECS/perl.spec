@@ -1,6 +1,5 @@
 %global iov_prefix iov-
 %global iov_email  jira-ops@iovaiton.com
-%global perl_root %{_prefix}/local/perl520
 %global with_test 0
 %global parallel_tests 1
 %global sname perl
@@ -33,7 +32,7 @@ installed on your system so that your system can handle Perl scripts.
 %setup -q -n %{sname}-%{version}
 
 %build
-sh Configure -des -Dprefix=%{perl_root} -Duseshrplib -Dusemultiplicity -Duseithreads -Dinc_version_list=none -Dperladmin=%{iov_email} -Dcf_email=%{iov_email}
+sh Configure -des -Dprefix=%{_prefix} -Duseshrplib -Dusemultiplicity -Duseithreads -Dinc_version_list=none -Dperladmin=%{iov_email} -Dcf_email=%{iov_email}
 make %{?_smp_mflags}
 
 %check
@@ -56,7 +55,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %doc Artistic AUTHORS Copying README Changes
-%{perl_root}/*
+%{_prefix}/*
 
 %changelog
 * Wed Jul 16 2014 David E. Wheeler <david.wheeler@iovation.com> - 5.20.0-1
