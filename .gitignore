@@ -1,0 +1,8 @@
+/BUILD/
+/BUILDROOT/
+/RPMS/
+/SOURCES/*.tar.gz
+/SOURCES/*.bz2
+/SOURCES/*.zip
+/SRPMS/
+/yum/
