@@ -30,11 +30,6 @@ their spec files changed, pass `--all`.
 
     ./bin/build_em --all
 
-To Do
------
-* Build RPMs for spec files with no corresponding RPMS in the `yum` directory,
-  even if they haven't been changed since the last run.
-
 Author
 ------
 * [David E. Wheeler](mailto:david.wheeler@iovation.com)

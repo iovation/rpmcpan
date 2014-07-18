@@ -51,18 +51,32 @@ my %specs = map {
     # Clean up deleted RPMs.
     if (-e $dest) {
         for my $rm (capturex qw(git diff --name-only --diff-filter=D), $prev_hash, '--', 'SPECS') {
+            # We have deleted SPEC files. Delete the corresponding RPMs.
             chomp $rm;
             (my $rpm = $prefix . file($rm)->basename) =~ s/[.]spec$//;
             rm_rpms($rpm);
         }
-    } else {
-        $dest->mkpath;
-    }
 
-    # Get a list of only modifed SPEC files.
-    map {; chomp; file $_ } capturex(
-        qw(git diff --name-only --diff-filter=ACMR), $prev_hash, '--', 'SPECS'
-    );
+        # Get a list of only modifed SPEC files.
+        my %add = map {; chomp; $_ => file $_ } capturex(
+            qw(git diff --name-only --diff-filter=ACMR), $prev_hash, '--', 'SPECS'
+        );
+
+        # Now add any that have no corresponding RPMs in the destination directory.
+        for my $spec (dir('SPECS')->children) {
+            next if $add{$spec};
+            my $file = file $spec;
+            (my $rpm = $prefix . $file->basename) =~ s/[.]spec$//;
+            $add{$spec} = $file unless find_rpms($spec);
+        }
+
+        # Return them all.
+        values %add;
+    } else {
+        # Make sure we have a destination directory, then build everything.
+        $dest->mkpath;
+        dir('SPECS')->children;
+    }
 } : do {
     # Gonna rebuild everything.
     $dest->rmtree;
@@ -177,7 +191,7 @@ sub build {
             say "  - Collecting and installing $bn";
             my $archive = $dest->file($bn);
             rename $f, $archive;
-            runx qw(sudo yum install -y), $archive;
+            runx qw(sudo rpm -Uvh --replacepkgs), $archive;
         });
     } catch {
         warn $_;
@@ -188,12 +202,16 @@ sub build {
 sub rm_rpms {
     my $rpm = shift;
     say "* Removing previous builds for $rpm";
-    my $name_re = qr/^\Q$rpm\E-/;
-    for my $rpm_file ($dest->children) {
-        next if $rpm_file->is_dir || $rpm_file->basename !~ $name_re;
+    for my $rpm_file (find_rpms($rpm)) {
         say "    rm $rpm_file";
         $rpm_file->remove;
     }
+}
+
+sub find_rpms {
+    my $rpm = shift;
+    my $name_re = qr/^\Q$rpm\E-/;
+    return grep { !$_->is_dir && $_->basename =~ $name_re } $dest->children;
 }
 
 sub save_hash {
