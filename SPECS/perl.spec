@@ -33,7 +33,7 @@ are system administration utilities and web programming. A large proportion of
 the CGI scripts on the web are written in Perl. You need the perl package
 installed on your system so that your system can handle Perl scripts.
 
-%global %{sname}_compat %{sname}(:MODULE_COMPAT_%{version})
+%global perl_compat %{sname}(:MODULE_COMPAT_%{version})
 Provides: iov-%{sname}
 Provides: %{?iov_prefix}%{sname}(:MODULE_COMPAT_5.20.0)
 Provides: %{?iov_prefix}%{sname}(:WITH_ITHREADS)
