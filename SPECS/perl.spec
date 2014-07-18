@@ -1,15 +1,11 @@
-%global iov_prefix iov-
-%global iov_email  jira-ops@iovaiton.com
-%global with_test 0
-%global parallel_tests 1
+%define iov_email  jira-ops@iovaiton.com
+%define parallel_tests 1
 %global sname perl
-
 
 Name:           %{?iov_prefix}%{sname}
 Version:        5.20.0
 Release:        1%{?dist}
 Summary:        Practical Extraction and Reporting Language
-
 
 Group:          Development/Languages
 License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and MIT and Public Domain and UCD
@@ -18,6 +14,15 @@ Source0:        http://cpan.metacpan.org/src/perl-%{version}.tar.bz2
 # BuildRequires:  db4-devel, groff, tcsh, zlib-devel, bzip2-devel
 # BuildRequires:  systemtap-sdt-devel
 # BuildRequires:  procps, rsyslog
+
+# Filter requires on RPM 4.8.
+# http://www.redhat.com/archives/rpm-list/2005-August/msg00034.html
+# http://richdawe.livejournal.com/3102.html
+%define _use_internal_dependency_generator 0
+%define __find_requires bin/filter-requires Mac\\|VMS\\|perl >=\\|perl(Locale::Codes::\\|perl(unicore::Name)
+
+# Filter requires on RPM 4.9?
+#%{?perl_default_filter}
 
 %description
 Perl is a high-level programming language with roots in C, sed, awk and shell
@@ -28,11 +33,17 @@ are system administration utilities and web programming. A large proportion of
 the CGI scripts on the web are written in Perl. You need the perl package
 installed on your system so that your system can handle Perl scripts.
 
+%global %{sname}_compat %{sname}(:MODULE_COMPAT_%{version})
+Provides: iov-%{sname}
+Provides: %{?iov_prefix}%{sname}(:MODULE_COMPAT_5.20.0)
+Provides: %{?iov_prefix}%{sname}(:WITH_ITHREADS)
+Provides: %{?iov_prefix}%{sname}(:WITH_PERLIO)
+
 %prep
 %setup -q -n %{sname}-%{version}
 
 %build
-sh Configure -des -Dprefix=%{_prefix} -Duseshrplib -Dusemultiplicity -Duseithreads -Dinc_version_list=none -Dperladmin=%{iov_email} -Dcf_email=%{iov_email}
+sh Configure -des -Dprefix=%{_prefix} -Duseshrplib -Dusemultiplicity -Duseithreads -Dperladmin=%{iov_email} -Dcf_email=%{iov_email}
 make %{?_smp_mflags}
 
 %check
@@ -51,7 +62,6 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-
 
 %files
 %doc Artistic AUTHORS Copying README Changes

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Usage:
+# %define _use_internal_dependency_generator 0
+# %define __find_requires bin/filter-requires Mac\\|VMS\\|perl >=\\
+
+`rpm --eval "%__find_requires"` | grep -v -E "$1"

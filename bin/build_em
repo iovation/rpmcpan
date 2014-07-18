@@ -173,7 +173,7 @@ sub build {
             say "  - Collecting and installing $bn";
             my $archive = $dest->file($bn);
             rename $f, $archive;
-            runx qw(sudo yum install), $archive;
+            runx qw(sudo yum install -y), $archive;
         });
     } catch {
         warn $_;
