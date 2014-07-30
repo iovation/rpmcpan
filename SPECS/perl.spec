@@ -1,8 +1,9 @@
 %define iov_email  jira-ops@iovaiton.com
 %define parallel_tests 1
 %global sname perl
+%{!?iov_prefix: %define iov_prefix %{sname}}
 
-Name:           %{?iov_prefix}
+Name:           %{iov_prefix}
 Version:        5.20.0
 Release:        1%{?dist}
 Summary:        Practical Extraction and Reporting Language
@@ -20,6 +21,7 @@ Source0:        http://cpan.metacpan.org/src/perl-%{version}.tar.bz2
 # http://richdawe.livejournal.com/3102.html
 %define _use_internal_dependency_generator 0
 %define __find_requires bin/filter-requires Mac\\|VMS\\|perl >=\\|perl(Locale::Codes::\\|perl(unicore::Name)
+%define __find_provides bin/filter-provides %{iov_prefix}
 
 # Filter requires on RPM 4.9?
 #%{?perl_default_filter}

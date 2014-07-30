@@ -28,8 +28,7 @@ Getopt::Long::GetOptions(
 );
 
 # Establish the major Perl version we're building.
-my $version = capturex qw(rpm -q --qf %{version} --specfile SPECS/perl.spec --define ),
-    'iov_prefix perl';
+my $version = capturex qw(rpm -q --qf %{version} --specfile SPECS/perl.spec);
 $version =~ s/^5[.](\d+).+/5$1/;
 
 $path   //= "/usr/local/perl$version";
