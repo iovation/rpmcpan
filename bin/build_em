@@ -194,7 +194,7 @@ sub build {
             say "  - Collecting and installing $bn";
             my $archive = $dest->file($bn);
             rename $f, $archive;
-            runx qw(sudo rpm -Uvh --replacepkgs), $archive;
+            runx qw(sudo rpm -Uvh --replacepkgs --replacefiles), $archive;
         });
     } catch {
         warn $_;
