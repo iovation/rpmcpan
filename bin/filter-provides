@@ -2,6 +2,6 @@
 
 # Usage:
 # %define _use_internal_dependency_generator 0
-# %define __find_provides bin/filter-provides perl520
+# %define __find_provides bin/filter-provides %{iov_prefix}
 
 `rpm --eval "%__find_provides"` |  sed "s/perl(/$1(/g"
