@@ -2,7 +2,7 @@
 %define parallel_tests 1
 %global sname perl
 
-Name:           %{?iov_prefix}%{sname}
+Name:           %{?iov_prefix}
 Version:        5.20.0
 Release:        1%{?dist}
 Summary:        Practical Extraction and Reporting Language

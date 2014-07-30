@@ -28,22 +28,24 @@ Getopt::Long::GetOptions(
 );
 
 # Establish the major Perl version we're building.
-my $version = capturex qw(rpm -q --qf %{version} --specfile SPECS/perl.spec);
+my $version = capturex qw(rpm -q --qf %{version} --specfile SPECS/perl.spec --define ),
+    'iov_prefix perl';
 $version =~ s/^5[.](\d+).+/5$1/;
 
 $path   //= "/usr/local/perl$version";
-$prefix //= "perl$version-";
+$prefix //= "perl$version";
 $dist   //= '';
 
 my $dest      = dir 'yum';
 my $tmp       = dir +File::Spec->tmpdir;
 my $branch    = find_branch();
-my $hash_file = $tmp->file("${prefix}perl$dist-$branch.hash");
+my $hash_file = $tmp->file("${prefix}-$dist-$branch.hash");
 my $git_hash  = capturex qw(git log --format=%H -1);
 chomp $git_hash;
 
 my %specs = map {
-    (my $rpm = $prefix . $_->basename) =~ s/[.]spec$//;
+    (my $rpm = $_->basename) =~ s/[.]spec$//;
+    $rpm =~ s/^(?:perl\b)?/$prefix/;
     $rpm => $_
 } grep { !$_->is_dir && $_->basename =~ /[.]spec$/ } -e $hash_file && !$all ? do {
     my $prev_hash = $hash_file->slurp(chomp => 1);
@@ -53,7 +55,8 @@ my %specs = map {
         for my $rm (capturex qw(git diff --name-only --diff-filter=D), $prev_hash, '--', 'SPECS') {
             # We have deleted SPEC files. Delete the corresponding RPMs.
             chomp $rm;
-            (my $rpm = $prefix . file($rm)->basename) =~ s/[.]spec$//;
+            (my $rpm = file($rm)->basename) =~ s/[.]spec$//;
+            $rpm =~ s/^(?:perl\b)?/$prefix/;
             rm_rpms($rpm);
         }
 
@@ -66,7 +69,8 @@ my %specs = map {
         for my $spec (dir('SPECS')->children) {
             next if $add{$spec};
             my $file = file $spec;
-            (my $rpm = $prefix . $file->basename) =~ s/[.]spec$//;
+            (my $rpm = $file->basename) =~ s/[.]spec$//;
+            $rpm =~ s/^(?:perl\b)?/$prefix/;
             $add{$spec} = $file unless find_rpms($spec);
         }
 
