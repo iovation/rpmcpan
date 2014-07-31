@@ -8,6 +8,7 @@ use Try::Tiny;
 use Cwd;
 use List::Util qw(first);
 use IPC::System::Simple qw(runx capturex);
+use Config;
 use v5.10.1;
 
 # Specify all RPMs required by this script.
@@ -42,11 +43,25 @@ my $hash_file = $tmp->file("${prefix}-$dist-$branch.hash");
 my $git_hash  = capturex qw(git log --format=%H -1);
 chomp $git_hash;
 
+# Define the RPM macros we set, including the Perl site man directory.
+(my $mandir = $Config{installsiteman1dir}) =~ s{/man1$}{};
+my %macros = (
+    _prefix         => $path,
+    iov_prefix      => $prefix,
+    _mandir         => $mandir,
+    __find_requires => "bin/filter-requires $prefix",
+    __find_provides => "bin/filter-provides $prefix",
+    _use_internal_dependency_generator =>  0,
+    ($dist ? ('--define' => "dist $dist") : ()),
+);
+
 my %specs = map {
     (my $rpm = $_->basename) =~ s/[.]spec$//;
     $rpm =~ s/^(?:perl\b)?/$prefix/;
     $rpm => $_
-} grep { !$_->is_dir && $_->basename =~ /[.]spec$/ } -e $hash_file && !$all ? do {
+} grep {
+    !$_->is_dir && $_->basename =~ /[.]spec$/
+} -e $hash_file && !$all ? do {
     my $prev_hash = $hash_file->slurp(chomp => 1);
 
     # Clean up deleted RPMs.
@@ -108,8 +123,9 @@ for my $rpm (sort keys %specs) {
 
     # Find dependencies.
     while (<$fh>) {
-        next unless s/^(?:Build)?Requires:\s+//i;
+        next unless s/^BuildRequires:\s+//i;
         (my $dep = $_) =~ s/\s+$//;
+        $dep =~ s/[%]{([^}]+)}/$macros{$1} || $1/ge;
         next if defined $pairs{$rpm}{$dep};
         $pairs{$rpm}{$dep}++;
         $npred {$rpm} += 0;
@@ -134,7 +150,7 @@ while (@list) {
 while (@prereqs) {
     my @to_install;
     while (@prereqs) {
-        my $req = shift @prereqs;
+        my $req = pop @prereqs;
         if (my $spec = delete $specs{$req}) {
             # It's something we need to build.
             if (@to_install) {
@@ -168,9 +184,7 @@ sub build {
     return if $failed{$rpm};
 
     my @params = (
-        '--define', "_prefix $path",
-        '--define', "iov_prefix $prefix",
-        ($dist ? ('--define' => "dist $dist") : ()),
+        (map {; '--define' => "$_ $macros{$_}" } keys %macros),
         $spec,
     );
 

@@ -19,9 +19,7 @@ Source0:        http://cpan.metacpan.org/src/perl-%{version}.tar.bz2
 # Filter requires on RPM 4.8.
 # http://www.redhat.com/archives/rpm-list/2005-August/msg00034.html
 # http://richdawe.livejournal.com/3102.html
-%define _use_internal_dependency_generator 0
 %define __find_requires bin/filter-requires %{iov_prefix} Mac\\|VMS\\|perl >=\\|perl(Locale::Codes::\\|perl(unicore::Name)
-%define __find_provides bin/filter-provides %{iov_prefix}
 
 # Filter requires on RPM 4.9?
 #%{?perl_default_filter}
