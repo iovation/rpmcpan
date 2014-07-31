@@ -1,5 +1,4 @@
 %define iov_email  jira-ops@iovaiton.com
-%define parallel_tests 1
 %global sname perl
 %{!?iov_prefix: %define iov_prefix %{sname}}
 
@@ -58,14 +57,8 @@ make %{?_smp_mflags}
 
 
 %check
-%if %{with test}
-%if %{parallel_tests}
-    JOBS=$(printf '%%s' "%{?_smp_mflags}" | sed 's/.*-j\([0-9][0-9]*\).*/\1/')
-    LC_ALL=C TEST_JOBS=$JOBS make test_harness
-%else
-    LC_ALL=C make test
-%endif
-%endif
+JOBS=$(printf '%%s' "%{?_smp_mflags}" | sed 's/.*-j\([0-9][0-9]*\).*/\1/')
+LC_ALL=C TEST_JOBS=$JOBS make test_harness
 
 %install
 rm -rf $RPM_BUILD_ROOT
