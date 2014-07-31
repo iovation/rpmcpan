@@ -29,6 +29,7 @@ BuildRequires:  apr-devel >= 1.2.0
 BuildRequires:  apr-util-devel
 Requires:       %{iov_prefix}
 Requires:       httpd-mmn = %(cat %{sysincludedir}/httpd/.mmn || echo missing)
+Conflicts:      mod_perl
 
 %description
 mod_perl incorporates a Perl interpreter into the Apache web server,
@@ -44,9 +45,6 @@ like for it to directly incorporate a Perl interpreter.
 
 %prep
 %setup -q -n %{sname}-%{version}
-# %patch0 -p1
-# %patch1 -p1 -b .inline
-# %patch2 -p1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS -fpic" %{__perl} Makefile.PL </dev/null \
