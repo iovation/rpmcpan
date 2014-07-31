@@ -156,7 +156,7 @@ while (@prereqs) {
             if (@to_install) {
                 # Install prereqs.
                 say 'Installing Yum dependencies: ', join ' ', @to_install;
-                runx qw(sudo yum install -qy), @to_install;
+                runx qw(sudo yum install -q -y), @to_install;
                 @to_install = ();
             }
             # Build it.
