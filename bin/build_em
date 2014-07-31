@@ -35,7 +35,7 @@ $path   //= "/usr/local/perl$version";
 $prefix //= "perl$version";
 $dist   //= '';
 
-my $dest      = dir 'yum';
+my $dest      = dir 'repo';
 my $tmp       = dir +File::Spec->tmpdir;
 my $branch    = find_branch();
 my $hash_file = $tmp->file("${prefix}-$dist-$branch.hash");
@@ -200,7 +200,7 @@ sub build {
         say "* Building $rpm";
         runx qw(rpmbuild -ba --quiet), @params;
 
-        # Find all new RPMs and put them into the yum directory.
+        # Find all new RPMs and put them into the repo directory.
         dir('RPMS')->recurse(callback => sub {
             my $f = shift;
             my $bn = $f->basename;
