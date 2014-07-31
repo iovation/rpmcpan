@@ -85,7 +85,7 @@ my %specs = map {
             my $file = file $spec;
             (my $rpm = $file->basename) =~ s/[.]spec$//;
             $rpm =~ s/^(?:perl\b)?/$prefix/;
-            $add{$spec} = $file unless try { runx qw(rpm -q), $rpm; 1 };
+            $add{$spec} = $file unless try { capturex qw(rpm -q), $rpm; 1 };
         }
 
         # Return them all.
@@ -155,7 +155,8 @@ while (@prereqs) {
             # It's something we need to build.
             if (@to_install) {
                 # Install prereqs.
-                runx qw(sudo yum install -y), @to_install;
+                say 'Installing Yum dependencies: ', join ' ', @to_install;
+                runx qw(sudo yum install -qy), @to_install;
                 @to_install = ();
             }
             # Build it.
@@ -197,7 +198,7 @@ sub build {
         rm_rpms($rpm);
 
         say "* Building $rpm";
-        runx qw(rpmbuild -ba), @params;
+        runx qw(rpmbuild -ba --quiet), @params;
 
         # Find all new RPMs and put them into the yum directory.
         dir('RPMS')->recurse(callback => sub {
