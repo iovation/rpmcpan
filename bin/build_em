@@ -56,7 +56,7 @@ my %macros = (
 
 my %specs = map {
     (my $rpm = $_->basename) =~ s/[.]spec$//;
-    $rpm =~ s/^(?:perl\b)?/$prefix/;
+    $rpm =~ s/^(?:perl-?\b)?/$prefix-/;
     $rpm => $_
 } grep {
     !$_->is_dir && $_->basename =~ /[.]spec$/
@@ -69,7 +69,7 @@ my %specs = map {
             # We have deleted SPEC files. Delete the corresponding RPMs.
             chomp $rm;
             (my $rpm = file($rm)->basename) =~ s/[.]spec$//;
-            $rpm =~ s/^(?:perl\b)?/$prefix/;
+            $rpm =~ s/^(?:perl-?\b)?/$prefix-/;
             rm_rpms($rpm);
         }
 
@@ -84,7 +84,7 @@ my %specs = map {
             next if $add{$spec};
             my $file = file $spec;
             (my $rpm = $file->basename) =~ s/[.]spec$//;
-            $rpm =~ s/^(?:perl\b)?/$prefix/;
+            $rpm =~ s/^(?:perl-?\b)?/$prefix-/;
             $add{$spec} = $file unless try { capturex qw(rpm -q), $rpm; 1 };
         }
 

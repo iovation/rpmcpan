@@ -10,6 +10,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 BuildRequires:  %{iov_prefix}
 BuildRequires:  %{iov_prefix}-Capture-Tiny
+BuildRequires:  %{iov_prefix}-Sub-Name
 Requires:       %{iov_prefix}
 
 %description
