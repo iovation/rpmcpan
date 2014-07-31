@@ -8,7 +8,6 @@ use Try::Tiny;
 use Cwd;
 use List::Util qw(first);
 use IPC::System::Simple qw(runx capturex);
-use Config;
 use v5.10.1;
 
 # Specify all RPMs required by this script.
@@ -43,12 +42,12 @@ my $hash_file = $tmp->file("${prefix}-$dist-$branch.hash");
 my $git_hash  = capturex qw(git log --format=%H -1);
 chomp $git_hash;
 
-# Define the RPM macros we set, including the Perl site man directory.
-(my $mandir = $Config{installsiteman1dir}) =~ s{/man1$}{};
+# Define the RPM macros we set.
 my %macros = (
     _prefix         => $path,
     iov_prefix      => $prefix,
-    _mandir         => $mandir,
+    __perl          => "$path/bin/perl",
+    _topdir         => cwd,
     __find_requires => "bin/filter-requires $prefix",
     __find_provides => "bin/filter-provides $prefix",
     _use_internal_dependency_generator =>  0,
@@ -79,13 +78,14 @@ my %specs = map {
             qw(git diff --name-only --diff-filter=ACMR), $prev_hash, '--', 'SPECS'
         );
 
+
         # Now add any that have no corresponding RPMs in the destination directory.
         for my $spec (dir('SPECS')->children) {
             next if $add{$spec};
             my $file = file $spec;
             (my $rpm = $file->basename) =~ s/[.]spec$//;
             $rpm =~ s/^(?:perl\b)?/$prefix/;
-            $add{$spec} = $file unless find_rpms($spec);
+            $add{$spec} = $file unless try { runx qw(rpm -q), $rpm; 1 };
         }
 
         # Return them all.
@@ -197,8 +197,7 @@ sub build {
         rm_rpms($rpm);
 
         say "* Building $rpm";
-        my $cwd = cwd;
-        runx qw(rpmbuild -ba --define), "_topdir $cwd", @params;
+        runx qw(rpmbuild -ba), @params;
 
         # Find all new RPMs and put them into the yum directory.
         dir('RPMS')->recurse(callback => sub {
@@ -227,7 +226,7 @@ sub rm_rpms {
 
 sub find_rpms {
     my $rpm = shift;
-    my $name_re = qr/^\Q$rpm\E-/;
+    my $name_re = qr/^\Q$rpm\E-\d/;
     return grep { !$_->is_dir && $_->basename =~ $name_re } $dest->children;
 }
 

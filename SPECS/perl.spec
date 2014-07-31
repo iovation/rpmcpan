@@ -35,7 +35,7 @@ installed on your system so that your system can handle Perl scripts.
 
 %global perl_compat %{sname}(:MODULE_COMPAT_%{version})
 Provides: iov-%{sname}
-Provides: %{?iov_prefix}%{sname}(:MODULE_COMPAT_5.20.0)
+Provides: %{?iov_prefix}%{sname}(:MODULE_COMPAT_%{version})
 Provides: %{?iov_prefix}%{sname}(:WITH_ITHREADS)
 Provides: %{?iov_prefix}%{sname}(:WITH_PERLIO)
 
@@ -43,8 +43,19 @@ Provides: %{?iov_prefix}%{sname}(:WITH_PERLIO)
 %setup -q -n %{sname}-%{version}
 
 %build
-sh Configure -des -Dprefix=%{_prefix} -Duseshrplib -Dusemultiplicity -Duseithreads -Dperladmin=%{iov_email} -Dcf_email=%{iov_email}
+sh Configure -des \
+  -Dprefix=%{_prefix} \
+  -Duseshrplib \
+  -Dusemultiplicity \
+  -Duseithreads \
+  -Dperladmin=%{iov_email} \
+  -Dcf_email=%{iov_email} \
+  -Dprefix=%_prefix \
+  -Dvendorprefix=%_prefix \
+  -Dvendorman3dir=%_mandir/man3 \
+  -Dvendorman1dir=%_mandir/man1
 make %{?_smp_mflags}
+
 
 %check
 %if %{with test}
