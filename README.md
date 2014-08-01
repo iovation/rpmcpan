@@ -30,6 +30,42 @@ their spec files changed, pass `--all`.
 
     ./bin/build_em --all
 
+Adding CPAN Distributions
+-------------------------
+
+To add a CPAN distribution, start by running `cpanspec`, like so:
+
+    cpanspec --cpan http://cpan.metacpan.org --follow --noprefix \
+        --packager 'Joe Blow <joe.blow@iovation.com>' -v Module::Name
+
+Only use your own name and email address, of course. Copy the resulting
+`*.spec` files into the `SPECS` directory and the downloaded tarballs into the
+`SOURCES` directory (but don't add the tarballs to Git!). Then edit the spec
+file, making the following changes:
+
+* Prepend `%{iov_prefix}-` to the `Name` tag.
+* Replace the `Requires` and `BuildRequires` tags that require Perl to instead
+  require `%{iov_prefix}`.
+* Delete any `BuildRequires` tags that require modules included in the Perl
+  core.
+* Change any `BuildRequires` tags that reference modules built by this project
+  to require RPMs rather than modules. For example, replace `perl(Try::Tiny)`
+  with `%{iov_prefix}-Try-Tiny`. This allows build dependency ordering to work
+  correctly.
+* In the `%prep` section, change the `%setup` macro to reference the full
+  tarball name. That is, relace `%setup` with
+  `%setup -f Dist-Name-%{version}`.
+* Delete the `%doc` macro from the `%files` section. It tends to include a
+  bunch of crap no one ever needs to see.
+* Adjust the `%files` section to grab all the built files. For example, you
+  might need to add `%{_bindir}/*` and `%{_mandir}/man1/*` if the distribution
+  installs command-line applications.
+
+With those changes in place, `git add SPECS` and run `./bin/build_em` until
+the RPM or RPMs build. The run `rpm -qpl` on the resulting RPM or RPMs in the
+`repo` directory to make sure no unexpected files were installed or installed
+outside of `/usr/local/perl$version`. Commit the spec file(s) an push it!
+
 Author
 ------
 * [David E. Wheeler](mailto:david.wheeler@iovation.com)
