@@ -2,7 +2,7 @@ Name:           %{iov_prefix}-CGI
 Version:        4.03
 Release:        1%{?dist}
 Summary:        Handle Common Gateway Interface requests and responses
-License:        Perl
+License:        GPL+ or Artistic
 Group:          Development/Libraries
 URL:            http://search.cpan.org/dist/CGI/
 Source0:        http://cpan.metacpan.org/authors/id/L/LE/LEEJO/CGI.pm-%{version}.tar.gz

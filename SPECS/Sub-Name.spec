@@ -2,7 +2,7 @@ Name:           %{iov_prefix}-Sub-Name
 Version:        0.07
 Release:        1%{?dist}
 Summary:        (re)name a sub
-License:        CHECK(Distributable)
+License:        GPL+ or Artistic
 Group:          Development/Libraries
 URL:            http://search.cpan.org/dist/Sub-Name/
 Source0:        http://cpan.metacpan.org/authors/id/E/ET/ETHER/Sub-Name-%{version}.tar.gz
