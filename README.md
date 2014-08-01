@@ -53,8 +53,8 @@ file, making the following changes:
   with `%{iov_prefix}-Try-Tiny`. This allows build dependency ordering to work
   correctly.
 * In the `%prep` section, change the `%setup` macro to reference the full
-  tarball name. That is, relace `%setup` with
-  `%setup -f Dist-Name-%{version}`.
+  tarball name. That is, relace `%setup -q` with
+  `%setup -q -n Dist-Name-%{version}`.
 * Delete the `%doc` macro from the `%files` section. It tends to include a
   bunch of crap no one ever needs to see.
 * Adjust the `%files` section to grab all the built files. For example, you
