@@ -60,11 +60,26 @@ file, making the following changes:
 * Adjust the `%files` section to grab all the built files. For example, you
   might need to add `%{_bindir}/*` and `%{_mandir}/man1/*` if the distribution
   installs command-line applications.
+* Replace all instances of `perl(` in `Requires` tags with `%{iov_prefix}`. In
+  other words, `Requires: perl(CGI)` should become
+  `Requires: %{iov_prefix}(CGI)`.
 
 With those changes in place, `git add SPECS` and run `./bin/build_em` until
-the RPM or RPMs build. The run `rpm -qpl` on the resulting RPM or RPMs in the
-`repo` directory to make sure no unexpected files were installed or installed
-outside of `/usr/local/perl$version`. Commit the spec file(s) an push it!
+the RPM or RPMs build. Once you have those RPMs, you'll find them in the
+`repo` directory. Run these commands against each new RPM there:
+
+* `rpm -qpl repo/$rpmname.rpm`: Should list no unexpected files or files
+  outside the `/usr/local/perl$version` directory. If there are any extra or
+  misplaced files, adjust the installation and `%files` parts of the spec file
+  and rebuild until it's right.
+* `rpm -qp --provides repo/$rpmname.rpm`: Should show the appropriately
+  provided modules, wrapped in the name and version of Perl, e.g.,
+  `perl520(My::Module)`.
+* `rpm -qp --requies repo/$rpmname.rpm`: Should show the appropriately
+  required dependencies. Perl module dependencies should have their names
+  wrapped in the name and version of Perl, e.g., `perl520(Try::Tiny)`. None
+  should start with just `perl()`. If they do, edit the appropriate
+  `%Requires` entries and rebuild until it's right.
 
 Author
 ------

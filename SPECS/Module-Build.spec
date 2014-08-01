@@ -9,16 +9,16 @@ Source0:        http://cpan.metacpan.org/authors/id/L/LE/LEONT/Module-Build-%{ve
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 BuildRequires:  %{iov_prefix}
-Requires:       perl(CPAN::Meta) >= 2.110420
-Requires:       perl(ExtUtils::CBuilder) >= 0.27
-Requires:       perl(ExtUtils::Install) >= 0.3
-Requires:       perl(ExtUtils::Manifest) >= 1.54
-Requires:       perl(ExtUtils::Mkbootstrap)
-Requires:       perl(ExtUtils::ParseXS) >= 2.21
-Requires:       perl(Module::Metadata) >= 1.000002
-Requires:       perl(Perl::OSType) >= 1
-Requires:       perl(Test::Harness)
-Requires:       perl(version) >= 0.87
+Requires:       %{iov_prefix}(CPAN::Meta) >= 2.110420
+Requires:       %{iov_prefix}(ExtUtils::CBuilder) >= 0.27
+Requires:       %{iov_prefix}(ExtUtils::Install) >= 0.3
+Requires:       %{iov_prefix}(ExtUtils::Manifest) >= 1.54
+Requires:       %{iov_prefix}(ExtUtils::Mkbootstrap)
+Requires:       %{iov_prefix}(ExtUtils::ParseXS) >= 2.21
+Requires:       %{iov_prefix}(Module::Metadata) >= 1.000002
+Requires:       %{iov_prefix}(Perl::OSType) >= 1
+Requires:       %{iov_prefix}(Test::Harness)
+Requires:       %{iov_prefix}(version) >= 0.87
 Requires:       %{iov_prefix}
 
 %description
