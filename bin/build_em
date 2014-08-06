@@ -26,6 +26,7 @@ Getopt::Long::GetOptions(
     'dist|d=s'   => \my $dist,
     'all'        => \my $all,
     'verbose|v!' => \my $verbose,
+    'spec|s=s@'  => \my @specs,
 );
 
 # Establish the major Perl version we're building.
@@ -60,7 +61,7 @@ my %specs = map {
     (my $rpm = $_->basename) =~ s/[.]spec$//;
     $rpm =~ s/^(?:perl-?\b)?/$prefix-/;
     $rpm => $_
-} grep {
+} @specs ? (map { file $_ } @specs) : grep {
     !$_->is_dir && $_->basename =~ /[.]spec$/
 } -e $hash_file && !$all ? do {
     my $prev_hash = $hash_file->slurp(chomp => 1);
