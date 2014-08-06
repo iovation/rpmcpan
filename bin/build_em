@@ -31,7 +31,7 @@ Getopt::Long::GetOptions(
 
 # Establish the major Perl version we're building.
 my @qflag = ($verbose ? () : '--quiet');
-my $version = capturex 'rpm', @qflag, qw(-q --qf %{version} --specfile SPECS/perl.spec);
+my $version = capturex qw(rpm -q --qf %{version} --specfile SPECS/perl.spec);
 $version =~ s/^5[.](\d+).+/5$1/;
 $path   //= "/usr/local/perl$version";
 $prefix //= "perl$version";
@@ -56,10 +56,13 @@ my %macros = (
     ($dist ? ('--define' => "dist $dist") : ()),
 );
 
+sub spec_to_rpm($) {
+    (my $rpm = shift->basename) =~ s/[.]spec$//;
+    return $rpm eq 'perl' ? $prefix : "$prefix-$rpm";
+}
+
 my %specs = map {
-    (my $rpm = $_->basename) =~ s/[.]spec$//;
-    $rpm =~ s/^(?:perl-?\b)?/$prefix-/;
-    $rpm => $_
+    spec_to_rpm($_) => $_;
 } @specs ? (map { file $_ } @specs) : grep {
     !$_->is_dir && $_->basename =~ /[.]spec$/
 } -e $hash_file && !$all ? do {
@@ -70,9 +73,7 @@ my %specs = map {
         for my $rm (capturex qw(git diff --name-only --diff-filter=D), $prev_hash, '--', 'SPECS') {
             # We have deleted SPEC files. Delete the corresponding RPMs.
             chomp $rm;
-            (my $rpm = file($rm)->basename) =~ s/[.]spec$//;
-            $rpm =~ s/^(?:perl-?\b)?/$prefix-/;
-            rm_rpms($rpm);
+            rm_rpms(spec_to_rpm file $rm);
         }
 
         # Get a list of only modifed SPEC files.
@@ -85,9 +86,8 @@ my %specs = map {
         for my $spec (dir('SPECS')->children) {
             next if $add{$spec};
             my $file = file $spec;
-            (my $rpm = $file->basename) =~ s/[.]spec$//;
-            $rpm =~ s/^(?:perl-?\b)?/$prefix-/;
-            $add{$spec} = $file unless try { capturex qw(rpm -q), @qflag, $rpm; 1 };
+            my $rpm = spec_to_rpm $file;
+            $add{$spec} = $file unless try { capturex qw(rpm -q), $rpm; 1 };
         }
 
         # Return them all.
