@@ -33,13 +33,13 @@ written in a very cross-platform way.
 %setup -q -n Module-Build-%{version}
 
 %build
-%{__perl} Build.PL installdirs=vendor
+%{__perl} Build.PL --installdirs=vendor
 ./Build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-./Build install destdir=$RPM_BUILD_ROOT create_packlist=0
+./Build install --destdir=$RPM_BUILD_ROOT create_packlist=0
 find $RPM_BUILD_ROOT -depth -type d -exec rmdir {} 2>/dev/null \;
 
 %{_fixperms} $RPM_BUILD_ROOT/*
