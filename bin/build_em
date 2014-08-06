@@ -7,7 +7,7 @@ use Getopt::Long;
 use Try::Tiny;
 use Cwd;
 use List::Util qw(first);
-use IPC::System::Simple qw(runx capturex);
+use IPC::System::Simple qw(runx capturex $EXITVAL);
 use v5.10.1;
 
 # Specify all RPMs required by this script.
@@ -215,6 +215,7 @@ sub build {
         });
     } catch {
         warn $_;
+        exit $EXITVAL if /\bsignal\b/; # Just exit if we got a signal.
         $failed{$rpm} = 1;
     };
 }
