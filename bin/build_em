@@ -25,10 +25,12 @@ Getopt::Long::GetOptions(
     'prefix|f=s' => \my $prefix,
     'dist|d=s'   => \my $dist,
     'all'        => \my $all,
+    'verbose|v!' => \my $verbose,
 );
 
 # Establish the major Perl version we're building.
-my $version = capturex qw(rpm -q --qf %{version} --specfile SPECS/perl.spec);
+my @qflag = ($verbose ? () : '--quiet');
+my $version = capturex 'rpm', @qflag, qw(-q --qf %{version} --specfile SPECS/perl.spec);
 $version =~ s/^5[.](\d+).+/5$1/;
 
 $path   //= "/usr/local/perl$version";
@@ -85,7 +87,7 @@ my %specs = map {
             my $file = file $spec;
             (my $rpm = $file->basename) =~ s/[.]spec$//;
             $rpm =~ s/^(?:perl-?\b)?/$prefix-/;
-            $add{$spec} = $file unless try { capturex qw(rpm -q), $rpm; 1 };
+            $add{$spec} = $file unless try { capturex 'rpm', @qflag, $rpm; 1 };
         }
 
         # Return them all.
@@ -156,7 +158,7 @@ while (@prereqs) {
             if (@to_install) {
                 # Install prereqs.
                 say 'Installing Yum dependencies: ', join ' ', @to_install;
-                runx qw(sudo yum install -q -y), @to_install;
+                runx qw(sudo yum install -y), @qflag, @to_install;
                 @to_install = ();
             }
             # Build it.
@@ -185,6 +187,7 @@ sub build {
     return if $failed{$rpm};
 
     my @params = (
+        @qflag,
         (map {; '--define' => "$_ $macros{$_}" } keys %macros),
         $spec,
     );
@@ -198,7 +201,7 @@ sub build {
         rm_rpms($rpm);
 
         say "* Building $rpm";
-        runx qw(rpmbuild -ba --quiet), @params;
+        runx qw(rpmbuild -ba), @params;
 
         # Find all new RPMs and put them into the repo directory.
         dir('RPMS')->recurse(callback => sub {
