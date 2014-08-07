@@ -18,10 +18,7 @@ Source0:        http://cpan.metacpan.org/src/perl-%{version}.tar.bz2
 # Filter requires on RPM 4.8.
 # http://www.redhat.com/archives/rpm-list/2005-August/msg00034.html
 # http://richdawe.livejournal.com/3102.html
-%define __find_requires bin/filter-requires %{iov_prefix} Mac\\|VMS\\|perl >=\\|perl(Locale::Codes::\\|perl(unicore::Name)
-
-# Filter requires on RPM 4.9?
-#%{?perl_default_filter}
+%define __find_requires bin/filter-requires %{iov_prefix} 'Mac\\|VMS\\|perl >=\\|perl(Locale::Codes::\\|perl(unicore::Name\\|FCGI)'
 
 %description
 Perl is a high-level programming language with roots in C, sed, awk and shell
@@ -44,17 +41,18 @@ Provides: %{?iov_prefix}%{sname}(:WITH_PERLIO)
 %build
 sh Configure -des \
   -Dprefix=%{_prefix} \
+  -Dsiteprefix=%{_prefix} \
+  -Dsiteman1dir=%_prefix/share/man/man1 \
+  -Dsiteman3dir=%_prefix/share/man/man3 \
+  -Dvendorprefix=%{_prefix} \
+  -Dvendorman3dir=%{_prefix}/man/man3 \
+  -Dvendorman1dir=%{_prefix}/man/man1 \
   -Duseshrplib \
   -Dusemultiplicity \
   -Duseithreads \
   -Dperladmin=%{iov_email} \
-  -Dcf_email=%{iov_email} \
-  -Dprefix=%_prefix \
-  -Dvendorprefix=%_prefix \
-  -Dvendorman3dir=%_mandir/man3 \
-  -Dvendorman1dir=%_mandir/man1
+  -Dcf_email=%{iov_email}
 make %{?_smp_mflags}
-
 
 %check
 JOBS=$(printf '%%s' "%{?_smp_mflags}" | sed 's/.*-j\([0-9][0-9]*\).*/\1/')

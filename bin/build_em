@@ -52,8 +52,8 @@ my %macros = (
     _topdir         => cwd,
     __find_requires => "bin/filter-requires $prefix",
     __find_provides => "bin/filter-provides $prefix",
-    _use_internal_dependency_generator =>  0,
-    ($dist ? ('--define' => "dist $dist") : ()),
+    _use_internal_dependency_generator => 0,
+    ($dist ? (dist => $dist) : ()),
 );
 
 sub spec_to_rpm($) {
@@ -63,7 +63,10 @@ sub spec_to_rpm($) {
 
 my %specs = map {
     spec_to_rpm($_) => $_;
-} @specs ? (map { file $_ } @specs) : grep {
+} @specs ? do {
+    $dest->mkpath;
+    (map { file $_ } @specs)
+} : grep {
     !$_->is_dir && $_->basename =~ /[.]spec$/
 } -e $hash_file && !$all ? do {
     my $prev_hash = $hash_file->slurp(chomp => 1);
@@ -185,6 +188,7 @@ if (%failed) {
 sub build {
     my ($rpm, $spec) = @_;
     return if $failed{$rpm};
+    local $macros{__perl} = $^X if $rpm eq $prefix;
 
     my @params = (
         @qflag,
