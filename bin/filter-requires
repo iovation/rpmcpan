@@ -2,7 +2,11 @@
 
 # Usage:
 # %define _use_internal_dependency_generator 0
-# %define __find_requires bin/filter-requires %{iov_prefix}\\|Mac\\|VMS\\|perl >=
+# %define __find_requires bin/filter-requires %{iov_prefix} \\|Mac\\|VMS\\|perl >=
 
-`rpm --eval "%__find_requires"` | sed "s/perl(/$1(/g" | grep -v -E "$1"
+if [ -z "$2" ]; then
+    `rpm --eval "%__find_requires"` | grep -v -E "$2" | sed "s/perl(/$1(/g"
+else
+    `rpm --eval "%__find_requires"` | sed "s/perl(/$1(/g"
+fi
 
