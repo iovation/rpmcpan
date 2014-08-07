@@ -42,11 +42,11 @@ Provides: %{?iov_prefix}%{sname}(:WITH_PERLIO)
 sh Configure -des \
   -Dprefix=%{_prefix} \
   -Dsiteprefix=%{_prefix} \
-  -Dsiteman1dir=%_prefix/share/man/man1 \
-  -Dsiteman3dir=%_prefix/share/man/man3 \
+  -Dsiteman1dir=%{sitemandir}/man1 \
+  -Dsiteman3dir=%{sitemandir}/man3 \
   -Dvendorprefix=%{_prefix} \
-  -Dvendorman3dir=%{_prefix}/man/man3 \
-  -Dvendorman1dir=%{_prefix}/man/man1 \
+  -Dvendorman1dir=%{vendormandir}/man1 \
+  -Dvendorman3dir=%{vendormandir}/man3 \
   -Duseshrplib \
   -Dusemultiplicity \
   -Duseithreads \
