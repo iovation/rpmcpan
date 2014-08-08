@@ -193,7 +193,6 @@ sub build {
     local $macros{__perl} = $^X if $rpm eq $prefix;
 
     my @params = (
-        @qflag,
         (map {; '--define' => "$_ $macros{$_}" } keys %macros),
         $spec,
     );
@@ -207,7 +206,7 @@ sub build {
         rm_rpms($rpm);
 
         say "* Building $rpm";
-        runx qw(rpmbuild -ba), @params;
+        runx qw(rpmbuild -ba), @qflag, @params;
 
         # Find all new RPMs and put them into the repo directory.
         dir('RPMS')->recurse(callback => sub {
