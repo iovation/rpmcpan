@@ -1,4 +1,4 @@
-Name:           %{iov_prefix}-DBI
+Name:           perl%{plv}-DBI
 Version:        1.631
 Release:        1%{?dist}
 Summary:        Database independent interface for Perl
@@ -7,10 +7,10 @@ Group:          Development/Libraries
 URL:            http://search.cpan.org/dist/DBI/
 Source0:        http://cpan.metacpan.org/authors/id/T/TI/TIMB/DBI-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires:  %{iov_prefix}
-Requires:       %{iov_prefix}
+BuildRequires:  perl%{plv}
+Requires:       perl%{plv}
 
-%define __find_requires bin/filter-requires %{iov_prefix} 'perl(\\(Coro[^)]*\\|RPC::[^)]\\+\\|Win32::ODBC\\))'
+%define __find_requires bin/filter-requires perl%{plv} 'perl(\\(Coro[^)]*\\|RPC::[^)]\\+\\|Win32::ODBC\\))'
 
 %description
 The DBI is a database access module for the Perl programming language.

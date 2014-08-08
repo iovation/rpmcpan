@@ -1,4 +1,4 @@
-Name:           %{iov_prefix}-Sub-Name
+Name:           perl%{plv}-Sub-Name
 Version:        0.07
 Release:        1%{?dist}
 Summary:        (re)name a sub
@@ -7,8 +7,8 @@ Group:          Development/Libraries
 URL:            http://search.cpan.org/dist/Sub-Name/
 Source0:        http://cpan.metacpan.org/authors/id/E/ET/ETHER/Sub-Name-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires:  %{iov_prefix}
-Requires:       %{iov_prefix}
+BuildRequires:  perl%{plv}
+Requires:       perl%{plv}
 
 %description
 This module has only one function, which is also exported by default:

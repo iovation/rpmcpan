@@ -47,7 +47,7 @@ chomp $git_hash;
 # Define the RPM macros we set.
 my %macros = (
     _prefix         => $path,
-    iov_prefix      => $prefix,
+    plv             => $version,
     __perl          => "$path/bin/perl",
     _topdir         => cwd,
     sitemandir      => "$path/share/man",

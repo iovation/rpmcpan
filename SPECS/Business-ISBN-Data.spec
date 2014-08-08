@@ -1,4 +1,4 @@
-Name:           %{iov_prefix}-Business-ISBN-Data
+Name:           perl%{plv}-Business-ISBN-Data
 Version:        20120719.001
 Release:        1%{?dist}
 Summary:        Data pack for Business::ISBN
@@ -8,8 +8,8 @@ URL:            http://search.cpan.org/dist/Business-ISBN-Data/
 Source0:        http://cpan.metacpan.org/authors/id/B/BD/BDFOY/Business-ISBN-Data-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
-BuildRequires:  %{iov_prefix}
-Requires:       %{iov_prefix}
+BuildRequires:  perl%{plv}
+Requires:       perl%{plv}
 
 %description
 You don't need to load this module yourself in most cases. Business::ISBN

@@ -1,4 +1,4 @@
-Name:           %{iov_prefix}-CGI
+Name:           perl%{plv}-CGI
 Version:        4.03
 Release:        1%{?dist}
 Summary:        Handle Common Gateway Interface requests and responses
@@ -8,8 +8,8 @@ URL:            http://search.cpan.org/dist/CGI/
 Source0:        http://cpan.metacpan.org/authors/id/L/LE/LEEJO/CGI.pm-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
-BuildRequires:  %{iov_prefix}
-Requires:       %{iov_prefix}
+BuildRequires:  perl%{plv}
+Requires:       perl%{plv}
 
 %description
 CGI.pm is a stable, complete and mature solution for processing and preparing

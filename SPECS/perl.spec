@@ -1,8 +1,7 @@
 %define iov_email  jira-ops@iovaiton.com
 %global sname perl
-%{!?iov_prefix: %define iov_prefix %{sname}}
 
-Name:           %{iov_prefix}
+Name:           perl%{plv}
 Version:        5.20.0
 Release:        1%{?dist}
 Summary:        Practical Extraction and Reporting Language
@@ -18,7 +17,7 @@ Source0:        http://cpan.metacpan.org/src/perl-%{version}.tar.bz2
 # Filter requires on RPM 4.8.
 # http://www.redhat.com/archives/rpm-list/2005-August/msg00034.html
 # http://richdawe.livejournal.com/3102.html
-%define __find_requires bin/filter-requires %{iov_prefix} 'Mac\\|VMS\\|perl >=\\|perl(Locale::Codes::\\|perl(unicore::Name\\|FCGI)'
+%define __find_requires bin/filter-requires perl%{plv} 'Mac\\|VMS\\|perl >=\\|perl(Locale::Codes::\\|perl(unicore::Name\\|FCGI)'
 
 %description
 Perl is a high-level programming language with roots in C, sed, awk and shell
@@ -31,9 +30,9 @@ installed on your system so that your system can handle Perl scripts.
 
 %global perl_compat %{sname}(:MODULE_COMPAT_%{version})
 Provides: iov-%{sname}
-Provides: %{?iov_prefix}%{sname}(:MODULE_COMPAT_%{version})
-Provides: %{?iov_prefix}%{sname}(:WITH_ITHREADS)
-Provides: %{?iov_prefix}%{sname}(:WITH_PERLIO)
+Provides: %{sname}%{plv}(:MODULE_COMPAT_%{version})
+Provides: %{sname}%{plv}(:WITH_ITHREADS)
+Provides: %{sname}%{plv}(:WITH_PERLIO)
 
 %prep
 %setup -q -n %{sname}-%{version}

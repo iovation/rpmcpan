@@ -6,7 +6,7 @@
 %define sysbindir     %{sysprefix}/bin
 %define syssbindir    %{sysprefix}/sbin
 
-Name:           %{iov_prefix}-%{sname}
+Name:           perl%{plv}-%{sname}
 Version:        2.0.8
 Release:        1%{?dist}
 Summary:        An embedded Perl interpreter for the Apache HTTP Server
@@ -21,17 +21,17 @@ Source1:        perl.conf
 # Source3:        filter-provides.sh
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  %{iov_prefix}
+BuildRequires:  perl%{plv}
 BuildRequires:  httpd-devel >= 2.2.0
 BuildRequires:  httpd
 BuildRequires:  gdbm-devel
 BuildRequires:  apr-devel >= 1.2.0
 BuildRequires:  apr-util-devel
-Requires:       %{iov_prefix}
+Requires:       perl%{plv}
 Requires:       httpd-mmn = %(cat %{sysincludedir}/httpd/.mmn || echo missing)
 Conflicts:      mod_perl
 
-%define __find_requires bin/filter-requires %{iov_prefix} 'perl(\\(Apache2\\?::[^)]\\+\\|BSD::Resource\\|Data::Flow\\))'
+%define __find_requires bin/filter-requires perl%{plv} 'perl(\\(Apache2\\?::[^)]\\+\\|BSD::Resource\\|Data::Flow\\))'
 
 %description
 mod_perl incorporates a Perl interpreter into the Apache web server,

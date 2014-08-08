@@ -1,4 +1,4 @@
-Name:           %{iov_prefix}-Capture-Tiny
+Name:           perl%{plv}-Capture-Tiny
 Version:        0.24
 Release:        1%{?dist}
 Summary:        Capture STDOUT and STDERR from Perl, XS or external programs
@@ -8,8 +8,8 @@ URL:            http://search.cpan.org/dist/Capture-Tiny/
 Source0:        http://cpan.metacpan.org/authors/id/D/DA/DAGOLDEN/Capture-Tiny-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
-BuildRequires:  %{iov_prefix}
-Requires:       %{iov_prefix}
+BuildRequires:  perl%{plv}
+Requires:       perl%{plv}
 
 %description
 Capture::Tiny provides a simple, portable way to capture almost anything

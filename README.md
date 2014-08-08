@@ -43,14 +43,14 @@ Only use your own name and email address, of course. Copy the resulting
 `SOURCES` directory (but don't add the tarballs to Git!). Then edit the spec
 file, making the following changes:
 
-* Prepend `%{iov_prefix}-` to the `Name` tag.
+* Prepend `perl%{plv}-` to the `Name` tag.
 * Replace the `Requires` and `BuildRequires` tags that require Perl to instead
-  require `%{iov_prefix}`.
+  require `perl%{plv}`.
 * Delete any `BuildRequires` tags that require modules included in the Perl
   core.
 * Change any `BuildRequires` tags that reference modules built by this project
   to require RPMs rather than modules. For example, replace `perl(Try::Tiny)`
-  with `%{iov_prefix}-Try-Tiny`. This allows build dependency ordering to work
+  with `perl%{plv}-Try-Tiny`. This allows build dependency ordering to work
   correctly.
 * In the `%prep` section, change the `%setup` macro to reference the full
   tarball name. That is, relace `%setup -q` with
@@ -60,9 +60,9 @@ file, making the following changes:
 * Adjust the `%files` section to grab all the built files. For example, you
   might need to add `%{_bindir}/*` and `%{_mandir}/man1/*` if the distribution
   installs command-line applications.
-* Replace all instances of `perl(` in `Requires` tags with `%{iov_prefix}`. In
+* Replace all instances of `perl(` in `Requires` tags with `perl%{plv}`. In
   other words, `Requires: perl(CGI)` should become
-  `Requires: %{iov_prefix}(CGI)`.
+  `Requires: perl%{plv}(CGI)`.
 
 With those changes in place, `git add SPECS` and run `./bin/build_em` until
 the RPM or RPMs build. Once you have those RPMs, you'll find them in the

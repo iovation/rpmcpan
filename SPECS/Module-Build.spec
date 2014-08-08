@@ -1,4 +1,4 @@
-Name:           %{iov_prefix}-Module-Build
+Name:           perl%{plv}-Module-Build
 Version:        0.4206
 Release:        1%{?dist}
 Summary:        Build and install Perl modules
@@ -8,18 +8,18 @@ URL:            http://search.cpan.org/dist/Module-Build/
 Source0:        http://cpan.metacpan.org/authors/id/L/LE/LEONT/Module-Build-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
-BuildRequires:  %{iov_prefix}
-Requires:       %{iov_prefix}(CPAN::Meta) >= 2.110420
-Requires:       %{iov_prefix}(ExtUtils::CBuilder) >= 0.27
-Requires:       %{iov_prefix}(ExtUtils::Install) >= 0.3
-Requires:       %{iov_prefix}(ExtUtils::Manifest) >= 1.54
-Requires:       %{iov_prefix}(ExtUtils::Mkbootstrap)
-Requires:       %{iov_prefix}(ExtUtils::ParseXS) >= 2.21
-Requires:       %{iov_prefix}(Module::Metadata) >= 1.000002
-Requires:       %{iov_prefix}(Perl::OSType) >= 1
-Requires:       %{iov_prefix}(Test::Harness)
-Requires:       %{iov_prefix}(version) >= 0.87
-Requires:       %{iov_prefix}
+BuildRequires:  perl%{plv}
+Requires:       perl%{plv}(CPAN::Meta) >= 2.110420
+Requires:       perl%{plv}(ExtUtils::CBuilder) >= 0.27
+Requires:       perl%{plv}(ExtUtils::Install) >= 0.3
+Requires:       perl%{plv}(ExtUtils::Manifest) >= 1.54
+Requires:       perl%{plv}(ExtUtils::Mkbootstrap)
+Requires:       perl%{plv}(ExtUtils::ParseXS) >= 2.21
+Requires:       perl%{plv}(Module::Metadata) >= 1.000002
+Requires:       perl%{plv}(Perl::OSType) >= 1
+Requires:       perl%{plv}(Test::Harness)
+Requires:       perl%{plv}(version) >= 0.87
+Requires:       perl%{plv}
 
 %description
 Module::Build is a system for building, testing, and installing Perl
