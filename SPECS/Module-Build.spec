@@ -54,8 +54,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{perl_vendorlib}/*
 %{_bindir}/*
-%{_mandir}/man3/*
-%{_mandir}/man1/*
+%{vendormandir}/man3/*
+%{vendormandir}/man1/*
 
 %changelog
 * Thu Jul 31 2014 David E. Wheeler <david.wheeler@iovation.com> 0.4206-1

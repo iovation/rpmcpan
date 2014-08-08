@@ -43,7 +43,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %{perl_vendorlib}/*
-%{_mandir}/man3/*
+%{vendormandir}/man3/*
 
 %changelog
 * Wed Jul 30 2014 David E. Wheeler <david.wheeler@iovation.com> 0.22-1

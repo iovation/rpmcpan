@@ -91,7 +91,7 @@ rm -rf $RPM_BUILD_ROOT
 %{perl_vendorarch}/APR/
 %{perl_vendorarch}/ModPerl/
 %{perl_vendorarch}/*.pm
-%{_mandir}/man3/*.3*
+%{vendormandir}/man3/*
 
 %changelog
 * Thu Jul 31 2014 David E. Wheeler <david.wheeler@iovation.com> - 2.0.8-1

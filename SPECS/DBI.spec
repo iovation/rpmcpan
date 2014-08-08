@@ -49,8 +49,8 @@ rm -rf $RPM_BUILD_ROOT
 %{perl_vendorarch}/Bundle/DBI.pm
 %{perl_vendorarch}/dbixs_rev.pl
 %{_bindir}/*
-%{_mandir}/man3/*
-%{_mandir}/man1/*
+%{vendormandir}/man3/*
+%{vendormandir}/man1/*
 
 %changelog
 * Thu Jul 31 2014 David E. Wheeler <david.wheeler@iovation.com> 1.631-1
