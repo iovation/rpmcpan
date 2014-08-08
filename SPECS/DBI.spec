@@ -10,6 +10,8 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  %{iov_prefix}
 Requires:       %{iov_prefix}
 
+%define __find_requires bin/filter-requires %{iov_prefix} 'perl(\\(Coro[^)]*\\|RPC::[^)]\\+\\|Win32::ODBC\\))'
+
 %description
 The DBI is a database access module for the Perl programming language.
 It defines a set of methods, variables, and conventions that provide a

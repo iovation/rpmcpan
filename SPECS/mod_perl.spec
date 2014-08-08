@@ -31,6 +31,8 @@ Requires:       %{iov_prefix}
 Requires:       httpd-mmn = %(cat %{sysincludedir}/httpd/.mmn || echo missing)
 Conflicts:      mod_perl
 
+%define __find_requires bin/filter-requires %{iov_prefix} 'perl(\\(Apache2\\?::[^)]\\+\\|BSD::Resource\\|Data::Flow\\))'
+
 %description
 mod_perl incorporates a Perl interpreter into the Apache web server,
 so that the Apache web server can directly execute Perl code.
