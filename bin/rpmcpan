@@ -74,9 +74,16 @@ sub go {
         'repo|r=s',
         'config|c=s',
         'packager|p=s',
-        'install!',
+        'die!',
     );
     return $class->new(%opts)->run;
+}
+
+sub vent {
+    my $self = shift;
+    die  'ERROR: ', @_, "\n" if $self->{die};
+    warn 'ERROR: ', @_, "\n";
+    return 0
 }
 
 sub run {
@@ -109,10 +116,9 @@ sub call {
     my $uri = "http://api.metacpan.org/v0/$api/$path";
     say "  - Calling $uri" if $self->{verbose} > 1;
     my $res = $self->{http}->get($uri);
-    unless ($res->{success}) {
-        warn "ERROR: Request for $api/$path failed: $res->{status} $res->{reason}\n";
-        return 0;
-    }
+    return $self->vent(
+        "Request for $api/$path failed: $res->{status} $res->{reason}"
+    ) unless $res->{success};
     return decode_json $res->{content};
 }
 
@@ -133,10 +139,9 @@ sub get_modules {
         'http://api.metacpan.org/v0/file/_search',
         { content => $body }
     );
-    unless ($res->{success}) {
-        warn "ERROR: Request for file/_search failed: $res->{status} $res->{reason}\n";
-        return 0;
-    }
+    return $self->vent(
+        "Request for file/_search failed: $res->{status} $res->{reason}"
+    ) unless $res->{success};
     return decode_json $res->{content};
 }
 
@@ -168,10 +173,9 @@ sub download {
 
     say "- Downloading $tgz" if $self->{verbose};
     my $res = $self->{http}->mirror($url, $file);
-    unless ($res->{success}) {
-        warn "ERROR: Download of $url failed: $res->{status} $res->{reason}\n";
-        return 0;
-    }
+    return $self->vent(
+        "Download of $url failed: $res->{status} $res->{reason}"
+    ) unless $res->{success};
     if ($self->{verbose} > 1) {
         say $res->{status} == 304
             ? "  - $file is up-to-date"
@@ -275,10 +279,9 @@ sub write_spec {
     my @provides = (@{ $spec->{provides} || [] }, @{ $found });
 
     say "- Generating $specfile" if $self->{verbose};
-    open my $fh, '>:encoding(UTF-8)', $specfile or do {
-        warn "ERROR: Cannot open $specfile: $!\n";
-        return 0;
-    };
+    open my $fh, '>:encoding(UTF-8)', $specfile or return $self->vent(
+        "Cannot open $specfile: $!"
+    );
 
     print $fh qq{Name:           perl$self->{plv}-$rel->{distribution}
 Version:        $rel->{version}
@@ -358,32 +361,29 @@ sub rpmbuild {
     );
 
     system(
-        qw(rpmbuild -ba), ($self->{verbose} < 2 ? '--quiet' : ()), @params, $specfile
-    ) == 0 or do {
-        warn "ERROR: Build failed\n";
-        return 0;
-    };
+        qw(rpmbuild -ba),
+        ($self->{verbose} < 2 ? '--quiet' : ()),
+        @params, $specfile
+    ) == 0 or return $self->vent("Build failed");
 
     # Find all new RPMs and put them into the repo directory.
-    my @rpms = 0;
+    my @rpms;
     say "- Collecting and installing $rel->{name} RPMs";
     find { no_chdir => 1, wanted => sub {
         return unless /[.]rpm$/;
         my $dest = File::Spec->catfile($self->{repo}, basename $_);
         rename $_, $dest;
-        push @rpms;
+        push @rpms => $dest;
     } }, 'RPMS';
 
-    if ($self->{install}) {
-        system(
-            qw(sudo rpm -Uvh --replacepkgs --replacefiles), @rpms
-        ) == 0 or do {
-            warn 'ERROR: Could not install ' . join(', ', @rpms) . "\n";
-            return 0;
-        };
-    }
+    return $self->vent("No RPMs found after building $rel->{name}")
+        unless @rpms;
 
-    return scalar @rpms;
+    return $self->vent('Could not install ', join ', ', @rpms) unless system(
+        qw(sudo rpm -Uvh --replacepkgs --replacefiles), @rpms
+    ) == 0;
+
+    return 1;
 }
 
 my %seen = (perl => 1);
@@ -408,23 +408,19 @@ sub build {
     my $build_requires = $spec->{build_requires} ||= [];
     if (my @req = @{ $build_requires }) {
         say '- Installing build dependencies: ', join ', ', @req;
-        system(
+        return $self->vent("Dependency installation failed") unless system(
             qw(sudo yum install -y), ($self->{verbose} > 1 ? () : '--quiet'), @req
-        ) == 0 or do {
-            warn "ERROR: Dependency installation failed\n";
-            return 0;
-        };
+        ) == 0;
     }
 
     # Let's look at its dependencies.
-    my %dist_seen;
-    my @failed;
+    my (%mod_seen, %dist_seen, @failed);
     my $corelist = $self->{corelist};
     if (my @deps = @{ $rel->{dependency} }) {
         say "- Checking dependencies" if $self->{verbose};
         for my $dep (@deps) {
             # Skip development, conflicting, or previously seen dependencies.
-            next if $seen{ $dep->{module} }++;
+            next if $mod_seen{ $dep->{module} }++;
             next if $dep->{phase} eq 'develop';
             next if $dep->{relationship} eq 'conflicts';
 
