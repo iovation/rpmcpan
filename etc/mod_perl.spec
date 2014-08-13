@@ -7,7 +7,7 @@
 %define syssbindir    %{sysprefix}/sbin
 
 Name:           perl%{plv}-%{sname}
-Version:        2.0.8
+Version:        %(echo %{version})
 Release:        1%{?dist}
 Summary:        An embedded Perl interpreter for the Apache HTTP Server
 
@@ -31,6 +31,8 @@ Requires:       perl%{plv}
 Requires:       httpd-mmn = %(cat %{sysincludedir}/httpd/.mmn || echo missing)
 Conflicts:      mod_perl
 
+%define _use_internal_dependency_generator 0,
+%define __find_requires bin/filter-requires perl%{plv}
 %define __find_requires bin/filter-requires perl%{plv} 'perl(\\(Apache2\\?::[^)]\\+\\|BSD::Resource\\|Data::Flow\\))'
 
 %description

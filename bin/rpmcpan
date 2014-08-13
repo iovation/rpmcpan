@@ -1,0 +1,526 @@
+#!/usr/bin/env perl
+
+package RPM::CPAN;
+
+use v5.10;
+use strict;
+use warnings;
+use utf8;
+use HTTP::Tiny;
+use Module::CoreList;
+use Getopt::Long;
+use JSON::PP qw(decode_json encode_json);
+use File::Spec::Functions qw(catfile splitpath splitdir canonpath);
+use File::Find;
+use Archive::Tar;
+use File::Basename qw(basename dirname);
+use POSIX qw(strftime);
+use File::Path qw(make_path remove_tree);
+use Cwd;
+
+our $VERSION = '1.0';
+
+sub new {
+    my ($class, %p) = @_;
+    $p{verbose}  //= 0;
+    $p{config}   //= File::Spec->catfile(qw(etc dists.json));
+    $p{repo}     //= 'repo';
+    $p{packager} //= do {
+        require User::pwent;
+        my $sysname = $ENV{USER};
+        my $name = (User::pwent::getpwnam($sysname)->gecos)[0] || $sysname;
+        if (eval "require Encode::Locale") {
+            require Encode;
+            $name = Encode::decode( locale => $name );
+        }
+        require Sys::Hostname;
+        my $email = "$sysname@" . Sys::Hostname::hostname();
+        "$name <$email>";
+    };
+
+    if (my $perlver = $p{version}) {
+        my @parts = split /[.]/ => $perlver;
+        push @parts => 0 if @parts < 3;
+        $p{version} = version->new(join '.' => @parts);
+    } else {
+        $p{version} = $^V;
+    }
+
+    $p{exitval}  = 0;
+    ($p{plv}     = $p{version}->stringify) =~ s/^v?5[.](\d+).+/5$1/;
+    $p{date}     = strftime("%a %b %d %Y", localtime);
+    $p{http}     = HTTP::Tiny->new(agent => "rpmcpan/$VERSION");
+    $p{prefix} //= "/usr/local/perl$p{plv}";
+    $p{perl}     = "$p{prefix}/bin/perl";
+    die "$p{perl} does not exist; have you built it?\n" unless -e $p{perl};
+
+    $p{corelist} = $Module::CoreList::version{ $p{version}->numify }
+        or die "Perl version " . $p{version}->numify
+             . " not listed in \$Module::CoreList::version\n";
+
+    return bless \%p => $class;
+}
+
+sub go {
+    my $class = shift;
+    Getopt::Long::Configure (qw(bundling));
+    Getopt::Long::GetOptionsFromArray(
+        \@_,
+        \my %opts,
+        'version=s',
+        'prefix|f=s',
+        'all',
+        'verbose|v+',
+        'repo|r=s',
+        'config|c=s',
+        'packager|p=s',
+        'install!',
+    );
+    return $class->new(%opts)->run;
+}
+
+sub run {
+    my $self = shift;
+    my $dists = decode_json do {
+        open my $fh, '<:raw', $self->{config}
+            or die "Cannot open $self->{config}: $!\n";
+        local $/;
+        <$fh>;
+    };
+    $self->{dists} = $dists;
+
+    remove_tree $self->{repo} if $self->{all};
+    make_path $self->{repo};
+    say "Building RPMs for Perl $self->{version} (perl$self->{plv})\n"
+        if $self->{verbose};
+    while (my ($dist, $spec) = each %{ $dists }) {
+        $self->{exitval}++ unless $self->build($dist, $spec);
+    }
+    if ($self->{exitval}) {
+        say "Unable to build all RPMs for Perl $self->{version} (perl$self->{plv})\n";
+    } else {
+        say "Done building RPMs for Perl $self->{version} (perl$self->{plv})\n";
+    }
+    return $self->{exitval};
+}
+
+sub call {
+    my ($self, $api, $path) = @_;
+    my $uri = "http://api.metacpan.org/v0/$api/$path";
+    say "  - Calling $uri" if $self->{verbose} > 1;
+    my $res = $self->{http}->get($uri);
+    unless ($res->{success}) {
+        warn "ERROR: Request for $api/$path failed: $res->{status} $res->{reason}\n";
+        return 0;
+    }
+    return decode_json $res->{content};
+}
+
+sub get_modules {
+    my ($self, $rel) = @_;
+    say "  - Searching $rel->{name} for modules" if $self->{verbose} > 1;
+    my $body = encode_json +{
+        query => { match_all => {} },
+        filter => {
+            and => [
+                { term   => {release => $rel->{name}  }},
+                { exists => {field   => 'module.name' }},
+            ],
+        },
+        fields => [ qw(module.name module.version) ],
+    };
+    my $res = $self->{http}->post(
+        'http://api.metacpan.org/v0/file/_search',
+        { content => $body }
+    );
+    unless ($res->{success}) {
+        warn "ERROR: Request for file/_search failed: $res->{status} $res->{reason}\n";
+        return 0;
+    }
+    return decode_json $res->{content};
+}
+
+sub provides {
+    my ($self, $rel) = @_;
+    # Just use the release list if we have them.
+    my %seen;
+    if (my $p = $rel->{metadata}{provides}) {
+        return [map {
+            "perl$self->{plv}($_)" . ($p->{$_}{version} ? " = $p->{$_}{version}" : '')
+        } grep { !$seen{$_}++ } keys %{ $p }];
+    }
+
+    # Otherwise, ask metacpan for a list.
+    my $mods = $self->get_modules($rel) or return 0;
+    return [map {
+        my $f = $_->{fields};
+        "perl$self->{plv}($f->{'module.name'})"
+            . ($f->{'module.version'} ? " = $f->{'module.version'}" : '')
+    }  grep { !$seen{ $_->{fields}{'module.name'} }++ } @{ $mods->{hits}{hits} }];
+}
+
+sub download {
+    my ($self, $rel) = @_;
+    my $url  = $rel->{download_url};
+    my $tgz  = basename +$rel->{archive};
+    my $file = catfile 'SOURCES', $tgz;
+    return $file if -e $file;
+
+    say "- Downloading $tgz" if $self->{verbose};
+    my $res = $self->{http}->mirror($url, $file);
+    unless ($res->{success}) {
+        warn "ERROR: Download of $url failed: $res->{status} $res->{reason}\n";
+        return 0;
+    }
+    if ($self->{verbose} > 1) {
+        say $res->{status} == 304
+            ? "  - $file is up-to-date"
+            : "  - Saved to $file";
+    }
+    return $file;
+}
+
+sub is_built {
+    my ($self, $mod) = @_;
+    my $rpm = join '-', "perl$self->{plv}", @{ $mod }{qw(distribution version)};
+    say "  - Looking for $rpm" if $self->{verbose} > 1;
+    my $match = 0;
+    find sub { $match += /^\Q$rpm\E-\d/ }, $self->{repo};
+    return $match > 0;
+}
+
+sub inspect {
+    my ($self, $tgz) = @_;
+    say "- Inspecting $tgz" if $self->{verbose} > 1;
+    my %info;
+    for my $file ( Archive::Tar->list_archive($tgz) ) {
+        if (!$info{arch} && $file =~ /[.](?:[ch]|xs|inl)$/i) {
+            $info{arch} = 1;
+            last if $info{use_mb};
+            next;
+        }
+        if (
+            !$info{use_mb} && basename($file) eq 'Build[.]PL'
+            && splitdir(canonpath +(splitpath $file)[1]) <= 1
+        ) {
+            $info{use_mb} = 1;
+            last if $info{arch};
+            next;
+        }
+    }
+    return \%info;
+}
+
+my %label_for = (
+    # The following list of license strings are valid:
+    agpl_3          => 'Affero General Public License 3.0',
+    apache_1_1      => 'Apache Software License 1.1',
+    apache_2_0      => 'Apache Software License 2.0',
+    artistic_1      => 'Artistic',
+    artistic_2      => 'Artistic 2.0',
+    bsd             => 'BSD License (three-clause)',
+    freebsd         => 'FreeBSD License (two-clause)',
+    gfdl_1_2        => 'GNU Free Documentation License 1.2',
+    gfdl_1_3        => 'GNU Free Documentation License 1.3',
+    gpl_1           => 'GPLv1',
+    gpl_2           => 'GPLv2',
+    gpl_3           => 'GPLv3',
+    lgpl_2_1        => 'LGPLv2',
+    lgpl_3_0        => 'LGPLv3',
+    mit             => 'MIT',
+    mozilla_1_0     => 'MPLv1.0',
+    mozilla_1_1     => 'MPLv1.1',
+    openssl         => 'OpenSSL',
+    perl_5          => 'GPL+ or Artistic',
+    qpl_1_0         => 'QPL',
+    ssleay          => 'Original SSLeay License',
+    sun             => 'SISSL',
+    zlib            => 'zlib',
+
+    # The following license strings are also valid and indicate other
+    # licensing not described above:
+    open_source     => 'OSI-Approved',
+    restricted      => 'Non-distributable',    # XXX Warn?
+    unrestricted    => 'Distributable',
+#   unknown         => 'CHECK(Distributable)', # XXX Warn?
+);
+
+sub license_for {
+    my ($self, $rel) = @_;
+    say "- Finding license for $rel->{distribution}" if $self->{verbose} > 1;
+    return $label_for{ $rel->{license} } || $label_for{perl_5}
+        unless ref $rel->{license};
+    return join ' or ' => map {
+        $label_for{$_} || $label_for{perl_5}
+    } @{ $rel->{license} };
+}
+
+sub write_spec {
+    my ($self, $rel, $spec, $tgz) = @_;
+    my $specfile;
+    for my $dir (qw(etc SPECS)) {
+        $specfile = File::Spec->catfile($dir, "$rel->{distribution}.spec");
+        next unless -e $specfile;
+        say "- Using $specfile" if $self->{verbose};
+        return $specfile;
+    }
+
+    my $license = $self->license_for($rel);
+    my $url = $rel->{metadata}{'meta-spec'}{url}
+          || "https://metacpan.org/release/$rel->{name}";
+    my $time = time;
+    my $info = $self->inspect($tgz);
+    my $src  = basename $rel->{archive};
+    my $found = $self->provides($rel) or return 0;
+    my @provides = (@{ $spec->{provides} || [] }, @{ $found });
+
+    say "- Generating $specfile" if $self->{verbose};
+    open my $fh, '>:encoding(UTF-8)', $specfile or do {
+        warn "ERROR: Cannot open $specfile: $!\n";
+        return 0;
+    };
+
+    print $fh qq{Name:           perl$self->{plv}-$rel->{distribution}
+Version:        $rel->{version}
+Release:        1.$time
+Summary:        $rel->{abstract}
+License:        $license
+Group:          Development/Libraries
+URL:            $url
+Source0:        $src
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+AutoReqProv:    no
+}, ($info->{noarch} ? "\nBuildArch:      noarch" : ()), qq{
+BuildRequires:  perl$self->{plv}},
+    ( map {; "\nBuildRequires:  $_" } @{ $rel->{build_requires} } ), qq{
+Requires:       perl$self->{plv}},
+    ( map {; "\nRequires:       $_" } @{ $rel->{requires} } ),
+    ( map {; "\nProvides:       $_" } @provides ), qq{
+
+%description
+$rel->{abstract}
+
+%prep
+%setup -q -n $rel->{name}
+
+%build
+%{__perl} }, ($info->{use_mb} ? (
+    "Build.PL --installdirs=vendor" . ($info->{noarch} ? '' : ' --optimize="$RPM_OPT_FLAGS"')
+    . "\n./Build.PL"
+) : (
+    "Makefile.PL INSTALLDIRS=vendor" . ($info->{noarch} ? '' : ' OPTIMIZE="$RPM_OPT_FLAGS"')
+    . "\nmake %{?_smp_mflags}"
+)), qq{
+
+%install
+rm -rf \$RPM_BUILD_ROOT
+}, ($info->{use_mb} ? (
+    "./Build install --destdir=\$RPM_BUILD_ROOT create_packlist=0"
+) : (
+    "make pure_install PERL_INSTALL_ROOT=\$RPM_BUILD_ROOT\n",
+    "find \$RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} \\;"
+)), qq{
+find \$RPM_BUILD_ROOT -depth -type d -exec rmdir {} 2>/dev/null \\;
+%{_fixperms} \$RPM_BUILD_ROOT/*
+
+%check
+}, ($info->{use_mb} ? "./Build test" : "make test" ), qq{
+
+%clean
+rm -rf \$RPM_BUILD_ROOT
+
+%files
+%defattr(-,root,root,-)
+%{_prefix}/*
+
+%changelog
+* $self->{date} $self->{packager} $rel->{version}-1
+- Specfile autogenerated by rpmcpan $VERSION.
+};
+    close $fh;
+    return $specfile;
+}
+
+sub rpmbuild {
+    my ($self, $rel, $specfile) = @_;
+
+    say "- Building $rel->{name}" if $self->{verbose};
+    my @params = (
+        '--define' => "version $rel->{version}",
+        @{ $self->{params} ||= [
+            '--define' => "__perl $self->{perl}",
+            '--define' => "plv $self->{plv}",
+            '--define' => "_prefix $self->{prefix}",
+            '--define' => '_topdir ' . cwd,
+            '--define' => "sitemandir $self->{prefix}/share/man",
+            '--define' => "vendormandir $self->{prefix}/man",
+        ] },
+    );
+
+    system(
+        qw(rpmbuild -ba), ($self->{verbose} < 2 ? '--quiet' : ()), @params, $specfile
+    ) == 0 or do {
+        warn "ERROR: Build failed\n";
+        return 0;
+    };
+
+    # Find all new RPMs and put them into the repo directory.
+    my @rpms = 0;
+    say "- Collecting and installing $rel->{name} RPMs";
+    find { no_chdir => 1, wanted => sub {
+        return unless /[.]rpm$/;
+        my $dest = File::Spec->catfile($self->{repo}, basename $_);
+        rename $_, $dest;
+        push @rpms;
+    } }, 'RPMS';
+
+    if ($self->{install}) {
+        system(
+            qw(sudo rpm -Uvh --replacepkgs --replacefiles), @rpms
+        ) == 0 or do {
+            warn 'ERROR: Could not install ' . join(', ', @rpms) . "\n";
+            return 0;
+        };
+    }
+
+    return scalar @rpms;
+}
+
+my %seen = (perl => 1);
+
+sub build {
+    my ($self, $dist, $spec) = @_;
+    return 1 if $seen{$dist}++;
+    say "Processing $dist" if $self->{verbose};
+
+    # Get the latest release.
+    my $rel = $self->call(release => $dist) or return 0;
+    say "- Version: $rel->{version}" if $self->{verbose};
+
+    # Do we already have a RPM for this release?
+    if ( $self->is_built($rel) ) {
+        say "- $dist-$rel->{version} already built; skipping\n";
+        return 1;
+    }
+
+    # Grab pre-specified dependencies.
+    my $requires = $spec->{requires} ||= [];
+    my $build_requires = $spec->{build_requires} ||= [];
+    if (my @req = @{ $build_requires }) {
+        say '- Installing build dependencies: ', join ', ', @req;
+        system(
+            qw(sudo yum install -y), ($self->{verbose} > 1 ? () : '--quiet'), @req
+        ) == 0 or do {
+            warn "ERROR: Dependency installation failed\n";
+            return 0;
+        };
+    }
+
+    # Let's look at its dependencies.
+    my %dist_seen;
+    my @failed;
+    my $corelist = $self->{corelist};
+    if (my @deps = @{ $rel->{dependency} }) {
+        say "- Checking dependencies" if $self->{verbose};
+        for my $dep (@deps) {
+            # Skip development, conflicting, or previously seen dependencies.
+            next if $seen{ $dep->{module} }++;
+            next if $dep->{phase} eq 'develop';
+            next if $dep->{relationship} eq 'conflicts';
+
+            say "  - $dist $dep->{relationship} $dep->{module} for its $dep->{phase} phase"
+                if $self->{verbose} > 1;
+
+            if ( exists $corelist->{ $dep->{module} } ) {
+                # It's in core. Is it new enough?
+                if (
+                    !$dep->{version}
+                    || version->parse($dep->{version}) <= version->parse($corelist->{ $dep->{module} } || 0)
+                ) {
+                    say "  - $dep->{module} in core; skipping" if $self->{verbose} > 1;
+                    next;
+                }
+            }
+
+            my $mod = $self->call( module => $dep->{module} ) or do {
+                push @failed => $dep->{module};
+                next;
+            };
+
+            if ($mod->{distribution} eq 'perl') {
+                say "  - $dep->{module} in core; skipping" if $self->{verbose} > 1;
+                next;
+            }
+
+            # Build this one.
+            $self->build( $mod->{distribution}, $self->{dists}{ $dist } || {} ) or do {
+                push @failed => $mod->{distribution};
+                $self->{exitval}++;
+            };
+
+            # Record it as a dependency.
+            if ($dep->{phase} eq 'runtime') {
+                # It's a runtime dependency; require the module.
+                push @{ $requires } => "perl$self->{plv}($dep->{module})"
+                    . ($dep->{version} ? " >= $dep->{version}" : '')
+            } else {
+                # It's a build dependency; require the distribution.
+                push @{ $build_requires } => "perl$self->{plv}-$mod->{distribution}"
+                    unless $dist_seen{ $mod->{distribution} }++;
+            }
+        }
+    }
+
+    # Handle failures.
+    if (@failed) {
+        say "- Cannot build $dist: Dependencies failed:";
+        say "  - $_" for @failed;
+        print "\n" if $self->{verbose};
+        return 0;
+    }
+
+    # Get the source file.
+    my $tarball = $self->download($rel) or return 0;
+
+    # Write the spec file.
+    my $specfile = $self->write_spec($rel, $spec, $tarball) or return 0;
+
+    # Create the RPM.
+    $self->rpmbuild($rel, $specfile) or return 0;
+
+    print "\n" if $self->{verbose};
+    return 1;
+}
+
+package main;
+exit RPM::CPAN->go(@ARGV);
+
+
+__END__
+
+* Get dist name for module
+  http://api.metacpan.org/v0/module/$module -> {distribution}
+* If distribution is "perl", use Module::CoreList to see if it's in the
+  current version. If so, go to the next module.
+* Look at dependencies. For each:
+    * If already building dist with required version, do nothing
+    * Otherwise, go to second bullet above for this dist
+* Download the source file and unpack it to search for Build.PL or Makefile.PL.
+    * http://api.metacpan.org/v0/release/$distribution -> {download_url}
+* Write out spec file
+    * http://api.metacpan.org/v0/release/$distribution -> {dependency}
+    * http://api.metacpan.org/v0/release/$distribution -> {provides}
+    * http://api.metacpan.org/v0/release/$distribution -> {metadata}{license}
+    * Be sure to provide proper %files lines for lib, man, script (if scripts)
+
+* Download latest dist
+  http://api.metacpan.org/v0/release/$distribution -> {download_url}
+* Read META spec
+* Look at dependencies. For each:
+    * If in core, do nothing.
+    * Get dist name.
+    * If already building dist with required version, do nothing
+    * Otherwise, go to second bullet above for this dist
+* Write out spec file
+    * Be sure to provide proper %files lines for lib, man, script (if scripts)
+

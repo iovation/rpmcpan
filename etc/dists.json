@@ -1,0 +1,18 @@
+{
+    "Capture-Tiny": {},
+    "Module-Build": {},
+    "Test-Harness": { "provides": ["prove"] },
+    "mod_perl": {
+        "build_requires": [
+            "httpd-devel >= 2.2.0",
+            "httpd",
+            "gdbm-devel",
+            "apr-devel >= 1.2.0",
+            "apr-util-devel"
+        ],
+        "requires": [
+            "http-mmn = %(cat %{sysincludedir}/httpd/.mmn || echo missing)"
+        ]
+    }
+}
+
