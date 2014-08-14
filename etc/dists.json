@@ -5,6 +5,7 @@
         "phase": "test",
         "relationship": "recommends"
     }] },
+    "CGI": {},
     "Module-Build": {},
     "Test-Harness": { "provides": ["prove"] },
     "Business-IBAN": {},
