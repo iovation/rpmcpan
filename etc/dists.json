@@ -7,6 +7,7 @@
     }] },
     "Module-Build": {},
     "Test-Harness": { "provides": ["prove"] },
+    "Business-IBAN": {},
     "mod_perl": {
         "build_requires": [
             "httpd-devel >= 2.2.0",
