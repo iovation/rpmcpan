@@ -305,9 +305,9 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 AutoReqProv:    no
 }, ($info->{noarch} ? "\nBuildArch:      noarch" : ()), qq{
 BuildRequires:  perl$self->{plv}},
-    ( map {; "\nBuildRequires:  $_" } @{ $rel->{build_requires} } ), qq{
+    ( map {; "\nBuildRequires:  $_" } @{ $spec->{build_requires} } ), qq{
 Requires:       perl$self->{plv}},
-    ( map {; "\nRequires:       $_" } @{ $rel->{requires} } ),
+    ( map {; "\nRequires:       $_" } @{ $spec->{requires} } ),
     ( map {; "\nProvides:       $_" } @provides ), qq{
 
 %description
@@ -432,7 +432,7 @@ sub build {
             # Skip development, conflicting, or previously seen dependencies.
             next if $mod_seen{ $dep->{module} }++;
             next if $dep->{phase} eq 'develop';
-            next if $dep->{relationship} eq 'conflicts';
+            next if $dep->{relationship} eq 'conflicts'; # XXX Add to spec file?
 
             say "  - $dist $dep->{relationship} $dep->{module} for its $dep->{phase} phase"
                 if $self->{verbose} > 1;
