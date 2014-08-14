@@ -47,7 +47,7 @@ sub new {
     }
 
     $p{exitval}  = 0;
-    ($p{plv}     = $p{version}->stringify) =~ s/^v?5[.](\d+).+/5$1/;
+    ($p{plv}     = $p{version}->normal) =~ s/^v?5[.](\d+).+/5$1/;
     $p{date}     = strftime("%a %b %d %Y", localtime);
     $p{http}     = HTTP::Tiny->new(agent => "rpmcpan/$VERSION");
     $p{prefix} //= "/usr/local/perl$p{plv}";
@@ -98,6 +98,10 @@ sub run {
 
     remove_tree $self->{repo} if $self->{all};
     make_path $self->{repo};
+
+    # First, build Perl.
+    return 1 unless $self->build_perl;
+
     say "Building RPMs for Perl $self->{version} (perl$self->{plv})\n"
         if $self->{verbose};
     while (my ($dist, $spec) = each %{ $dists }) {
@@ -282,7 +286,6 @@ sub write_spec {
     my $license = $self->license_for($rel);
     my $url = $rel->{metadata}{'meta-spec'}{url}
           || "https://metacpan.org/release/$rel->{name}";
-    my $time = time;
     my $info = $self->inspect($tgz);
     my $src  = basename $rel->{archive};
     my $found = $self->provides($rel) or return 0;
@@ -295,7 +298,7 @@ sub write_spec {
 
     print $fh qq{Name:           perl$self->{plv}-$rel->{distribution}
 Version:        $rel->{version}
-Release:        1.$time
+Release:        1.%{dist}
 Summary:        $rel->{abstract}
 License:        $license
 Group:          Development/Libraries
@@ -354,12 +357,42 @@ rm -rf \$RPM_BUILD_ROOT
     return $specfile;
 }
 
+sub build_perl {
+    my $self = shift;
+
+    my $rpm = join "perl$self->{plv}-$self->{version}-";
+    say "Looking for $rpm" if $self->{verbose} > 1;
+    my $match = 0;
+    find sub { $match += /^\Q$rpm\E-\d/ }, $self->{repo};
+
+    if ($match) {
+        say "Perl $self->{version} already built\n";
+        return 1;
+    }
+
+    # Put together the release information for this version.
+    (my $v = $self->{version}->normal) =~ s/^v//;
+    my $archive = "perl-$v.tar.bz2";
+    my $rel = {
+        name         => 'perl',
+        version      => $self->{version},
+        download_url => "http://cpan.metacpan.org/src/$archive",
+        archive      => $archive,
+    };
+
+    # Download and build Perl
+    $self->download($rel) or return 0;
+    return $self->rpmbuild($rel, File::Spec->catfile(qw(etc perl.spec)));
+}
+
 sub rpmbuild {
     my ($self, $rel, $specfile) = @_;
 
     say "- Building $rel->{name}" if $self->{verbose};
+    (my $v = $self->{version}->normal) =~ s/^v//;
     my @params = (
-        '--define' => "version $rel->{version}",
+        '--define' => "version $v",
+        '--define' => 'dist ' . scalar time,
         @{ $self->{params} ||= [
             '--define' => "__perl $self->{perl}",
             '--define' => "plv $self->{plv}",
@@ -498,35 +531,7 @@ sub build {
     return 1;
 }
 
+1;
+
 package main;
 exit RPM::CPAN->go(@ARGV);
-
-
-__END__
-
-* Get dist name for module
-  http://api.metacpan.org/v0/module/$module -> {distribution}
-* If distribution is "perl", use Module::CoreList to see if it's in the
-  current version. If so, go to the next module.
-* Look at dependencies. For each:
-    * If already building dist with required version, do nothing
-    * Otherwise, go to second bullet above for this dist
-* Download the source file and unpack it to search for Build.PL or Makefile.PL.
-    * http://api.metacpan.org/v0/release/$distribution -> {download_url}
-* Write out spec file
-    * http://api.metacpan.org/v0/release/$distribution -> {dependency}
-    * http://api.metacpan.org/v0/release/$distribution -> {provides}
-    * http://api.metacpan.org/v0/release/$distribution -> {metadata}{license}
-    * Be sure to provide proper %files lines for lib, man, script (if scripts)
-
-* Download latest dist
-  http://api.metacpan.org/v0/release/$distribution -> {download_url}
-* Read META spec
-* Look at dependencies. For each:
-    * If in core, do nothing.
-    * Get dist name.
-    * If already building dist with required version, do nothing
-    * Otherwise, go to second bullet above for this dist
-* Write out spec file
-    * Be sure to provide proper %files lines for lib, man, script (if scripts)
-

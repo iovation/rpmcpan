@@ -2,12 +2,12 @@
 %global sname perl
 
 Name:           perl%{plv}
-Version:        5.20.0
-Release:        1%{?dist}
+Version:        %(echo %{version})
+Release:        1.%{?dist}
 Summary:        Practical Extraction and Reporting Language
 
 Group:          Development/Languages
-License:        (GPL+ or Artistic) and (GPLv2+ or Artistic) and Copyright Only and MIT and Public Domain and UCD
+License:        GPL+ or Artistic
 Url:            http://www.perl.org/
 Source0:        http://cpan.metacpan.org/src/perl-%{version}.tar.bz2
 # BuildRequires:  db4-devel, groff, tcsh, zlib-devel, bzip2-devel
@@ -17,6 +17,8 @@ Source0:        http://cpan.metacpan.org/src/perl-%{version}.tar.bz2
 # Filter requires on RPM 4.8.
 # http://www.redhat.com/archives/rpm-list/2005-August/msg00034.html
 # http://richdawe.livejournal.com/3102.html
+%define _use_internal_dependency_generator 0
+%define __find_provides bin/filter-provides perl%{plv}
 %define __find_requires bin/filter-requires perl%{plv} 'Mac\\|VMS\\|perl >=\\|perl(Locale::Codes::\\|perl(unicore::Name\\|FCGI)'
 
 %description

@@ -8,7 +8,7 @@
 
 Name:           perl%{plv}-%{sname}
 Version:        %(echo %{version})
-Release:        1%{?dist}
+Release:        1.%{?dist}
 Summary:        An embedded Perl interpreter for the Apache HTTP Server
 
 Group:          System Environment/Daemons
