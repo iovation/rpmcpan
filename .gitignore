@@ -3,6 +3,8 @@
 /RPMS/
 /SOURCES/*.tar.gz
 /SOURCES/*.bz2
+/SOURCES/*.tgz
 /SOURCES/*.zip
 /SRPMS/
+/SPECS/
 /repo/
