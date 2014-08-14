@@ -473,12 +473,6 @@ sub build {
     my $rel = $self->call(release => $dist) or return 0;
     say "- Version: $rel->{version}" if $self->{verbose};
 
-    # Do we already have a RPM for this release?
-    if ( $self->is_built($rel) ) {
-        say "- $dist-$rel->{version} already built; skipping\n";
-        return 1;
-    }
-
     # Grab pre-specified dependencies.
     my $requires = $spec->{requires} ||= [];
     my $build_requires = $spec->{build_requires} ||= [];
@@ -549,6 +543,12 @@ sub build {
         say "  - $_" for @failed;
         print "\n" if $self->{verbose};
         return 0;
+    }
+
+    # Do we already have a RPM for this release?
+    if ( $self->is_built($rel) ) {
+        say "- $dist-$rel->{version} already built; skipping\n";
+        return 1;
     }
 
     # Get the source file.
