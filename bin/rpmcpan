@@ -366,32 +366,34 @@ sub build_perl {
     find sub { $match += /^\Q$rpm\E-\d/ }, $self->{repo};
 
     if ($match) {
-        say "Perl $self->{version} already built\n";
+        say "Perl $self->{version} already built\n" if $self->{verbose};
         return 1;
     }
 
     # Put together the release information for this version.
+    say "Building Perl $self->{version}" if $self->{verbose};
     (my $v = $self->{version}->normal) =~ s/^v//;
     my $archive = "perl-$v.tar.bz2";
     my $rel = {
         name         => 'perl',
-        version      => $self->{version},
+        version      => $v,
         download_url => "http://cpan.metacpan.org/src/$archive",
         archive      => $archive,
     };
 
     # Download and build Perl
     $self->download($rel) or return 0;
-    return $self->rpmbuild($rel, File::Spec->catfile(qw(etc perl.spec)));
+    $self->rpmbuild($rel, File::Spec->catfile(qw(etc perl.spec)))
+        or return 0;
+    say "Perl $self->{version} built\n" if $self->{verbose};
 }
 
 sub rpmbuild {
     my ($self, $rel, $specfile) = @_;
 
     say "- Building $rel->{name}" if $self->{verbose};
-    (my $v = $self->{version}->normal) =~ s/^v//;
     my @params = (
-        '--define' => "version $v",
+        '--define' => "version $rel->{version}",
         '--define' => 'dist ' . scalar time,
         @{ $self->{params} ||= [
             '--define' => "__perl $self->{perl}",
