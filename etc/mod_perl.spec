@@ -31,8 +31,8 @@ Requires:       perl%{plv}
 Requires:       httpd-mmn = %(cat %{sysincludedir}/httpd/.mmn || echo missing)
 Conflicts:      mod_perl
 
-%define _use_internal_dependency_generator 0,
-%define __find_requires bin/filter-requires perl%{plv}
+%define _use_internal_dependency_generator 0
+%define __find_provides bin/filter-provides perl%{plv}
 %define __find_requires bin/filter-requires perl%{plv} 'perl(\\(Apache2\\?::[^)]\\+\\|BSD::Resource\\|Data::Flow\\))'
 
 %description
