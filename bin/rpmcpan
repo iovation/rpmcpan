@@ -423,6 +423,16 @@ sub rpmbuild {
     my ($self, $rel, $specfile) = @_;
 
     say "- Building $rel->{name}" if $self->{verbose};
+
+    if ( my $to_install = $rel->{install_from_yum} ) {
+        say '- Installing build dependencies: ', join ', ', @{ $to_install };
+        system(
+            qw(sudo yum install -y),
+            ($self->{verbose} > 1 ? () : '--quiet'),
+            @{ $to_install }
+        ) == 0 or return $self->vent("Dependency installation failed");
+    }
+
     my @params = (
         '--define' => "version $rel->{version}",
         '--define' => 'dist ' . scalar time,
@@ -476,11 +486,10 @@ sub build {
     # Grab pre-specified dependencies.
     my $requires = $spec->{requires} ||= [];
     my $build_requires = $spec->{build_requires} ||= [];
+
+    # Set aside pre-specified build dependencies to be installed from Yum.
     if (my @req = @{ $build_requires }) {
-        say '- Installing build dependencies: ', join ', ', @req;
-        return $self->vent("Dependency installation failed") unless system(
-            qw(sudo yum install -y), ($self->{verbose} > 1 ? () : '--quiet'), @req
-        ) == 0;
+        $rel->{install_from_yum} = \@req;
     }
 
     # Let's look at its dependencies.
