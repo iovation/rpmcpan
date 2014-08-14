@@ -279,14 +279,13 @@ sub license_for {
 
 sub write_spec {
     my ($self, $rel, $spec, $tgz) = @_;
-    my $specfile;
-    for my $dir (qw(etc SPECS)) {
-        $specfile = File::Spec->catfile($dir, "$rel->{distribution}.spec");
-        next unless -e $specfile;
+    my $specfile = File::Spec->catfile('etc', "$rel->{distribution}.spec");
+    if (-e $specfile) {
         say "- Using $specfile" if $self->{verbose};
         return $specfile;
     }
 
+    $specfile = File::Spec->catfile('SPECS', "$rel->{distribution}.spec");
     my $license = $self->license_for($rel);
     my $url = $rel->{metadata}{'meta-spec'}{url}
           || "https://metacpan.org/release/$rel->{name}";
