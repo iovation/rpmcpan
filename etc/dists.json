@@ -6,6 +6,7 @@
         "relationship": "recommends"
     }] },
     "CGI": {},
+    "DBI": {},
     "Module-Build": {},
     "Test-Harness": { "provides": ["prove"] },
     "Business-IBAN": {},
