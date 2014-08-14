@@ -149,18 +149,28 @@ sub provides {
     my ($self, $rel) = @_;
     # Just use the release list if we have them.
     my %seen;
+    my $pl = "perl$self->{plv}";
     if (my $p = $rel->{metadata}{provides}) {
         return [map {
-            "perl$self->{plv}($_)" . ($p->{$_}{version} ? " = $p->{$_}{version}" : '')
+            "$pl($_)" . ($p->{$_}{version} ? " = $p->{$_}{version}" : '')
         } grep { !$seen{$_}++ } keys %{ $p }];
     }
 
     # Otherwise, ask metacpan for a list.
     my $mods = $self->get_modules($rel) or return 0;
+
+    # Each hit contains scalars or arrays of modules. Standardize on arrays.
     return [map {
         my $f = $_->{fields};
-        "perl$self->{plv}($f->{'module.name'})"
-            . ($f->{'module.version'} ? " = $f->{'module.version'}" : '')
+        my $mods = ref $f->{'module.name'}
+            ? $f->{'module.name'}
+            : [$f->{'module.name'}];
+        my $vers = ref $f->{'module.version'}
+            ? $f->{'module.version'}
+            : [$f->{'module.version'}];
+        map {
+            "$pl($mods->[$_])" . ($vers->[$_] ? " = $vers->[$_]" : '')
+        } 0..$#$mods;
     }  grep { !$seen{ $_->{fields}{'module.name'} }++ } @{ $mods->{hits}{hits} }];
 }
 
@@ -416,7 +426,7 @@ sub build {
     # Let's look at its dependencies.
     my (%mod_seen, %dist_seen, @failed);
     my $corelist = $self->{corelist};
-    if (my @deps = @{ $rel->{dependency} }) {
+    if ( my @deps = (@{ $rel->{dependency} }, @{ $spec->{missing_prereqs} || []}) ) {
         say "- Checking dependencies" if $self->{verbose};
         for my $dep (@deps) {
             # Skip development, conflicting, or previously seen dependencies.

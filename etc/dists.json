@@ -1,5 +1,10 @@
 {
-    "Capture-Tiny": {},
+    "Capture-Tiny": { "missing_prereqs": [{
+        "module": "Inline::C",
+        "version": "0.50",
+        "phase": "test",
+        "relationship": "recommends"
+    }] },
     "Module-Build": {},
     "Test-Harness": { "provides": ["prove"] },
     "mod_perl": {
