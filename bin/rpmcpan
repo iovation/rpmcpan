@@ -25,6 +25,7 @@ sub new {
     $p{verbose}  //= 0;
     $p{config}   //= File::Spec->catfile(qw(etc dists.json));
     $p{repo}     //= 'repo';
+    $p{no_perl}  //= delete $p{'no-perl'} // 0;
     $p{packager} //= do {
         require User::pwent;
         my $sysname = $ENV{USER};
@@ -52,11 +53,7 @@ sub new {
     $p{http}     = HTTP::Tiny->new(agent => "rpmcpan/$VERSION");
     $p{prefix} //= "/usr/local/perl$p{plv}";
     $p{perl}     = "$p{prefix}/bin/perl";
-    die "$p{perl} does not exist; have you built it?\n" unless -e $p{perl};
-
-    $p{corelist} = $Module::CoreList::version{ $p{version}->numify }
-        or die "Perl version " . $p{version}->numify
-             . " not listed in \$Module::CoreList::version\n";
+    $p{corelist} = $Module::CoreList::version{ $p{version}->numify };
 
     return bless \%p => $class;
 }
@@ -75,6 +72,7 @@ sub go {
         'config|c=s',
         'packager|p=s',
         'die!',
+        'no-perl',
     );
     return $class->new(%opts)->run;
 }
@@ -101,6 +99,12 @@ sub run {
 
     # First, build Perl.
     return 1 unless $self->build_perl;
+
+    # Make sure we are building with the target Perl.
+    die "$self->{perl} does not exist; have you built it?\n"
+        unless -e $self->{perl};
+    die "Perl version " . $self->{version}->numify
+        . " not listed in \$Module::CoreList::version\n" unless $self->{corelist};
 
     say "Building RPMs for Perl $self->{version} (perl$self->{plv})\n"
         if $self->{verbose};
@@ -359,20 +363,42 @@ rm -rf \$RPM_BUILD_ROOT
 
 sub build_perl {
     my $self = shift;
+    return 1 if $self->{no_perl};
 
-    my $rpm = join "perl$self->{plv}-$self->{version}-";
+    (my $v = $self->{version}->normal) =~ s/^v//;
+    my $pl = File::Spec->catfile($self->{prefix}, qw(bin perl));
+
+    my $rpm = "perl$self->{plv}-$v";
     say "Looking for $rpm" if $self->{verbose} > 1;
-    my $match = 0;
-    find sub { $match += /^\Q$rpm\E-\d/ }, $self->{repo};
+    my $rpmfile;
+    find sub { $rpmfile = $File::Find::name if /^\Q$rpm\E-\d/ }, $self->{repo};
 
-    if ($match) {
-        say "Perl $self->{version} already built\n" if $self->{verbose};
+    if ($rpmfile) {
+        say "Perl $self->{version} already built" if $self->{verbose};
+
+        # Do we need to install it?
+        my $restart = 0;
+        if (!-e $pl) {
+            $restart = 1;
+            say "Installing $rpmfile" if $self->{verbose};
+            return $self->vent("Could not install $rpmfile") unless system(
+                qw(sudo rpm -Uvh --replacepkgs --replacefiles), $rpmfile
+            ) == 0;
+        }
+
+        # Do we need to switch to it?
+        if ($restart || $self->{version} != $^V) {
+            say "Restarting with Perl $self->{version}\n" if $self->{verbose};
+            exec { $pl } $pl, $0, '--no-perl', @ARGV;
+            die "Could not exec $pl: $!\n";
+        }
+
+        # We good.
         return 1;
     }
 
     # Put together the release information for this version.
     say "Building Perl $self->{version}" if $self->{verbose};
-    (my $v = $self->{version}->normal) =~ s/^v//;
     my $archive = "perl-$v.tar.bz2";
     my $rel = {
         name         => 'perl',
@@ -385,7 +411,12 @@ sub build_perl {
     $self->download($rel) or return 0;
     $self->rpmbuild($rel, File::Spec->catfile(qw(etc perl.spec)))
         or return 0;
-    say "Perl $self->{version} built\n" if $self->{verbose};
+
+    # Restart.
+    say "Perl $self->{version} built; restarting with that version\n"
+        if $self->{verbose};
+    exec { $pl } $pl, $0, '--no-perl', @ARGV;
+    die "Could not exec $pl: $!\n";
 }
 
 sub rpmbuild {
