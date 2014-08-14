@@ -495,7 +495,7 @@ sub build {
     # Let's look at its dependencies.
     my (%mod_seen, %dist_seen, @failed);
     my $corelist = $self->{corelist};
-    if ( my @deps = (@{ $rel->{dependency} }, @{ $spec->{missing_prereqs} || []}) ) {
+    if ( my @deps = ( @{ $spec->{missing_prereqs} || []}, @{ $rel->{dependency} } ) ) {
         say "- Checking dependencies" if $self->{verbose};
         for my $dep (@deps) {
             # Skip development, conflicting, or previously seen dependencies.
