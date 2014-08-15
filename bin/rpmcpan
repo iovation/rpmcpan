@@ -134,11 +134,15 @@ sub get_modules {
     my ($self, $rel) = @_;
     say "  - Searching $rel->{name} for modules" if $self->{verbose} > 1;
     my $body = encode_json +{
-        query => { match_all => {} },
+        query  => { match_all => {} },
+        size   => 5000,
         filter => {
             and => [
-                { term   => {release => $rel->{name}  }},
-                { exists => {field   => 'module.name' }},
+                { term   => { release    => $rel->{name}   } },
+                { term   => { author     => $rel->{author} } },
+                { term   => { indexed    => JSON::PP::true } },
+                { term   => { authorized => JSON::PP::true } },
+                { exists => { field      => 'module.name'  } },
             ],
         },
         fields => [ qw(module.name module.version) ],
