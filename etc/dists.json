@@ -7,6 +7,10 @@
     }] },
     "CGI": {},
     "DBI": {},
+    "DBD-Pg": {
+        "build_requires": ["postgresql93-devel", "postgresql93"],
+        "environment": { "POSTGRES_HOME": "/usr/pgsql-9.3" }
+    },
     "Module-Build": {},
     "Test-Harness": { "provides": ["prove"] },
     "Business-IBAN": {},
