@@ -408,7 +408,7 @@ sub build_perl {
 
     # Download and build Perl
     $self->download($rel) or return 0;
-    $self->rpmbuild($rel, File::Spec->catfile(qw(etc perl.spec)))
+    $self->rpmbuild($rel, File::Spec->catfile(qw(etc perl.spec)), {})
         or return 0;
 
     # Restart.
@@ -419,11 +419,11 @@ sub build_perl {
 }
 
 sub rpmbuild {
-    my ($self, $rel, $specfile) = @_;
+    my ($self, $rel, $specfile, $spec) = @_;
 
     say "- Building $rel->{name}" if $self->{verbose};
 
-    if ( my $to_install = $rel->{install_from_yum} ) {
+    if ( my $to_install = $spec->{install_from_yum} ) {
         say '- Installing build dependencies: ', join ', ', @{ $to_install };
         system(
             qw(sudo yum install -y),
@@ -443,6 +443,13 @@ sub rpmbuild {
             '--define' => "sitemandir $self->{prefix}/share/man",
             '--define' => "vendormandir $self->{prefix}/man",
         ] },
+    );
+
+    # Set up environment variables.
+    local %ENV = (
+        %ENV,
+        PERL_MM_USE_DEFAULT => 1,
+        %{ $spec->{environment} || {} }
     );
 
     system(
@@ -488,7 +495,7 @@ sub build {
 
     # Set aside pre-specified build dependencies to be installed from Yum.
     if (my @req = @{ $build_requires }) {
-        $rel->{install_from_yum} = \@req;
+        $spec->{install_from_yum} = \@req;
     }
 
     # Let's look at its dependencies.
@@ -521,14 +528,15 @@ sub build {
                 next;
             };
 
-            if ($mod->{distribution} eq 'perl') {
+            my $depdist = $mod->{distribution};
+            if ($depdist eq 'perl') {
                 say "  - $dep->{module} in core; skipping" if $self->{verbose} > 1;
                 next;
             }
 
             # Build this one.
-            $self->build( $mod->{distribution}, $self->{dists}{ $dist } || {} ) or do {
-                push @failed => $mod->{distribution};
+            $self->build( $depdist, $self->{dists}{$depdist} || {} ) or do {
+                push @failed => $depdist;
                 $self->{exitval}++;
             };
 
@@ -539,8 +547,8 @@ sub build {
                     . ($dep->{version} ? " >= $dep->{version}" : '')
             } else {
                 # It's a build dependency; require the distribution.
-                push @{ $build_requires } => "perl$self->{plv}-$mod->{distribution}"
-                    unless $dist_seen{ $mod->{distribution} }++;
+                push @{ $build_requires } => "perl$self->{plv}-$depdist"
+                    unless $dist_seen{ $depdist }++;
             }
         }
     }
@@ -566,7 +574,7 @@ sub build {
     my $specfile = $self->write_spec($rel, $spec, $tarball) or return 0;
 
     # Create the RPM.
-    $self->rpmbuild($rel, $specfile) or return 0;
+    $self->rpmbuild($rel, $specfile, $spec) or return 0;
 
     print "\n" if $self->{verbose};
     return 1;
