@@ -1,4 +1,5 @@
 {
+    "Business-IBAN": {},
     "Capture-Tiny": {},
     "CGI": {},
     "DBI": {},
@@ -7,8 +8,6 @@
         "environment": { "POSTGRES_HOME": "/usr/pgsql-9.3" }
     },
     "Module-Build": {},
-    "Test-Harness": { "provides": ["prove"] },
-    "Business-IBAN": {},
     "mod_perl": {
         "build_requires": [
             "httpd-devel >= 2.2.0",
@@ -20,6 +19,7 @@
         "requires": [
             "http-mmn = %(cat %{sysincludedir}/httpd/.mmn || echo missing)"
         ]
-    }
+    },
+    "Test-Harness": { "provides": ["prove"] }
 }
 
