@@ -606,7 +606,7 @@ sub build {
 
     # Do we already have a RPM for this release?
     if ( $self->is_built($rel) ) {
-        say "- $dist-$rel->{version} already built; skipping\n";
+        say "- $dist-$rel->{version} already built; skipping\n" if $self->{verbose};
         return 1;
     }
 
