@@ -492,7 +492,7 @@ sub rpmbuild {
         return unless /[.]rpm$/;
         my $dest = File::Spec->catfile($self->{repo}, basename $_);
         rename $_, $dest;
-        push @rpms => $dest;
+        push @rpms => $dest unless $dest =~ /-debuginfo-/;
     } }, 'RPMS';
 
     return $self->vent("No RPMs found after building $rel->{name}")

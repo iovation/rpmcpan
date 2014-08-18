@@ -5,6 +5,7 @@
     "Crypt-DES": {},
     "Crypt-RC4": {},
     "Crypt-Rijndael": {},
+    "Data-UUID": {},
     "DBI": {},
     "DBD-Pg": {
         "build_requires": ["postgresql93-devel", "postgresql93"],
