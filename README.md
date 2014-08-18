@@ -48,6 +48,9 @@ The JSON object after the distribution name suppors a number of keys:
 * `envrionment`: An object defining environment variables required to build
    the RPM. Keys should be environment variable names, and values their
    values.
+* `patch`: A list of patches to be applied to the source before buildling.
+  Each will be applied with `patch -p1`, so make sure your prefixes are
+  correct.
 * `missing_prereqs`: A list of JSON objects describing required modules
    missing from the metadata downloaded from MetaCPAN. Requires these keys:
     * `module`: Name of the required module.

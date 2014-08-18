@@ -1,0 +1,10 @@
+--- a/t/TestInlineSetup.pm	2014-08-18 14:54:13.231175864 -0700
++++ b/t/TestInlineSetup.pm	2014-08-18 14:54:15.351174634 -0700
+@@ -29,6 +29,7 @@
+     mkdir($DIR) or die "$DIR: $!\n";
+ }
+ my $absdir = File::Spec->rel2abs($DIR);
++$absdir =~ /(.*)/; $absdir = $1; # untaint
+ 
+ my $startpid = $$;
+ END {

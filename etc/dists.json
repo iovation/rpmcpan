@@ -10,6 +10,7 @@
         "build_requires": ["postgresql93-devel", "postgresql93"],
         "environment": { "POSTGRES_HOME": "/usr/pgsql-9.3" }
     },
+    "Inline-C": { "patch": [ "inline-c-untaint.patch" ] },
     "Module-Build": {},
     "mod_perl": {
         "build_requires": [

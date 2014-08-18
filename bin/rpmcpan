@@ -305,6 +305,7 @@ sub write_spec {
     my $src  = basename $rel->{archive};
     my $found = $self->provides($rel) or return 0;
     my @provides = (@{ $spec->{provides} || [] }, @{ $found });
+    my @patches = @{ $spec->{patch} || [] };
 
     say "- Generating $specfile" if $self->{verbose};
     open my $fh, '>:encoding(UTF-8)', $specfile or return $self->vent(
@@ -318,7 +319,8 @@ Summary:        $rel->{abstract}
 License:        $license
 Group:          Development/Libraries
 URL:            $url
-Source0:        $src
+Source0:        $src},
+    (map { "\nPatch$_:         $patches[$_]" } 0..$#patches), qq{
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 AutoReqProv:    no
 }, ($info->{noarch} ? "\nBuildArch:      noarch" : ()), qq{
@@ -332,7 +334,8 @@ Requires:       perl$self->{plv}},
 $rel->{abstract}
 
 %prep
-%setup -q -n $rel->{name}
+%setup -q -n $rel->{name}},
+    ( map { "\n%patch$_ -p1" } 0..$#patches ), qq{
 
 %build
 %{__perl} }, ($info->{use_mb} ? (
