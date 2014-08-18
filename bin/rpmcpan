@@ -9,16 +9,24 @@ use utf8;
 use HTTP::Tiny;
 use Module::CoreList;
 use Getopt::Long;
-use JSON::PP qw(decode_json encode_json);
 use File::Spec::Functions qw(catfile splitpath splitdir canonpath);
 use File::Find;
 use Archive::Tar;
 use File::Basename qw(basename dirname);
 use POSIX qw(strftime);
 use File::Path qw(make_path remove_tree);
+use List::Util qw(first);
 use Cwd;
 
 our $VERSION = '1.0';
+my $true;
+
+BEGIN {
+    my $pkg = first { eval "require $_" } qw(JSON::XS JSON::PP JSON);
+    die "Could not load JSON parser\n" unless $pkg;
+    $pkg->import(qw(decode_json encode_json));
+    $true = $pkg->true;
+}
 
 sub new {
     my ($class, %p) = @_;
@@ -140,8 +148,8 @@ sub get_modules {
             and => [
                 { term   => { release    => $rel->{name}   } },
                 { term   => { author     => $rel->{author} } },
-                { term   => { indexed    => JSON::PP::true } },
-                { term   => { authorized => JSON::PP::true } },
+                { term   => { indexed    => $true          } },
+                { term   => { authorized => $true          } },
                 { exists => { field      => 'module.name'  } },
             ],
         },
