@@ -2,6 +2,9 @@
     "Business-IBAN": {},
     "Capture-Tiny": {},
     "CGI": {},
+    "Crypt-DES": {},
+    "Crypt-RC4": {},
+    "Crypt-Rijndael": {},
     "DBI": {},
     "DBD-Pg": {
         "build_requires": ["postgresql93-devel", "postgresql93"],

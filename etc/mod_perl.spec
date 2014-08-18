@@ -103,5 +103,5 @@ rm -rf $RPM_BUILD_ROOT
 %{vendormandir}/man3/*
 
 %changelog
-* Thu Jul 31 2014 David E. Wheeler <david.wheeler@iovation.com> - 2.0.8-1
-- First attempt at building 2.0.8.
+* Thu Jul 31 2014 David E. Wheeler <david.wheeler@iovation.com> - %{version}-1
+- Let's build a modern mod_perl.
