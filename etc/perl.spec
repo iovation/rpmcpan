@@ -10,9 +10,17 @@ Group:          Development/Languages
 License:        GPL+ or Artistic
 Url:            http://www.perl.org/
 Source0:        http://cpan.metacpan.org/src/perl-%{version}.tar.bz2
-# BuildRequires:  db4-devel, groff, tcsh, zlib-devel, bzip2-devel
-# BuildRequires:  systemtap-sdt-devel
-# BuildRequires:  procps, rsyslog
+
+BuildRequires:  db4-devel
+BuildRequires:  groff
+BuildRequires:  tcsh
+BuildRequires:  zlib-devel
+BuildRequires:  bzip2-devel
+BuildRequires:  systemtap-sdt-devel
+BuildRequires:  procps
+BuildRequires:  rsyslog
+BuildRequires:  man
+BuildRequires:  gdbm-devel
 
 # Filter requires on RPM 4.8.
 # http://www.redhat.com/archives/rpm-list/2005-August/msg00034.html

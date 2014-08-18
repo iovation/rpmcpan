@@ -419,9 +419,21 @@ sub build_perl {
     };
 
     # Download and build Perl
+    my $specfile = File::Spec->catfile(qw(etc perl.spec));
     $self->download($rel) or return 0;
-    $self->rpmbuild($rel, File::Spec->catfile(qw(etc perl.spec)), {})
-        or return 0;
+    $self->rpmbuild($rel, $specfile, {
+        install_from_yum =>  do {
+            open my $fh, '<:encoding(UTF-8)', $specfile
+                or die "Cannot open $specfile: $!\n";
+            my @reqs;
+            while (<$fh>) {
+                next unless s/^(?:Build)?Requires:\s+//i;
+                (my $dep = $_) =~ s/\s+$//;
+                push @reqs => $dep;
+            }
+            \@reqs;
+        },
+    }) or return 0;
 
     # Restart.
     say "Perl $self->{version} built; restarting with that version\n"
