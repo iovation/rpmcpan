@@ -234,7 +234,7 @@ sub inspect {
             next;
         }
         if (
-            !$info{use_mb} && basename($file) eq 'Build[.]PL'
+            !$info{use_mb} && basename($file) eq 'Build.PL'
             && splitdir(canonpath +(splitpath $file)[1]) <= 1
         ) {
             $info{use_mb} = 1;
@@ -306,6 +306,7 @@ sub write_spec {
     my $found = $self->provides($rel) or return 0;
     my @provides = (@{ $spec->{provides} || [] }, @{ $found });
     my @patches = @{ $spec->{patch} || [] };
+    my $descr = $rel->{abstract} || $rel->{metadata}{abstract} || 'unknown';
 
     say "- Generating $specfile" if $self->{verbose};
     open my $fh, '>:encoding(UTF-8)', $specfile or return $self->vent(
@@ -315,7 +316,7 @@ sub write_spec {
     print $fh qq{Name:           perl$self->{plv}-$rel->{distribution}
 Version:        $rel->{version}
 Release:        1.%{dist}
-Summary:        $rel->{abstract}
+Summary:        $descr
 License:        $license
 Group:          Development/Libraries
 URL:            $url
@@ -331,7 +332,7 @@ Requires:       perl$self->{plv}},
     ( map {; "\nProvides:       $_" } @provides ), qq{
 
 %description
-$rel->{abstract}
+$descr
 
 %prep
 %setup -q -n $rel->{name}},
@@ -340,7 +341,7 @@ $rel->{abstract}
 %build
 %{__perl} }, ($info->{use_mb} ? (
     "Build.PL --installdirs=vendor" . ($info->{noarch} ? '' : ' --optimize="$RPM_OPT_FLAGS"')
-    . "\n./Build.PL"
+    . "\n./Build"
 ) : (
     "Makefile.PL INSTALLDIRS=vendor" . ($info->{noarch} ? '' : ' OPTIMIZE="$RPM_OPT_FLAGS"')
     . "\nmake %{?_smp_mflags}"
@@ -486,21 +487,28 @@ sub rpmbuild {
     ) == 0 or return $self->vent("Build failed");
 
     # Find all new RPMs and put them into the repo directory.
-    my @rpms;
+    my (@rpms, @debugrpms);
     say "- Collecting and installing $rel->{name} RPMs" if $self->{verbose};
     find { no_chdir => 1, wanted => sub {
         return unless /[.]rpm$/;
         my $dest = File::Spec->catfile($self->{repo}, basename $_);
         rename $_, $dest;
-        push @rpms => $dest unless $dest =~ /-debuginfo-/;
+        if ($dest =~ /-debuginfo-/) {
+            push @debugrpms => $dest;
+        } else {
+            push @rpms => $dest;
+        }
     } }, 'RPMS';
 
     return $self->vent("No RPMs found after building $rel->{name}")
         unless @rpms;
 
-    return $self->vent('Could not install ', join ', ', @rpms) unless system(
+    system(
         qw(sudo rpm -Uvh --replacepkgs --replacefiles), @rpms
-    ) == 0;
+    ) == 0 or do {
+        unlink @rpms, @debugrpms;
+        return $self->vent('Could not install ', join ', ', @rpms);
+    };
 
     return 1;
 }
@@ -518,7 +526,11 @@ sub build {
 
     # Grab pre-specified dependencies.
     my $requires = $spec->{requires} ||= [];
+    my %exclude_requires = map { $_ => 1 }
+        @{ $spec->{exclude_requires} || [] };
     my $build_requires = $spec->{build_requires} ||= [];
+    my %exclude_build_requires = map { $_ => 1 }
+        @{ $spec->{exclude_build_requires} || [] };
 
     # Set aside pre-specified build dependencies to be installed from Yum.
     if (my @req = @{ $build_requires }) {
@@ -531,7 +543,11 @@ sub build {
     if ( my @deps = ( @{ $spec->{missing_prereqs} || []}, @{ $rel->{dependency} } ) ) {
         say "- Checking dependencies" if $self->{verbose};
         for my $dep (@deps) {
-            # Skip development, conflicting, or previously seen dependencies.
+            # Skip excluded, development, conflicting, or seen dependencies.
+            next if $exclude_requires{ $dep->{module} }
+                && $dep->{phase} eq 'runtime';
+            next if $exclude_build_requires{ $dep->{module} }
+                && $dep->{phase} ne 'runtime';
             next if $mod_seen{ $dep->{module} }++;
             next if $dep->{phase} eq 'develop';
             next if $dep->{relationship} eq 'conflicts'; # XXX Add to spec file?

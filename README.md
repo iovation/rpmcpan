@@ -42,9 +42,15 @@ The JSON object after the distribution name suppors a number of keys:
 * `requires`: A list of non-CPAN-derived RPMs required for the resulting RPM
   to be used. Normally needed only for third-party RPMS, such as `libxml2` or
   `httpd`.
+* `exclude_requires`: A list of CPAN modules to exclude from the list of
+  runtime prereqs returned by the MetaCPAN API. Useful for excluding
+  incompatible or circular dependencies.
 * `build_requires`: A list of non-CPAN-derived RPMs required to build the RPM.
   Normally needed only for third-party RPMS, such as `httpd-devel` or
   `postgresql`.
+* `exclude_build_requires`: A list of CPAN modules to exclude from the list of
+  non-runtime prereqs returned by the MetaCPAN API. Useful for excluding
+  incompatible or circular dependencies.
 * `envrionment`: An object defining environment variables required to build
    the RPM. Keys should be environment variable names, and values their
    values.

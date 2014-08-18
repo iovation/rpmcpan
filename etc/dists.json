@@ -2,16 +2,28 @@
     "Business-IBAN": {},
     "Capture-Tiny": {},
     "CGI": {},
+    "Class-Accessor-Chained": {},
     "Crypt-DES": {},
     "Crypt-RC4": {},
     "Crypt-Rijndael": {},
     "Data-UUID": {},
+    "Data-Structure-Util": { "patch": ["data-structure-util-rt88257.patch"] },
+    "Data-Validate-URI": {},
     "DBI": {},
     "DBD-Pg": {
         "build_requires": ["postgresql93-devel", "postgresql93"],
         "environment": { "POSTGRES_HOME": "/usr/pgsql-9.3" }
     },
+    "Email-Valid": {},
+    "Encode-Locale": { "exclude_requires": ["Win32::Console"] },
+    "Locale-Codes": {},
+    "HTTP-Lite": {},
     "Inline-C": { "patch": [ "inline-c-untaint.patch" ] },
+    "JSON": {},
+    "JSON-PP": { "provides": ["json_pp"] },
+    "JSON-XS": { "provides": ["json_xs"] },
+    "Log-Log4perl": {},
+    "libwww-perl": { "exclude_requires": [ "LWP::Protocol::https" ] },
     "Module-Build": {},
     "mod_perl": {
         "build_requires": [
@@ -25,6 +37,21 @@
             "http-mmn = %(cat %{sysincludedir}/httpd/.mmn || echo missing)"
         ]
     },
-    "Test-Harness": { "provides": ["prove"] }
+    "Number-Phone": {},
+    "Scalar-List-Utils": {},
+    "Test-Harness": { "provides": ["prove"] },
+    "Try-Tiny": {},
+    "URI": { "exclude_requires": [ "Business::ISBN" ] },
+    "XML-Parser": {
+        "build_requires": ["expat-devel"]
+    },
+    "XML-XPath": {
+        "missing_prereqs": [{
+            "module": "XML::Parser",
+            "version": "2.23",
+            "phase": "runtime",
+            "relationship": "requires"
+        }]
+    }
 }
 
