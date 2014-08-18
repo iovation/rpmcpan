@@ -45,6 +45,9 @@ The JSON object after the distribution name suppors a number of keys:
 * `build_requires`: A list of non-CPAN-derived RPMs required to build the RPM.
   Normally needed only for third-party RPMS, such as `httpd-devel` or
   `postgresql`.
+* `envrionment`: An object defining environment variables required to build
+   the RPM. Keys should be environment variable names, and values their
+   values.
 * `missing_prereqs`: A list of JSON objects describing required modules
    missing from the metadata downloaded from MetaCPAN. Requires these keys:
     * `module`: Name of the required module.
