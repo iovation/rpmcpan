@@ -484,7 +484,7 @@ sub rpmbuild {
 
     # Find all new RPMs and put them into the repo directory.
     my @rpms;
-    say "- Collecting and installing $rel->{name} RPMs";
+    say "- Collecting and installing $rel->{name} RPMs" if $self->{verbose};
     find { no_chdir => 1, wanted => sub {
         return unless /[.]rpm$/;
         my $dest = File::Spec->catfile($self->{repo}, basename $_);
