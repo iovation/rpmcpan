@@ -1,10 +1,5 @@
 {
-    "Capture-Tiny": { "missing_prereqs": [{
-        "module": "Inline::C",
-        "version": "0.50",
-        "phase": "test",
-        "relationship": "recommends"
-    }] },
+    "Capture-Tiny": {},
     "CGI": {},
     "DBI": {},
     "DBD-Pg": {
