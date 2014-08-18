@@ -27,7 +27,7 @@ BuildRequires:  gdbm-devel
 # http://richdawe.livejournal.com/3102.html
 %define _use_internal_dependency_generator 0
 %define __find_provides bin/filter-provides perl%{plv}
-%define __find_requires bin/filter-requires perl%{plv} 'Mac\\|VMS\\|perl >=\\|perl(Locale::Codes::\\|perl(unicore::Name\\|FCGI)'
+%define __find_requires bin/filter-requires perl%{plv} 'Mac\\|VMS\\|perl >=\\|perl(Locale::Codes::\\|perl(unicore::Name\\|FCGI\\|DBD::SQLite\\|DBIx::Simple\\|Your::Module::Here)'
 
 %description
 Perl is a high-level programming language with roots in C, sed, awk and shell
@@ -79,5 +79,5 @@ rm -rf $RPM_BUILD_ROOT
 %{_prefix}/*
 
 %changelog
-* Wed Jul 16 2014 David E. Wheeler <david.wheeler@iovation.com> - 5.20.0-1
-- First attempt at building 5.20.0.
+* Wed Jul 16 2014 David E. Wheeler <david.wheeler@iovation.com> - %{version}-1
+- Let's build a modern Perl.
