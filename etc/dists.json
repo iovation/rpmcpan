@@ -3,6 +3,7 @@
     "Capture-Tiny": {},
     "CGI": {},
     "Class-Accessor-Chained": {},
+    "Class-Date": {},
     "Crypt-DES": {},
     "Crypt-RC4": {},
     "Crypt-Rijndael": {},
@@ -16,6 +17,7 @@
     },
     "Email-Valid": {},
     "Encode-Locale": { "exclude_requires": ["Win32::Console"] },
+    "Error": {},
     "Locale-Codes": {},
     "HTTP-Lite": {},
     "Inline-C": { "patch": [ "inline-c-untaint.patch" ] },
@@ -24,6 +26,7 @@
     "JSON-XS": { "provides": ["json_xs"] },
     "Log-Log4perl": {},
     "libwww-perl": { "exclude_requires": [ "LWP::Protocol::https" ] },
+    "MIME-Base64-URLSafe": {},
     "Module-Build": {},
     "mod_perl": {
         "build_requires": [
@@ -37,12 +40,16 @@
             "http-mmn = %(cat %{sysincludedir}/httpd/.mmn || echo missing)"
         ]
     },
+    "Net-IP": {},
     "Number-Phone": {},
     "Scalar-List-Utils": {},
+    "SOAP-Lite": {},
     "Test-Harness": { "provides": ["prove"] },
     "Try-Tiny": {},
     "URI": { "exclude_requires": [ "Business::ISBN" ] },
     "UUID": {},
+    "XML-Simple": {},
+    "XML-DOM": {},
     "XML-Parser": {
         "build_requires": ["expat-devel"]
     },
