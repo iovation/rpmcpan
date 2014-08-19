@@ -516,8 +516,12 @@ sub rpmbuild {
     return $self->vent("No RPMs found after building $rel->{name}")
         unless @rpms;
 
+    # Don't install mod_perl; multiple versions stomp on each other.
+    # But do test the RPM to make sure it has no conflicts.
+    my @test = $rel->{name} eq 'mod_perl' ? ('--test') : ();
+
     system(
-        qw(sudo rpm -Uvh --replacepkgs --replacefiles), @rpms
+        qw(sudo rpm -Uvh --replacepkgs --replacefiles), @test, @rpms
     ) == 0 or do {
         unlink @rpms, @debugrpms;
         return $self->vent('Could not install ', join ', ', @rpms);

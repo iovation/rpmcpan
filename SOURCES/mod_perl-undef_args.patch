@@ -1,0 +1,22 @@
+--- a/t/response/TestDirective/perlloadmodule2.pm	2014-08-14 13:55:56.331568918 -0700
++++ b/t/response/TestDirective/perlloadmodule2.pm	2014-08-14 13:55:58.599567494 -0700
+@@ -82,7 +82,7 @@
+ 
+     my $s = $r->server;
+ 
+-    if ($r->args eq 'srv') {
++    if ($r->args || '' eq 'srv') {
+         my $srv_cfg = $self->get_config($s);
+         $r->print("srv: @{ $srv_cfg->{MyMergeTest}||[] }");
+     }
+--- a/Apache-Reload/t/lib/Apache2/TestReload.pm	2014-08-19 13:36:49.324352146 -0700
++++ b/Apache-Reload/t/lib/Apache2/TestReload.pm	2014-08-19 13:36:51.357351017 -0700
+@@ -15,7 +15,7 @@
+ sub handler {
+     my $r = shift;
+     $pass++;
+-    if ($r->args eq 'last') {
++    if ($r->args || '' eq 'last') {
+         Apache2::Reload->unregister_module($package);
+         ModPerl::Util::unload_package($package);
+         $pass = 0;

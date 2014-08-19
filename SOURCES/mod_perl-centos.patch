@@ -8,14 +8,3 @@
      ok t_cmp(Apache2::ServerUtil::get_server_banner, $server_descr,
               'Apache2::ServerUtil::get_server_banner()');
  
---- a/t/response/TestDirective/perlloadmodule2.pm	2014-08-14 13:55:56.331568918 -0700
-+++ b/t/response/TestDirective/perlloadmodule2.pm	2014-08-14 13:55:58.599567494 -0700
-@@ -82,7 +82,7 @@
- 
-     my $s = $r->server;
- 
--    if ($r->args eq 'srv') {
-+    if ($r->args || '' eq 'srv') {
-         my $srv_cfg = $self->get_config($s);
-         $r->print("srv: @{ $srv_cfg->{MyMergeTest}||[] }");
-     }
