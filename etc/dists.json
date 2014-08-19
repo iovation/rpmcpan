@@ -47,7 +47,7 @@
     "Test-Harness": { "provides": ["prove"] },
     "Try-Tiny": {},
     "URI": { "exclude_requires": [ "Business::ISBN" ] },
-    "UUID": { "buid_requires": ["uuid-devel"] },
+    "UUID": { "buid_requires": ["libuuid-devel"] },
     "XML-Simple": {},
     "XML-DOM": {},
     "XML-Parser": {
