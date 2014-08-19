@@ -41,6 +41,7 @@
         ]
     },
     "Net-IP": {},
+    "Net-Stomp": {},
     "Number-Phone": {},
     "Scalar-List-Utils": {},
     "SOAP-Lite": {},
