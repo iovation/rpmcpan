@@ -42,6 +42,7 @@
     "Test-Harness": { "provides": ["prove"] },
     "Try-Tiny": {},
     "URI": { "exclude_requires": [ "Business::ISBN" ] },
+    "UUID": {},
     "XML-Parser": {
         "build_requires": ["expat-devel"]
     },
