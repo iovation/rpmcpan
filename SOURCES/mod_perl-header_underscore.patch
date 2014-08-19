@@ -1,0 +1,20 @@
+--- a/t/api/err_headers_out.t	2014-08-19 11:48:44.724260737 -0700
++++ b/t/api/err_headers_out.t	2014-08-19 11:48:59.587251413 -0700
+@@ -25,7 +25,7 @@
+     local $HTTP::Headers::TRANSLATE_UNDERSCORE=
+ 	$HTTP::Headers::TRANSLATE_UNDERSCORE;
+     undef $HTTP::Headers::TRANSLATE_UNDERSCORE
+-	if defined HTTP::Headers->VERSION and HTTP::Headers->VERSION==6.00;
++	if defined HTTP::Headers->VERSION and HTTP::Headers->VERSION>=6.00;
+ 
+     ok t_cmp $res->header('X-err_headers_out'), "err_headers_out",
+         "X-err_headers_out: made it";
+@@ -50,7 +50,7 @@
+     local $HTTP::Headers::TRANSLATE_UNDERSCORE=
+ 	$HTTP::Headers::TRANSLATE_UNDERSCORE;
+     undef $HTTP::Headers::TRANSLATE_UNDERSCORE
+-	if defined HTTP::Headers->VERSION and HTTP::Headers->VERSION==6.00;
++	if defined HTTP::Headers->VERSION and HTTP::Headers->VERSION>=6.00;
+ 
+     ok t_cmp $res->header('X-err_headers_out'), "err_headers_out",
+         "X-err_headers_out: made it";

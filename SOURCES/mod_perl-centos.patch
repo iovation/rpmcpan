@@ -1,5 +1,5 @@
---- t/response/TestAPI/server_const.pm	2014-08-14 12:03:38.543794463 -0700
-+++ t/response/TestAPI/server_const.pm	2014-08-14 12:35:02.042581864 -0700
+--- a/t/response/TestAPI/server_const.pm	2014-08-14 12:03:38.543794463 -0700
++++ b/t/response/TestAPI/server_const.pm	2014-08-14 12:35:02.042581864 -0700
 @@ -45,6 +45,7 @@
               'Apache2::ServerUtil::get_server_description() -- component');
  
@@ -8,8 +8,8 @@
      ok t_cmp(Apache2::ServerUtil::get_server_banner, $server_descr,
               'Apache2::ServerUtil::get_server_banner()');
  
---- t/response/TestDirective/perlloadmodule2.pm	2014-08-14 13:55:56.331568918 -0700
-+++ t/response/TestDirective/perlloadmodule2.pm	2014-08-14 13:55:58.599567494 -0700
+--- a/t/response/TestDirective/perlloadmodule2.pm	2014-08-14 13:55:56.331568918 -0700
++++ b/t/response/TestDirective/perlloadmodule2.pm	2014-08-14 13:55:58.599567494 -0700
 @@ -82,7 +82,7 @@
  
      my $s = $r->server;

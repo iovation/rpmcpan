@@ -17,7 +17,8 @@ URL:            http://perl.apache.org/
 # Source0:        http://perl.apache.org/dist/%{sname}-%{version}.tar.gz
 Source0:        http://apache.osuosl.org/perl/%{sname}-%{version}.tar.gz
 Source1:        perl.conf
-Patch1:         mod_perl-centos.patch
+Patch0:         mod_perl-centos.patch
+Patch1:         mod_perl-header_underscore.patch
 # Source2:        filter-requires.sh
 # Source3:        filter-provides.sh
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -50,7 +51,8 @@ like for it to directly incorporate a Perl interpreter.
 
 %prep
 %setup -q -n %{sname}-%{version}
-%patch1 -p0
+%patch0 -p1
+%patch1 -p1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS -fpic" %{__perl} Makefile.PL </dev/null \
