@@ -79,6 +79,7 @@ sub go {
         'repo|r=s',
         'config|c=s',
         'packager|p=s',
+        'dist|d=s@',
         'die!',
         'no-perl',
     );
@@ -116,8 +117,19 @@ sub run {
 
     say "Building RPMs for Perl $self->{version} (perl$self->{plv})\n"
         if $self->{verbose};
-    while (my ($dist, $spec) = each %{ $dists }) {
-        $self->{exitval}++ unless $self->build($dist, $spec);
+
+    if (my $list = $self->{dist}) {
+        # Specific list of distributions requested.
+        for my $dist (@{ $list }) {
+            my $spec = $dists->{$dist}
+                or die "$dist not listed in $self->{config}\n";
+            $self->{exitval}++ unless $self->build($dist, $spec);
+        }
+    } else {
+        # Iterate over complete list of distributions.
+        while (my ($dist, $spec) = each %{ $dists }) {
+            $self->{exitval}++ unless $self->build($dist, $spec);
+        }
     }
     if ($self->{exitval}) {
         say "Unable to build all RPMs for Perl $self->{version} (perl$self->{plv})\n";
