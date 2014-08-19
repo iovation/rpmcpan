@@ -452,7 +452,8 @@ sub rpmbuild {
     say "- Building $rel->{name}" if $self->{verbose};
 
     if ( my $to_install = $spec->{install_from_yum} ) {
-        say '- Installing build dependencies: ', join ', ', @{ $to_install };
+        say '- Installing build dependencies: ', join ', ', @{ $to_install }
+            if $self->{verbose};
         system(
             qw(sudo yum install -y),
             ($self->{verbose} > 1 ? () : '--quiet'),
