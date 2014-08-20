@@ -45,6 +45,7 @@
     "Number-Phone": {},
     "Scalar-List-Utils": {},
     "SOAP-Lite": {},
+    "Test-Class": {},
     "Test-Harness": { "provides": ["prove"] },
     "Try-Tiny": {},
     "URI": { "exclude_requires": [ "Business::ISBN" ] },
