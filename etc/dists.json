@@ -19,12 +19,14 @@
     "Email-Valid": {},
     "Encode-Locale": { "exclude_requires": ["Win32::Console"] },
     "Error": {},
+    "List-MoreUtils": {},
     "Locale-Codes": {},
     "HTTP-Lite": {},
     "Inline-C": { "patch": [ "inline-c-untaint.patch" ] },
     "JSON": {},
     "JSON-PP": { "provides": ["json_pp"] },
     "JSON-XS": { "provides": ["json_xs"] },
+    "Log-Dispatch": {},
     "Log-Log4perl": {},
     "libwww-perl": { "exclude_requires": [ "LWP::Protocol::https" ] },
     "MIME-Base64-URLSafe": {},
@@ -63,6 +65,7 @@
             "phase": "runtime",
             "relationship": "requires"
         }]
-    }
+    },
+    "YAML-Tiny": {}
 }
 
