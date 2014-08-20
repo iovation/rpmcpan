@@ -50,6 +50,7 @@
     "SOAP-Lite": {},
     "Test-Class": {},
     "Test-Harness": { "provides": ["prove"] },
+    "Test-XML": { "patch": ["test-xml-sax-parsers.patch"] },
     "Try-Tiny": {},
     "URI": { "exclude_requires": [ "Business::ISBN" ] },
     "UUID": { "build_requires": ["libuuid-devel"] },
