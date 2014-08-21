@@ -184,7 +184,10 @@ sub provides {
     my $pl = "perl$self->{plv}";
     if (my $p = $rel->{metadata}{provides}) {
         return [map {
-            "$pl($_)" . ($p->{$_}{version} ? " = $p->{$_}{version}" : '')
+            "$pl($_)" . ($p->{$_}{version} ? do {
+                (my $v = $p->{$_}{version}) =~ s/^v//;
+                " = $v";
+            } : '')
         } grep { !$seen{$_}++ } keys %{ $p }];
     }
 
@@ -201,7 +204,10 @@ sub provides {
             ? $f->{'module.version'}
             : [$f->{'module.version'}];
         map {
-            "$pl($mods->[$_])" . ($vers->[$_] ? " = $vers->[$_]" : '')
+            "$pl($mods->[$_])" . ($vers->[$_] ? do {
+                (my $v = $vers->[$_]) =~ s/^v//;
+                " = $v";
+            } : '')
         } 0..$#$mods;
     }  grep { !$seen{ $_->{fields}{'module.name'} }++ } @{ $mods->{hits}{hits} }];
 }
