@@ -29,6 +29,14 @@
     "Log-Dispatch": {},
     "Log-Log4perl": {},
     "libwww-perl": { "exclude_requires": [ "LWP::Protocol::https" ] },
+    "libxml-perl": {
+        "missing_prereqs": [{
+            "module": "XML::Parser",
+            "version": "2.23",
+            "phase": "runtime",
+            "relationship": "requires"
+        }]
+    },
     "MIME-Base64-URLSafe": {},
     "Module-Build": {},
     "mod_perl": {
