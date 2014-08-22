@@ -67,6 +67,22 @@
     "XML-Parser": {
         "build_requires": ["expat-devel"]
     },
+    "XML-Filter-BufferText": {
+        "missing_prereqs": [
+            {
+                "module": "XML::SAX",
+                "version": "0.04",
+                "phase": "runtime",
+                "relationship": "requires"
+            },
+            {
+                "module": "XML::SAX::Base",
+                "version": "1.03",
+                "phase": "runtime",
+                "relationship": "requires"
+            }
+        ]
+    },
     "XML-XPath": {
         "missing_prereqs": [{
             "module": "XML::Parser",
