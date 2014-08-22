@@ -467,7 +467,7 @@ sub build_perl {
 sub rpmbuild {
     my ($self, $rel, $specfile, $spec) = @_;
 
-    say "- Building $rel->{name}" if $self->{verbose};
+    say "- Building $rel->{name}";
 
     if ( my $to_install = $spec->{install_from_yum} ) {
         say '- Installing build dependencies: ', join ', ', @{ $to_install }
