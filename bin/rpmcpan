@@ -524,7 +524,7 @@ sub rpmbuild {
 
     # Don't install mod_perl; multiple versions stomp on each other.
     # But do test the RPM to make sure it has no conflicts.
-    my @test = $rel->{name} eq 'mod_perl' ? ('--test') : ();
+    my @test = $rel->{name} eq 'mod_perl' ? ('--test', '--replacefiles') : ();
 
     system(
         qw(sudo rpm -Uvh), @test, @rpms
