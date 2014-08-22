@@ -1,5 +1,6 @@
 %define iov_email  jira-ops@iovaiton.com
 %global sname perl
+%define syssbindir /usr/sbin
 
 Name:           perl%{plv}
 Version:        %(echo %{version})
@@ -21,6 +22,13 @@ BuildRequires:  procps
 BuildRequires:  rsyslog
 BuildRequires:  man
 BuildRequires:  gdbm-devel
+
+Requires(post): %{syssbindir}/update-alternatives
+Requires(postun): %{syssbindir}/update-alternatives
+
+# List of dual-life bin files. Update %ghost entries in %files if you update
+# this list.
+%define dualbin config_data corelist cpan json_pp pod2usage podchecker podselect prove shasum
 
 # Filter requires on RPM 4.8.
 # http://www.redhat.com/archives/rpm-list/2005-August/msg00034.html
@@ -71,11 +79,41 @@ LC_ALL=C TEST_JOBS=$JOBS make test_harness
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
+# Rename dual-life binfiles.
+for binfile in %{dualbin}; do
+    %{__mv} %{buildroot}%{_bindir}/$binfile %{buildroot}%{_bindir}/%{plv}$binfile
+    touch %{buildroot}%{_bindir}/$binfile
+done
+
+%post
+# Install dual-life binfile alternatives.
+for binfile in %{dualbin}; do
+    %{syssbindir}/update-alternatives --install %{_bindir}/$binfile $binfile \
+    %{_bindir}/%{plv}$binfile 10
+done
+
+%postun
+if [ $1 -eq 0 ] ; then
+    # Remove dual-life binfile alternatives.
+    for binfile in %{dualbin}; do
+        %{syssbindir}/update-alternatives --remove $binfile %{_bindir}/%{plv}$binfile
+    done
+fi
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %doc Artistic AUTHORS Copying README Changes
+%ghost %{_bindir}/config_data
+%ghost %{_bindir}/corelist
+%ghost %{_bindir}/cpan
+%ghost %{_bindir}/json_pp
+%ghost %{_bindir}/pod2usage
+%ghost %{_bindir}/podchecker
+%ghost %{_bindir}/podselect
+%ghost %{_bindir}/prove
+%ghost %{_bindir}/shasum
 %{_prefix}/*
 
 %changelog

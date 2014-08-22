@@ -415,7 +415,7 @@ sub build_perl {
             $restart = 1;
             say "Installing $rpmfile" if $self->{verbose};
             return $self->vent("Could not install $rpmfile") unless system(
-                qw(sudo rpm -Uvh --replacepkgs --replacefiles), $rpmfile
+                qw(sudo rpm -Uvh), $rpmfile
             ) == 0;
         }
 
@@ -487,8 +487,8 @@ sub rpmbuild {
             '--define' => "plv $self->{plv}",
             '--define' => "_prefix $self->{prefix}",
             '--define' => '_topdir ' . cwd,
-            '--define' => "sitemandir $self->{prefix}/share/man",
-            '--define' => "vendormandir $self->{prefix}/man",
+            '--define' => "sitemandir $self->{prefix}/man/site_perl",
+            '--define' => "vendormandir $self->{prefix}/man/vendor_perl",
         ] },
     );
 
@@ -527,7 +527,7 @@ sub rpmbuild {
     my @test = $rel->{name} eq 'mod_perl' ? ('--test') : ();
 
     system(
-        qw(sudo rpm -Uvh --replacepkgs --replacefiles), @test, @rpms
+        qw(sudo rpm -Uvh), @test, @rpms
     ) == 0 or do {
         unlink @rpms, @debugrpms;
         return $self->vent('Could not install ', join ', ', @rpms);
