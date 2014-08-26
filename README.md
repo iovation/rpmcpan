@@ -26,6 +26,21 @@ spec files changed, pass `--all`.
 
     ./bin/rpmcpan --version 5.20.1 --all
 
+Options
+-------
+
+* `--version`: The version of Perl to build.
+* `-f` `--prefix`: The path prefix. Defaults to `/usr/local/perl5xx`.
+* `-c` `--config`: Distribution configuration JSON file.
+* `--all`: Delete the local repo and build all new RPMs.
+* `-v` `--verbose`: Incremental verbosity.
+* `-r` `--repo`: Directory to use for local repo. Defaults to `./repo`.
+* `--admin`: Email address to use for the Perl admin contact info.
+* `-p` `--packager`: Name and email address of the packager.
+* `-d` `--dist`: Distribution to build. May be specified multiple times.
+* `--die`: Die on first error.
+* `--no-perl`: Don't check or build Perl itself. Used internally.
+
 Adding CPAN Distributions
 -------------------------
 

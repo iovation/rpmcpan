@@ -1,4 +1,3 @@
-%define iov_email  jira-ops@iovaiton.com
 %global sname perl
 %define syssbindir /usr/sbin
 
@@ -64,11 +63,13 @@ sh Configure -des \
   -Dvendorprefix=%{_prefix} \
   -Dvendorman1dir=%{vendormandir}/man1 \
   -Dvendorman3dir=%{vendormandir}/man3 \
+%if %{?admin_email:1}%{!?admin_email:0}
+  -Dperladmin=%{admin_email} \
+  -Dcf_email=%{admin_email} \
+%endif
   -Duseshrplib \
   -Dusemultiplicity \
-  -Duseithreads \
-  -Dperladmin=%{iov_email} \
-  -Dcf_email=%{iov_email}
+  -Duseithreads
 make %{?_smp_mflags}
 
 %check

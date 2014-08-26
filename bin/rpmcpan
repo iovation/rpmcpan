@@ -77,6 +77,7 @@ sub go {
         'all',
         'verbose|v+',
         'repo|r=s',
+        'admin=s',
         'config|c=s',
         'packager|p=s',
         'dist|d=s@',
@@ -455,6 +456,7 @@ sub build_perl {
             }
             \@reqs;
         },
+        ( $self->{admin} ? ( define => { admin_email => $self->{admin} } ) : () ),
     }) or return 0;
 
     # Restart.
@@ -479,6 +481,7 @@ sub rpmbuild {
         ) == 0 or return $self->vent("Dependency installation failed");
     }
 
+    my $def = $spec->{define} || {};
     my @params = (
         '--define' => "version $rel->{version}",
         '--define' => 'dist ' . scalar time,
@@ -490,6 +493,7 @@ sub rpmbuild {
             '--define' => "sitemandir $self->{prefix}/man/site_perl",
             '--define' => "vendormandir $self->{prefix}/man/vendor_perl",
         ] },
+        ( map {; '--define' => "$_ $def->{$_}" } sort keys %{ $def } ),
     );
 
     # Set up environment variables.
