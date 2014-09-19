@@ -1,11 +1,11 @@
-iovation Perl RPM Packager
-==========================
+Modern Perl RPM Packager
+========================
 
-This project manages the creation and maintenance of iovation's Perl 5 RPMs,
-including all modules required for iovation Perl applications. It's designed
-to be run directly from a Git clone. To build it, just run:
+This project manages the creation and maintenance of modern Perl 5 RPMs, and
+selected CPAN distributions. It's designed to be run directly from a Git
+clone. To build it, just run:
 
-    ./bin/rpmcpan --version 5.20.0
+    ./bin/rpmcpan --version 5.20.1
 
 This will build Perl and all of the modules. If it has been built previously
 from the same Git branch, then only updated CPAN modules or modules for which
@@ -21,8 +21,8 @@ prefix with the `--prefix` options, e.g.:
 
 But you probably won't want to mess with the prefix.
 
-If you want to rebuild *all* of the RPMs, not just those that have had their
-spec files changed, pass `--all`.
+If you want to rebuild *all* of the RPMs, not just those that have been
+updated since the last run, pass `--all`.
 
     ./bin/rpmcpan --version 5.20.1 --all
 
@@ -49,7 +49,7 @@ so:
 
     "App-Sqitch": {},
 
-The JSON object after the distribution name suppors a number of keys:
+The JSON object after the distribution name supports a number of keys:
 
 * `provides`: A list of additional features provided by the RPM, in case the
   list fetched from MetaCPAN is incomplete. Mostly used to name programs,
@@ -134,7 +134,7 @@ that all are properly prefixed, like so:
 Note that `__find_requires` can take an additional argument, a regular
 expression to be passed to `grep` to filter out any bogusly-detected prerequisites.
 
-The build should gnerally use the vendor installation directories. An
+The build should gnerally use the vendor installation directories. A
 `Makefile.PL`-based build does it like this:
 
     %{__perl} Makefile.PL INSTALLDIRS=vendor OPTIMIZE="$RPM_OPT_FLAGS"
