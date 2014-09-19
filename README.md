@@ -154,6 +154,13 @@ But you can also use the `%_bindir`, `%perl_vendorlib`, `%perl_vendorarch`,
 and `%vendormandir` macros. If you did not do a vendor build (shame on you!),
 you can use the `site` versions of those macros, instead.
 
+Copyright & License
+-------------------
+Copyright 2014 [iovation, Inc.](http://iovation.com/) Some Rights Reserved.
+
+This program is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
+
 Author
 ------
 * [David E. Wheeler](mailto:david.wheeler@iovation.com)
