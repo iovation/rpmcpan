@@ -22,7 +22,7 @@
     "List-MoreUtils": {},
     "Locale-Codes": {},
     "HTTP-Lite": {},
-    "Inline-C": { "patch": [ "inline-c-untaint.patch" ] },
+    "Inline-C": {},
     "JSON": {},
     "JSON-PP": { "provides": ["json_pp"] },
     "JSON-XS": { "provides": ["json_xs"] },
