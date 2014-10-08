@@ -575,7 +575,7 @@ sub build {
                 && $dep->{phase} eq 'runtime';
             next if $exclude_build_requires{ $dep->{module} }
                 && $dep->{phase} ne 'runtime';
-            next if $mod_seen{ $dep->{module} }++;
+            next if $mod_seen{ $dep->{module} };
             next if $dep->{phase} eq 'develop';
             next if $dep->{relationship} eq 'conflicts'; # XXX Add to spec file?
 
@@ -593,6 +593,7 @@ sub build {
                 }
             }
 
+            $mod_seen{ $dep->{module} }++;
             my $mod = $self->call( module => $dep->{module} ) or do {
                 push @failed => $dep->{module};
                 next;
