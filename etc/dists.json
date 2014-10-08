@@ -58,7 +58,7 @@
     "SOAP-Lite": {},
     "Test-Class": {},
     "Test-Harness": { "provides": ["prove"] },
-    "Test-More": {},
+    "Test-Simple": {},
     "Test-XML": { "patch": ["test-xml-sax-parsers.patch"] },
     "Try-Tiny": {},
     "URI": { "exclude_requires": [ "Business::ISBN" ] },
