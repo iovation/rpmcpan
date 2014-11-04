@@ -109,6 +109,7 @@ rm -rf $RPM_BUILD_ROOT
 %ghost %{_bindir}/config_data
 %ghost %{_bindir}/corelist
 %ghost %{_bindir}/cpan
+%ghost %{_bindir}/instmodsh
 %ghost %{_bindir}/json_pp
 %ghost %{_bindir}/pod2usage
 %ghost %{_bindir}/podchecker
@@ -118,5 +119,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_prefix}/*
 
 %changelog
+* Tue Nov 4 2014 David E. Wheeler <david.wheeler@iovation.com> - %{version}-1
+- Ghost instmodsh.
+
 * Wed Jul 16 2014 David E. Wheeler <david.wheeler@iovation.com> - %{version}-1
 - Let's build a modern Perl.

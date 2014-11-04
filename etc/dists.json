@@ -18,6 +18,7 @@
     },
     "Email-Valid": {},
     "Encode-Locale": { "exclude_requires": ["Win32::Console"] },
+    "ExtUtils-MakeMaker": { "environment": { "BUILDING_AS_PACKAGE": 1 } },
     "Error": {},
     "List-MoreUtils": {},
     "Locale-Codes": {},
