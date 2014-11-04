@@ -213,9 +213,19 @@ sub provides {
     }  grep { !$seen{ $_->{fields}{'module.name'} }++ } @{ $mods->{hits}{hits} }];
 }
 
-sub download {
+sub url_from {
     my ($self, $rel) = @_;
     my $url  = $rel->{download_url};
+    return $url unless $url =~ /^https:/;
+    eval { $self->{http}->_assert_ssl };
+    # Try using http if SSL is not supported.
+    $url =~ s/^https:/http:/ if $@;
+    return $url
+}
+
+sub download {
+    my ($self, $rel) = @_;
+    my $url  = $self->url_from($rel);
     my $tgz  = basename +$rel->{archive};
     my $file = catfile 'SOURCES', $tgz;
     return $file if -e $file;
@@ -223,7 +233,7 @@ sub download {
     say "- Downloading $tgz" if $self->{verbose};
     my $res = $self->{http}->mirror($url, $file);
     return $self->vent(
-        "Download of $url failed: $res->{status} $res->{reason}"
+        "Download of $url failed: $res->{status} $res->{reason}\n\n$res->{content}"
     ) unless $res->{success};
     if ($self->{verbose} > 1) {
         say $res->{status} == 304
