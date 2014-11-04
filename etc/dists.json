@@ -24,6 +24,7 @@
     "Locale-Codes": {},
     "HTTP-Lite": {},
     "Inline-C": {},
+    "IO-Socket-SSL": {},
     "JSON": {},
     "JSON-PP": { "provides": ["json_pp"] },
     "JSON-XS": { "provides": ["json_xs"] },
