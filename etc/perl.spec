@@ -3,7 +3,7 @@
 
 Name:           perl%{plv}
 Version:        %(echo %{version})
-Release:        1.%{?dist}
+Release:        2.%{?dist}
 Summary:        Practical Extraction and Reporting Language
 
 Group:          Development/Languages
@@ -119,7 +119,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_prefix}/*
 
 %changelog
-* Tue Nov 4 2014 David E. Wheeler <david.wheeler@iovation.com> - %{version}-1
+* Tue Nov 4 2014 David E. Wheeler <david.wheeler@iovation.com> - %{version}-2
 - Ghost instmodsh.
 
 * Wed Jul 16 2014 David E. Wheeler <david.wheeler@iovation.com> - %{version}-1

@@ -412,10 +412,22 @@ sub build_perl {
     (my $v = $self->{version}->normal) =~ s/^v//;
     my $pl = File::Spec->catfile($self->{prefix}, qw(bin perl));
 
-    my $rpm = "perl$self->{plv}-$v";
+    # Find the Release.
+    my $specfile = File::Spec->catfile(qw(etc perl.spec));
+    my $release = do {
+        open my $fh, '<:encoding(UTF-8)', $specfile
+            or die "Cannot open $specfile: $!\n";
+        my $r;
+        while (<$fh>) {
+            last if ($r) = /Release:\s+(\d+)/i;
+        }
+        $r;
+    };
+
+    my $rpm = "perl$self->{plv}-$v-$release";
     say "Looking for $rpm" if $self->{verbose} > 1;
     my $rpmfile;
-    find sub { $rpmfile = $File::Find::name if /^\Q$rpm\E-\d/ }, $self->{repo};
+    find sub { $rpmfile = $File::Find::name if /^\Q$rpm\E[.]/ }, $self->{repo};
 
     if ($rpmfile) {
         say "Perl $self->{version} already built" if $self->{verbose};
@@ -452,7 +464,6 @@ sub build_perl {
     };
 
     # Download and build Perl
-    my $specfile = File::Spec->catfile(qw(etc perl.spec));
     $self->download($rel) or return 0;
     $self->rpmbuild($rel, $specfile, {
         install_from_yum =>  do {
