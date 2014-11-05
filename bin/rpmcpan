@@ -57,6 +57,7 @@ sub new {
 
     $p{exitval}  = 0;
     ($p{plv}     = $p{version}->normal) =~ s/^v?5[.](\d+).+/5$1/;
+    ($p{plfullv} = $p{version}->normal) =~ s/^v//;
     $p{date}     = strftime("%a %b %d %Y", localtime);
     $p{http}     = HTTP::Tiny->new(agent => "rpmcpan/$VERSION");
     $p{prefix} //= "/usr/local/perl$p{plv}";
@@ -354,9 +355,9 @@ Source0:        $src},
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 AutoReqProv:    no
 }, ($info->{noarch} ? "\nBuildArch:      noarch" : ()), qq{
-BuildRequires:  perl$self->{plv}},
+BuildRequires:  perl$self->{plv} = $self->{plfullv}},
     ( map {; "\nBuildRequires:  $_" } @{ $spec->{build_requires} } ), qq{
-Requires:       perl$self->{plv}},
+Requires:       perl$self->{plv} = $self->{plfullv}},
     ( map {; "\nRequires:       $_" } @{ $spec->{requires} } ),
     ( map {; "\nProvides:       $_" } @provides ), qq{
 
@@ -479,6 +480,9 @@ sub build_perl {
         },
         ( $self->{admin} ? ( define => { admin_email => $self->{admin} } ) : () ),
     }) or return 0;
+
+    # New Perl RPM, all modules need to be rebuilt, too.
+    $self->{all} = 1;
 
     # Restart.
     say "Perl $self->{version} built; restarting with that version\n"
