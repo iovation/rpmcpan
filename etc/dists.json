@@ -2,7 +2,29 @@
     "aliased": {},
     "Business-IBAN": {},
     "Capture-Tiny": {},
-    "CGI": {},
+    "CGI": {
+        "missing_prereqs": [{
+            "module": "Test::More",
+            "version": "0.98",
+            "phase": "test",
+            "relationship": "requires"
+        }, {
+            "module": "Test::Deep",
+            "version": "0.11",
+            "phase": "test",
+            "relationship": "requires"
+        }, {
+            "module": "Test::NoWarnings",
+            "version": "1.04",
+            "phase": "test",
+            "relationship": "requires"
+        }, {
+            "module": "Test::Warn",
+            "version": "0.30",
+            "phase": "test",
+            "relationship": "requires"
+        }]
+    },
     "Class-Accessor-Chained": {},
     "Class-Date": {},
     "Crypt-DES": {},
