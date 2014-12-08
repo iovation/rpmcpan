@@ -574,6 +574,9 @@ sub build {
 
     # Get the latest release.
     my $rel = $self->call(release => $dist) or return 0;
+    if (my $override = $spec->{override}) {
+        %{ $rel } = (%{ $rel }, %{ $override });
+    }
     say "- Version: $rel->{version}" if $self->{verbose};
 
     # Grab pre-specified dependencies.
