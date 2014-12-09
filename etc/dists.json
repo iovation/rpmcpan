@@ -84,7 +84,7 @@
             "download_url": "http://cpan.metacpan.org/authors/id/D/DC/DCANTRELL/Number-Phone-3.0006.tar.gz",
             "name": "Number-Phone-3.0006",
             "archive": "Number-Phone-3.0006.tar.gz",
-            "metadata": { "provides": { "Number::Phone": "3.0006" } }
+            "metadata": { "provides": { "Number::Phone": { "version": "3.0006", "file": "lib/Number/Phone.pm" } } }
         },
         "missing_prereqs": [
             {
