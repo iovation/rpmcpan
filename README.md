@@ -80,11 +80,6 @@ The JSON object after the distribution name supports a number of keys:
       "configure", "build", "test", "runtime", or "develop".
     * `relationship`: The dependency relationship for the module. Must be one
        of "requires", "recommends", "suggests", or "conflicts".
-* `override`: A list of key/value pairs to override any part of the release
-  data. Useful if, for some reason, the MetaCPAN API gets out of whack and has
-  the wrong data. The values will simply be merged into the top level of the
-  data returned from the API, so if you need nested data, it must be complete.
-
 `rpmcpan` will use this information to download the required distributions,
 determine their dependencies, create RPM spec files in the `SPECS` directory,
 and build RPMs for all the distributions and their CPAN dependencies. Most of

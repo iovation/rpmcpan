@@ -77,27 +77,7 @@
     },
     "Net-IP": {},
     "Net-Stomp": {},
-    "Number-Phone": {
-        "override": {
-            "version": "3.0006",
-            "version_numified": "3.0006",
-            "download_url": "http://cpan.metacpan.org/authors/id/D/DC/DCANTRELL/Number-Phone-3.0006.tar.gz",
-            "name": "Number-Phone-3.0006",
-            "archive": "Number-Phone-3.0006.tar.gz",
-            "metadata": { "provides": {
-                "Number::Phone": { "version": "3.0006", "file": "lib/Number/Phone.pm" },
-                "Number::Phone::Lib": { "version": "1.0", "file": "lib/Number/Phone/Lib.pm" }
-            } }
-        },
-        "missing_prereqs": [
-            {
-                "module": "DBM::Deep",
-                "version": "2.0008",
-                "phase": "runtime",
-                "relationship": "requires"
-            }
-        ]
-    },
+    "Number-Phone": {},
     "Scalar-List-Utils": {},
     "SOAP-Lite": {},
     "Test-Class": {},
