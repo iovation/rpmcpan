@@ -31,7 +31,7 @@
     "Crypt-RC4": {},
     "Crypt-Rijndael": {},
     "Data-UUID": {},
-    "Data-Structure-Util": { "patch": ["data-structure-util-rt88257.patch"] },
+    "Data-Structure-Util": {},
     "Data-Validate-URI": {},
     "DBI": {},
     "DBD-Pg": {
