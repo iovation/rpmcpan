@@ -52,7 +52,7 @@
     "JSON-XS": { "provides": ["json_xs"] },
     "Log-Dispatch": {},
     "Log-Log4perl": {},
-    "libwww-perl": { "exclude_requires": [ "LWP::Protocol::https" ] },
+    "libwww-perl": { "exclude_requires": [ "LWP::Protocol::https", "HTTP::GHTTP" ] },
     "libxml-perl": {
         "missing_prereqs": [{
             "module": "XML::Parser",
