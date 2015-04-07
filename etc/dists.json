@@ -38,12 +38,17 @@
         "build_requires": ["postgresql93-devel", "postgresql93"],
         "environment": { "POSTGRES_HOME": "/usr/pgsql-9.3" }
     },
+    "DIME-Tools": { "patch": ["dime-tools-rt11080.patch"] },
     "Email-Valid": {},
     "Encode-Locale": { "exclude_requires": ["Win32::Console"] },
     "ExtUtils-MakeMaker": { "environment": { "BUILDING_AS_PACKAGE": 1 } },
     "Error": {},
     "List-MoreUtils": {},
     "Locale-Codes": {},
+    "GSSAPI": {
+        "build_requires": ["krb5-devel"],
+        "patch": ["gssapi-rt73293.patch"]
+    },
     "HTTP-Lite": {},
     "Inline-C": {},
     "IO-Socket-SSL": {},
@@ -75,11 +80,13 @@
             "http-mmn = %(cat %{sysincludedir}/httpd/.mmn || echo missing)"
         ]
     },
+    "Net-Jabber": { "patch": ["net-jabber-rt87436.patch"] },
     "Net-IP": {},
     "Net-Stomp": {},
     "Number-Phone": {},
     "Scalar-List-Utils": {},
-    "SOAP-Lite": {},
+    "SOAP-Lite": { "exclude_requires": [ "Apache", "SOAP::Transport::MQ" ] },
+    "SOAP-Transport-JABBER": { "exclude_requires": [ "SOAP::Lite" ] },
     "Test-Class": {},
     "Test-Harness": { "provides": ["prove"] },
     "Test-XML": { "patch": ["test-xml-sax-parsers.patch"] },
