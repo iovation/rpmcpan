@@ -336,6 +336,7 @@ sub write_spec {
     my $found = $self->provides($rel) or return 0;
     my @provides = (@{ $spec->{provides} || [] }, @{ $found });
     my @patches = @{ $spec->{patch} || [] };
+    my @conflicts = @{ $spec->{conflicts} || [] };
     my $descr = $rel->{abstract} || $rel->{metadata}{abstract} || 'unknown';
 
     say "- Generating $specfile" if $self->{verbose};
@@ -359,7 +360,8 @@ BuildRequires:  perl$self->{plv} = $self->{plfullv}},
     ( map {; "\nBuildRequires:  $_" } @{ $spec->{build_requires} } ), qq{
 Requires:       perl$self->{plv} = $self->{plfullv}},
     ( map {; "\nRequires:       $_" } @{ $spec->{requires} } ),
-    ( map {; "\nProvides:       $_" } @provides ), qq{
+    ( map {; "\nProvides:       $_" } @provides ),
+    ( map {; "\nConflicts:      perl$self->{plv}-$_" } @conflicts ), qq{
 
 %description
 $descr

@@ -66,6 +66,8 @@ The JSON object after the distribution name supports a number of keys:
 * `exclude_build_requires`: A list of CPAN modules to exclude from the list of
   non-runtime prereqs returned by the MetaCPAN API. Useful for excluding
   incompatible or circular dependencies.
+* `conflicts`: An array of CPAN distributions with which the resulting RPM for
+   the distribution will conflict.
 * `envrionment`: An object defining environment variables required to build
    the RPM. Keys should be environment variable names, and values their
    values.

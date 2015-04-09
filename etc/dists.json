@@ -89,6 +89,7 @@
     "SOAP-Transport-JABBER": { "exclude_requires": [ "SOAP::Lite" ] },
     "Test-Class": {},
     "Test-Harness": { "provides": ["prove"] },
+    "Test-Simple": { "conflicts": ["Test-Tester"] },
     "Test-XML": { "patch": ["test-xml-sax-parsers.patch"] },
     "Try-Tiny": {},
     "URI": { "exclude_requires": [ "Business::ISBN" ] },
