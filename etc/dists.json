@@ -30,6 +30,7 @@
     "Crypt-DES": {},
     "Crypt-RC4": {},
     "Crypt-Rijndael": {},
+    "Crypt-SSLeay": {},
     "Data-UUID": {},
     "Data-Structure-Util": {},
     "Data-Validate-URI": {},
@@ -57,6 +58,7 @@
     "JSON-XS": { "provides": ["json_xs"] },
     "Log-Dispatch": {},
     "Log-Log4perl": {},
+    "LWP-Protocol-https": {},
     "libwww-perl": { "exclude_requires": [ "LWP::Protocol::https", "HTTP::GHTTP" ] },
     "libxml-perl": {
         "missing_prereqs": [{
