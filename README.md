@@ -29,8 +29,12 @@ updated since the last run, pass `--all`.
 Options
 -------
 
-* `--version`: The version of Perl to build.
-* `-f` `--prefix`: The path prefix. Defaults to `/usr/local/perl5xx`.
+* `--version`: The version of Perl to build. Defaults to the version used to
+  run `rpmcpan`.
+* `--epoch`: The epoch to use. Defaults to minor version when using the system
+  Perl; otherwise not set.
+* `-f` `--prefix`: The path prefix. Defaults to `$Config{prefix}` for the
+   system Perl; `/usr/local/perl5xx` otherwise.
 * `-c` `--config`: Distribution configuration JSON file.
 * `--all`: Delete the local repo and build all new RPMs.
 * `-v` `--verbose`: Incremental verbosity.

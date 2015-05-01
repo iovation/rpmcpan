@@ -27,17 +27,31 @@
     },
     "Class-Accessor-Chained": {},
     "Class-Date": {},
+    "CPAN-Meta": { "exclude_build_requires": ["CPAN::Meta"] },
+    "CPAN-Meta-Requirements": { "exclude_build_requires": ["CPAN::Meta"] },
+    "CPAN-Meta-YAML": { "exclude_build_requires": ["CPAN::Meta"] },
     "Crypt-DES": {},
     "Crypt-RC4": {},
-    "Crypt-Rijndael": {},
+    "Crypt-Rijndael": {
+        "missing_prereqs": [{
+            "module": "Test::More",
+            "version": "0",
+            "phase": "test",
+            "relationship": "requires"
+        }, {
+            "module": "Test::Manifest",
+            "version": "1.14",
+            "phase": "test",
+            "relationship": "requires"
+        }]
+    },
     "Crypt-SSLeay": {},
     "Data-UUID": {},
     "Data-Structure-Util": {},
     "Data-Validate-URI": {},
     "DBI": {},
     "DBD-Pg": {
-        "build_requires": ["postgresql93-devel", "postgresql93"],
-        "environment": { "POSTGRES_HOME": "/usr/pgsql-9.3" }
+        "build_requires": ["postgresql-devel", "postgresql"]
     },
     "DIME-Tools": { "patch": ["dime-tools-rt11080.patch"] },
     "Email-Valid": {},

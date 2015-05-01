@@ -16,9 +16,10 @@ use File::Basename qw(basename dirname);
 use POSIX qw(strftime);
 use File::Path qw(make_path remove_tree);
 use List::Util qw(first);
+use Config;
 use Cwd;
 
-our $VERSION = '1.0';
+our $VERSION = '1.1';
 my $true;
 
 BEGIN {
@@ -55,12 +56,20 @@ sub new {
         $p{version} = $^V;
     }
 
-    $p{exitval}  = 0;
-    ($p{plv}     = $p{version}->normal) =~ s/^v?5[.](\d+).+/5$1/;
-    ($p{plfullv} = $p{version}->normal) =~ s/^v//;
+    $p{failed} = [];
+    my ($maj, $min, $pat) = $p{version}->normal =~ /^v?(\d+)[.](\d+)[.](\d+)/;
+    $p{plmajv}  = "$maj.$min";
+    if ($Config{prefix} eq '/usr') {
+        # It's the system Perl.
+        $p{plv} = '';
+        $p{prefix} //= $Config{prefix};
+        $p{epoch} //= $min;
+    } else {
+        $p{plv}  = "$maj$min";
+        $p{prefix} //= "/usr/local/perl$p{plv}";
+    }
     $p{date}     = strftime("%a %b %d %Y", localtime);
     $p{http}     = HTTP::Tiny->new(agent => "rpmcpan/$VERSION");
-    $p{prefix} //= "/usr/local/perl$p{plv}";
     $p{perl}     = "$p{prefix}/bin/perl";
     $p{corelist} = $Module::CoreList::version{ $p{version}->numify };
 
@@ -74,6 +83,7 @@ sub go {
         \@_,
         \my %opts,
         'version=s',
+        'epoch=i',
         'prefix|f=s',
         'all',
         'verbose|v+',
@@ -120,25 +130,30 @@ sub run {
     say "Building RPMs for Perl $self->{version} (perl$self->{plv})\n"
         if $self->{verbose};
 
+    make_path 'SPECS';
+
+    my $failed = $self->{failed};
     if (my $list = $self->{dist}) {
         # Specific list of distributions requested.
         for my $dist (@{ $list }) {
             my $spec = $dists->{$dist}
                 or die "$dist not listed in $self->{config}\n";
-            $self->{exitval}++ unless $self->build($dist, $spec);
+            push @{ $failed } => $dist unless $self->build($dist, $spec);
         }
     } else {
         # Iterate over complete list of distributions.
         while (my ($dist, $spec) = each %{ $dists }) {
-            $self->{exitval}++ unless $self->build($dist, $spec);
+            push @{ $failed } => $dist unless $self->build($dist, $spec);
         }
     }
-    if ($self->{exitval}) {
-        say "Unable to build all RPMs for Perl $self->{version} (perl$self->{plv})\n";
+    if (@{ $failed }) {
+        say "Unable to build all RPMs for Perl $self->{version} (perl$self->{plv})\n",
+            "Failed builds:\n",
+            join "\n", map { "* $_" } @{ $failed };
     } else {
         say "Done building RPMs for Perl $self->{version} (perl$self->{plv})\n";
     }
-    return $self->{exitval};
+    return scalar @{ $failed };
 }
 
 sub call {
@@ -347,6 +362,7 @@ sub write_spec {
     print $fh qq{Name:           perl$self->{plv}-$rel->{distribution}
 Version:        $rel->{version}
 Release:        1.%{dist}
+}, ($self->{epoch} ? "\nEpoch:          $self->{epoch}" : ()), qq{
 Summary:        $descr
 License:        $license
 Group:          Development/Libraries
@@ -356,9 +372,9 @@ Source0:        $src},
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 AutoReqProv:    no
 }, ($info->{noarch} ? "\nBuildArch:      noarch" : ()), qq{
-BuildRequires:  perl$self->{plv} = $self->{plfullv}},
+BuildRequires:  perl$self->{plv} >= $self->{plmajv}},
     ( map {; "\nBuildRequires:  $_" } @{ $spec->{build_requires} } ), qq{
-Requires:       perl$self->{plv} = $self->{plfullv}},
+Requires:       perl$self->{plv} >= $self->{plmajv}},
     ( map {; "\nRequires:       $_" } @{ $spec->{requires} } ),
     ( map {; "\nProvides:       $_" } @provides ),
     ( map {; "\nConflicts:      perl$self->{plv}-$_" } @conflicts ), qq{
@@ -382,11 +398,13 @@ $descr
 %install
 rm -rf \$RPM_BUILD_ROOT
 }, ($info->{use_mb} ? (
-    "./Build install --destdir=\$RPM_BUILD_ROOT create_packlist=0"
+    "./Build install --destdir=\$RPM_BUILD_ROOT create_packlist=1"
 ) : (
     "make pure_install PERL_INSTALL_ROOT=\$RPM_BUILD_ROOT\n",
-    "find \$RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} \\;"
 )), qq{
+find \$RPM_BUILD_ROOT -type f -name .packlist -exec mv {} . \\;
+perl -i -pe "s{^\\Q\$RPM_BUILD_ROOT}{}g" .packlist
+perl -i -pe 's/[.]([13](?:pm)?)\$/.\$1.gz/g' .packlist
 find \$RPM_BUILD_ROOT -depth -type d -exec rmdir {} 2>/dev/null \\;
 %{_fixperms} \$RPM_BUILD_ROOT/*
 
@@ -396,9 +414,8 @@ find \$RPM_BUILD_ROOT -depth -type d -exec rmdir {} 2>/dev/null \\;
 %clean
 rm -rf \$RPM_BUILD_ROOT
 
-%files
+%files -f .packlist
 %defattr(-,root,root,-)
-%{_prefix}/*
 
 %changelog
 * $self->{date} $self->{packager} $rel->{version}-1
@@ -411,6 +428,16 @@ rm -rf \$RPM_BUILD_ROOT
 sub build_perl {
     my $self = shift;
     return 1 if $self->{no_perl};
+    if ($self->{plv} eq '') {
+        say "Making sure core Perl $self->{version} is installed"
+            if $self->{verbose};
+        system(
+            qw(sudo yum install -y),
+            ($self->{verbose} > 1 ? () : '--quiet'),
+            'perl-core',
+        ) == 0 or return $self->vent("Error installing perl-core");
+        return 1;
+    }
 
     (my $v = $self->{version}->normal) =~ s/^v//;
     my $pl = File::Spec->catfile($self->{prefix}, qw(bin perl));
@@ -514,11 +541,12 @@ sub rpmbuild {
         '--define' => 'dist ' . scalar time,
         @{ $self->{params} ||= [
             '--define' => "__perl $self->{perl}",
-            '--define' => "plv $self->{plv}",
             '--define' => "_prefix $self->{prefix}",
             '--define' => '_topdir ' . cwd,
             '--define' => "sitemandir $self->{prefix}/man/site_perl",
             '--define' => "vendormandir $self->{prefix}/man/vendor_perl",
+            ($self->{plv} ?   ('--define' => "plv $self->{plv}") : ()),
+            ($self->{epoch} ? ('--define' => "epoch $self->{epoch}") : ()),
         ] },
         ( map {; '--define' => "$_ $def->{$_}" } sort keys %{ $def } ),
     );
@@ -534,7 +562,7 @@ sub rpmbuild {
         qw(rpmbuild -ba),
         ($self->{verbose} < 2 ? '--quiet' : ()),
         @params, $specfile
-    ) == 0 or return $self->vent("Build failed");
+    ) == 0 or return $self->vent("$rel->{name} Build failed");
 
     # Find all new RPMs and put them into the repo directory.
     my (@rpms, @debugrpms);
@@ -572,6 +600,12 @@ my %seen = (perl => 1);
 sub build {
     my ($self, $dist, $spec) = @_;
     return 1 if $seen{$dist}++;
+
+    if ($dist eq 'mod_perl' && $self->{plv} eq '') {
+        say "  - Skipping $dist on core Perl" if $self->{verbose} > 1;
+        return 1;
+    }
+
     say "Processing $dist" if $self->{verbose};
 
     # Get the latest release.
@@ -635,7 +669,7 @@ sub build {
             # Build this one.
             $self->build( $depdist, $self->{dists}{$depdist} || {} ) or do {
                 push @failed => $depdist;
-                $self->{exitval}++;
+                push @{ $self->{failed} } => $depdist;
             };
 
             # Record it as a dependency.
