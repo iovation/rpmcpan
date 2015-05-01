@@ -601,16 +601,18 @@ sub build {
     my ($self, $dist, $spec) = @_;
     return 1 if $seen{$dist}++;
 
-    if ($dist eq 'mod_perl' && $self->{plv} eq '') {
-        say "  - Skipping $dist on core Perl" if $self->{verbose} > 1;
-        return 1;
-    }
-
     say "Processing $dist" if $self->{verbose};
 
     # Get the latest release.
     my $rel = $self->call(release => $dist) or return 0;
     say "- Version: $rel->{version}" if $self->{verbose};
+
+    # Integrate overrides.
+    for my $key (qw(download_url)) {
+        if (my $val = $spec->{$key}) {
+            $rel->{$key} = $val;
+        }
+    }
 
     # Grab pre-specified dependencies.
     my $requires = $spec->{requires} ||= [];

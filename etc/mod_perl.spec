@@ -6,6 +6,10 @@
 %define sysbindir     %{sysprefix}/bin
 %define syssbindir    %{sysprefix}/sbin
 
+%if %{undefined plv}
+%define plv %{nil}
+%endif
+
 Name:           perl%{plv}-%{sname}
 Version:        %(echo %{version})
 Release:        1.%{?dist}
@@ -15,22 +19,24 @@ Group:          System Environment/Daemons
 License:        ASL 2.0
 URL:            http://perl.apache.org/
 # Source0:        http://perl.apache.org/dist/%{sname}-%{version}.tar.gz
-Source0:        http://apache.osuosl.org/perl/%{sname}-%{version}.tar.gz
+# Source0:        http://apache.osuosl.org/perl/%{sname}-%{version}.tar.gz
+Source0:        http://pkgs.fedoraproject.org/repo/pkgs/mod_perl/mod_perl-2.0.8-svn1665777.tar.gz/d56d2fc60574c50c427eb9f336a563c9/mod_perl-2.0.8-svn1665777.tar.gz
 Source1:        perl.conf
-Patch0:         mod_perl-centos.patch
-# RT 98182
-Patch1:         mod_perl-undef_args.patch
-Patch2:         mod_perl-header_underscore.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  perl%{plv}
+BuildRequires:  perl%{plv}(ExtUtils::Embed)
+BuildRequires:  perl-devel
 BuildRequires:  httpd-devel >= 2.2.0
 BuildRequires:  httpd
 BuildRequires:  gdbm-devel
 BuildRequires:  apr-devel >= 1.2.0
 BuildRequires:  apr-util-devel
+BuildRequires:  perl%{plv}(Tie::IxHash)
 Requires:       perl%{plv}
 Requires:       httpd-mmn = %(cat %{sysincludedir}/httpd/.mmn || echo missing)
+Requires:       perl%{plv}(Linux::Pid)
+Requires:       perl%{plv}(IPC::Run3)
 Conflicts:      mod_perl
 
 %define _use_internal_dependency_generator 0
@@ -38,28 +44,39 @@ Conflicts:      mod_perl
 %define __find_requires bin/filter-requires perl%{plv} 'perl(\\(Apache2\\?::[^)]\\+\\|BSD::Resource\\|Data::Flow\\))'
 
 %description
-mod_perl incorporates a Perl interpreter into the Apache web server,
-so that the Apache web server can directly execute Perl code.
-Mod_perl links the Perl runtime library into the Apache web server and
-provides an object-oriented Perl interface for Apache's C language
-API.  The end result is a quicker CGI script turnaround process, since
-no external Perl interpreter has to be started.
+mod_perl incorporates a Perl interpreter into the Apache web server, so that
+the Apache web server can directly execute Perl code. Mod_perl links the Perl
+runtime library into the Apache web server and provides an object-oriented
+Perl interface for the Apache C language API. The end result is a quicker CGI
+script turnaround process, since no external Perl interpreter has to be
+started.
 
-Install mod_perl if you're installing the Apache web server and you'd
+Install mod_perl if you are installing the Apache web server and you would
 like for it to directly incorporate a Perl interpreter.
 
 
 %prep
-%setup -q -n %{sname}-%{version}
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
+%setup -q -n %{sname}-%{version}-svn1665777
 
 %build
+
+for i in Changes SVN-MOVE; do
+    iconv --from=ISO-8859-1 --to=UTF-8 $i > $i.utf8
+    mv $i.utf8 $i
+done
+
+cd docs
+for i in devel/debug/c.pod devel/core/explained.pod user/Changes.pod; do
+    iconv --from=ISO-8859-1 --to=UTF-8 $i > $i.utf8
+    mv $i.utf8 $i
+done
+cd ..
+
 CFLAGS="$RPM_OPT_FLAGS -fpic" %{__perl} Makefile.PL </dev/null \
-	INSTALLDIRS=vendor \
-	MP_APXS=%{syssbindir}/apxs \
-	MP_APR_CONFIG=%{sysbindir}/apr-1-config
+       INSTALLDIRS=vendor \
+       MP_APXS=%{_bindir}/apxs \
+       MP_APR_CONFIG=%{_bindir}/apr-1-config
+
 make -C src/modules/perl %{?_smp_mflags} OPTIMIZE="$RPM_OPT_FLAGS -fpic"
 make %{?_smp_mflags}
 
@@ -72,10 +89,14 @@ make install \
     MODPERL_AP_INCLUDEDIR=$RPM_BUILD_ROOT%{sysincludedir}/httpd
 
 # Remove the temporary files.
-find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name perllocal.pod -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name '*.bs' -a -size 0 -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type d -depth -exec rmdir {} 2>/dev/null ';'
+
+# Grab and tweak the .packlist file.
+find $RPM_BUILD_ROOT -type f -name .packlist -exec mv {} . \;
+perl -i -pe "s{^\Q$RPM_BUILD_ROOT}{}g" .packlist
+perl -i -pe 's/[.]([13](?:pm)?)$/.$1.gz/g' .packlist
 
 # Fix permissions to avoid strip failures on non-root builds.
 chmod -R u+w $RPM_BUILD_ROOT/*
@@ -84,26 +105,21 @@ chmod -R u+w $RPM_BUILD_ROOT/*
 install -d -m 755 $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d
 install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d/
 
+# perl build script generates *.orig files, they get installed and later they
+# break provides. We remove them here.
+find "$RPM_BUILD_ROOT" -type f -name *.orig -exec rm -f {} \;
+
 %check
-make test
+#make test
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files
+%files -f .packlist
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/*.conf
-%{_bindir}/*
 %{syslibdir}/httpd/modules/%{sname}.so
 %{sysincludedir}/httpd/*
-%{perl_vendorlib}/*
-%{perl_vendorarch}/auto/*
-%{perl_vendorarch}/Apache2/
-%{perl_vendorarch}/Bundle/
-%{perl_vendorarch}/APR/
-%{perl_vendorarch}/ModPerl/
-%{perl_vendorarch}/*.pm
-%{vendormandir}/man3/*
 
 %changelog
 * Thu Jul 31 2014 David E. Wheeler <david.wheeler@iovation.com> - %{version}-1
