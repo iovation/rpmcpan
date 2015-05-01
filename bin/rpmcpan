@@ -59,7 +59,7 @@ sub new {
     $p{failed} = [];
     my ($maj, $min, $pat) = $p{version}->normal =~ /^v?(\d+)[.](\d+)[.](\d+)/;
     $p{plmajv}  = "$maj.$min";
-    if ($Config{prefix} eq '/usr') {
+    if ($p{version} == $^V && $Config{prefix} eq '/usr') {
         # It's the system Perl.
         $p{plv} = '';
         $p{prefix} //= $Config{prefix};
@@ -404,8 +404,7 @@ rm -rf \$RPM_BUILD_ROOT
 )), qq{
 find \$RPM_BUILD_ROOT -type f -name .packlist -exec mv {} . \\;
 perl -i -pe "s{^\\Q\$RPM_BUILD_ROOT}{}g" .packlist
-perl -i -pe 's/[.]([13](?:pm)?)\$/.\$1.gz/g' .packlist
-find \$RPM_BUILD_ROOT -depth -type d -exec rmdir {} 2>/dev/null \\;
+}, ($self->{plv} ? '' : qq{perl -i -pe 's/[.]([13](?:pm)?)\$/.\$1.gz/g' .packlist\n}), qq{
 %{_fixperms} \$RPM_BUILD_ROOT/*
 
 %check
@@ -583,7 +582,8 @@ sub rpmbuild {
 
     # Don't install mod_perl; multiple versions stomp on each other.
     # But do test the RPM to make sure it has no conflicts.
-    my @test = $rel->{distribution} eq 'mod_perl' ? ('--test', '--replacefiles') : ();
+    my @test = ($rel->{distribution} || '') eq 'mod_perl'
+        ? ('--test', '--replacefiles') : ();
 
     system(
         qw(sudo rpm -Uvh), @test, @rpms

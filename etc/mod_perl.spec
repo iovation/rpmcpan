@@ -74,8 +74,8 @@ cd ..
 
 CFLAGS="$RPM_OPT_FLAGS -fpic" %{__perl} Makefile.PL </dev/null \
        INSTALLDIRS=vendor \
-       MP_APXS=%{_bindir}/apxs \
-       MP_APR_CONFIG=%{_bindir}/apr-1-config
+       MP_APXS=%{sysbindir}/apxs \
+       MP_APR_CONFIG=%{sysbindir}/apr-1-config
 
 make -C src/modules/perl %{?_smp_mflags} OPTIMIZE="$RPM_OPT_FLAGS -fpic"
 make %{?_smp_mflags}
@@ -96,7 +96,9 @@ find $RPM_BUILD_ROOT -type d -depth -exec rmdir {} 2>/dev/null ';'
 # Grab and tweak the .packlist file.
 find $RPM_BUILD_ROOT -type f -name .packlist -exec mv {} . \;
 perl -i -pe "s{^\Q$RPM_BUILD_ROOT}{}g" .packlist
+%if "%{plv}" == ""
 perl -i -pe 's/[.]([13](?:pm)?)$/.$1.gz/g' .packlist
+%endif
 
 # Fix permissions to avoid strip failures on non-root builds.
 chmod -R u+w $RPM_BUILD_ROOT/*
@@ -110,7 +112,7 @@ install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d/
 find "$RPM_BUILD_ROOT" -type f -name *.orig -exec rm -f {} \;
 
 %check
-#make test
+make test
 
 %clean
 rm -rf $RPM_BUILD_ROOT

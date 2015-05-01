@@ -72,7 +72,7 @@
     "JSON-XS": { "provides": ["json_xs"] },
     "Log-Dispatch": {},
     "Log-Log4perl": {},
-    "LWP-Protocol-https": {},
+    "LWP-Protocol-https": { "patch": ["lwp-protocol-https-rt104150.patch"] },
     "libwww-perl": { "exclude_requires": [ "LWP::Protocol::https", "HTTP::GHTTP" ] },
     "libxml-perl": {
         "missing_prereqs": [{
@@ -103,6 +103,11 @@
             "module": "IPC::Run3",
             "version": "0",
             "phase": "runtime",
+            "relationship": "recommends"
+        }, {
+            "module": "Tie::IxHash",
+            "version": "0",
+            "phase": "build",
             "relationship": "recommends"
         }],
         "requires": [
