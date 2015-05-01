@@ -375,6 +375,7 @@ AutoReqProv:    no
 BuildRequires:  perl$self->{plv} >= $self->{plmajv}},
     ( map {; "\nBuildRequires:  $_" } @{ $spec->{build_requires} } ), qq{
 Requires:       perl$self->{plv} >= $self->{plmajv}},
+    ($self->{plv} ? '' : qq{\nRequires:       perl(:MODULE_COMPAT_$self->{version})}),
     ( map {; "\nRequires:       $_" } @{ $spec->{requires} } ),
     ( map {; "\nProvides:       $_" } @provides ),
     ( map {; "\nConflicts:      perl$self->{plv}-$_" } @conflicts ), qq{

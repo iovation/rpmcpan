@@ -3,7 +3,7 @@
 
 Name:           perl%{plv}
 Version:        %(echo %{version})
-Release:        2.%{?dist}
+Release:        3.%{?dist}
 Summary:        Practical Extraction and Reporting Language
 
 Group:          Development/Languages
@@ -45,9 +45,7 @@ are system administration utilities and web programming. A large proportion of
 the CGI scripts on the web are written in Perl. You need the perl package
 installed on your system so that your system can handle Perl scripts.
 
-%global perl_compat %{sname}(:MODULE_COMPAT_%{version})
 Provides: iov-%{sname}
-Provides: %{sname}%{plv}(:MODULE_COMPAT_%{version})
 Provides: %{sname}%{plv}(:WITH_ITHREADS)
 Provides: %{sname}%{plv}(:WITH_PERLIO)
 
@@ -70,6 +68,8 @@ sh Configure -des \
   -Duseshrplib \
   -Dusemultiplicity \
   -Duseithreads
+# Remove the version from @INC paths.
+%{__perl} -i -pe 's{/\Q%{version}}{}g' config.sh
 make %{?_smp_mflags}
 
 %check
@@ -119,6 +119,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_prefix}/*
 
 %changelog
+* Fri May 1 2015 David E. Wheeler <david.wheeler@iovation.com> - %{version}-3
+- Remove version from @INC paths so that any minor version uses the same
+  modules.
+
 * Tue Nov 4 2014 David E. Wheeler <david.wheeler@iovation.com> - %{version}-2
 - Ghost instmodsh.
 
