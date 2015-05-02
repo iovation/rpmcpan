@@ -12,7 +12,7 @@
 
 Name:           perl%{plv}-%{sname}
 Version:        %(echo %{version})
-Release:        1.%{?dist}
+Release:        2.svn1665777.%{?dist}
 Summary:        An embedded Perl interpreter for the Apache HTTP Server
 
 Group:          System Environment/Daemons
@@ -124,5 +124,11 @@ rm -rf $RPM_BUILD_ROOT
 %{sysincludedir}/httpd/*
 
 %changelog
+* Fri May 1 2015 David E. Wheeler <david.wheeler@iovation.com> - %{version}-2
+- Updated to build from Subversion-derived tarball provided by the Fedora project.
+- Require Linux::Pid and IPC::Run3
+- Require ExtUtils::Embed and Tie::IxHash to build.
+- Determine files to install based on the generated .packlist file.
+
 * Thu Jul 31 2014 David E. Wheeler <david.wheeler@iovation.com> - %{version}-1
 - Let's build a modern mod_perl.
