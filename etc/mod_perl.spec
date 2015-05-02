@@ -4,7 +4,7 @@
 %define syslibdir     %{sysprefix}/%{_lib}
 %define sysincludedir %{sysprefix}/include
 %define sysbindir     %{sysprefix}/bin
-%define syssbindir    %{sysprefix}/sbin
+%define apxs          %(which apxs)
 
 %if %{undefined plv}
 %define plv %{nil}
@@ -22,6 +22,10 @@ URL:            http://perl.apache.org/
 # Source0:        http://apache.osuosl.org/perl/%{sname}-%{version}.tar.gz
 Source0:        http://pkgs.fedoraproject.org/repo/pkgs/mod_perl/mod_perl-2.0.8-svn1665777.tar.gz/d56d2fc60574c50c427eb9f336a563c9/mod_perl-2.0.8-svn1665777.tar.gz
 Source1:        perl.conf
+%if "%{apxs}" == "/usr/sbin/apxs"
+Patch0:         mod_perl-undef_args.patch
+Patch1:         mod_perl-centos.patch
+%endif
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  perl%{plv}
@@ -57,6 +61,10 @@ like for it to directly incorporate a Perl interpreter.
 
 %prep
 %setup -q -n %{sname}-%{version}-svn1665777
+%if "%{apxs}" == "/usr/sbin/apxs"
+%patch0 -p1
+%patch1 -p1
+%endif
 
 %build
 
@@ -74,7 +82,7 @@ cd ..
 
 CFLAGS="$RPM_OPT_FLAGS -fpic" %{__perl} Makefile.PL </dev/null \
        INSTALLDIRS=vendor \
-       MP_APXS=%{sysbindir}/apxs \
+       MP_APXS=%{apxs} \
        MP_APR_CONFIG=%{sysbindir}/apr-1-config
 
 make -C src/modules/perl %{?_smp_mflags} OPTIMIZE="$RPM_OPT_FLAGS -fpic"

@@ -78,7 +78,10 @@ The JSON object after the distribution name supports a number of keys:
 * `patch`: A list of patches to be applied to the source before buildling.
   Each will be applied with `patch -p1`, so make sure your prefixes are
   correct.
-* `download_url`: The URL from which to download the source code.
+* `download_url`: The URL from which to download the source code. Probably need
+  to also set `archive` if you set this key.
+* `archive`: The name of the downloadaed archive. Probably needs to be
+  set to the base name of the `download_url` if `download_url` is set.
 * `missing_prereqs`: A list of JSON objects describing required modules
    missing from the metadata downloaded from MetaCPAN. Requires these keys:
     * `module`: Name of the required module.
