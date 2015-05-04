@@ -71,7 +71,14 @@
     "JSON-PP": { "provides": ["json_pp"] },
     "JSON-XS": { "provides": ["json_xs"] },
     "Log-Dispatch": {},
-    "Log-Log4perl": {},
+    "Log-Log4perl": {
+        "missing_prereqs": [{
+            "module": "File::Path",
+            "version": "2.09",
+            "phase": "runtime",
+            "relationship": "requires"
+        }]
+    },
     "LWP-Protocol-https": { "patch": ["lwp-protocol-https-rt104150.patch"] },
     "libwww-perl": { "exclude_requires": [ "LWP::Protocol::https", "HTTP::GHTTP" ] },
     "libxml-perl": {
