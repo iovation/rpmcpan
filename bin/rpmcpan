@@ -59,6 +59,7 @@ sub new {
     $p{failed} = [];
     my ($maj, $min, $pat) = $p{version}->normal =~ /^v?(\d+)[.](\d+)[.](\d+)/;
     $p{plmajv}  = "$maj.$min";
+    $p{plfullv}  = "$maj.$min.$pat";
     if ($p{version} == $^V && $Config{prefix} eq '/usr') {
         # It's the system Perl.
         $p{plv} = '';
@@ -375,7 +376,7 @@ AutoReqProv:    no
 BuildRequires:  perl$self->{plv} >= $self->{plmajv}},
     ( map {; "\nBuildRequires:  $_" } @{ $spec->{build_requires} } ), qq{
 Requires:       perl$self->{plv} >= $self->{plmajv}},
-    ($self->{plv} ? '' : qq{\nRequires:       perl(:MODULE_COMPAT_$self->{version})}),
+    ($self->{plv} ? '' : qq{\nRequires:       perl(:MODULE_COMPAT_$self->{plfullv})}),
     ( map {; "\nRequires:       $_" } @{ $spec->{requires} } ),
     ( map {; "\nProvides:       $_" } @provides ),
     ( map {; "\nConflicts:      perl$self->{plv}-$_" } @conflicts ), qq{
@@ -628,9 +629,25 @@ sub build {
         $spec->{install_from_yum} = \@req;
     }
 
-    # Let's look at its dependencies.
-    my (%mod_seen, %dist_seen, @failed);
+    # Set things up to record dependencies.
     my $corelist = $self->{corelist};
+    my $plv      = $self->{pl} // '';
+    my (%mod_seen, @failed);
+    my %dist_seen = ( "perl$plv" => 1 );
+    my $add_dep  = sub {
+        my ($dep, $dist) = @_;
+        if ($dep->{phase} eq 'runtime') {
+            # It's a runtime dependency; require the module.
+            push @{ $requires } => "perl$self->{plv}($dep->{module})"
+                . ($dep->{version} ? " >= $dep->{version}" : '')
+         } else {
+             # It's a build dependency; require the distribution.
+             push @{ $build_requires } => "perl$self->{plv}-$dist"
+                 unless $dist_seen{ $dist }++;
+         }
+    };
+
+    # Let's look at its dependencies.
     if ( my @deps = ( @{ $spec->{missing_prereqs} || []}, @{ $rel->{dependency} } ) ) {
         say "- Checking dependencies" if $self->{verbose};
         for my $dep (@deps) {
@@ -652,6 +669,7 @@ sub build {
                     !$dep->{version}
                     || version->parse($dep->{version}) <= version->parse($corelist->{ $dep->{module} } || 0)
                 ) {
+                    $add_dep->($dep, "perl$plv");
                     say "  - $dep->{module} in core; skipping" if $self->{verbose} > 1;
                     next;
                 }
@@ -665,6 +683,7 @@ sub build {
 
             my $depdist = $mod->{distribution};
             if ($depdist eq 'perl') {
+                $add_dep->($dep, "perl$plv") if $dep->{module} ne 'perl';
                 say "  - $dep->{module} in core; skipping" if $self->{verbose} > 1;
                 next;
             }
@@ -676,15 +695,7 @@ sub build {
             };
 
             # Record it as a dependency.
-            if ($dep->{phase} eq 'runtime') {
-                # It's a runtime dependency; require the module.
-                push @{ $requires } => "perl$self->{plv}($dep->{module})"
-                    . ($dep->{version} ? " >= $dep->{version}" : '')
-            } else {
-                # It's a build dependency; require the distribution.
-                push @{ $build_requires } => "perl$self->{plv}-$depdist"
-                    unless $dist_seen{ $depdist }++;
-            }
+            $add_dep->($dep, $depdist);
         }
     }
 
