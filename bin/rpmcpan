@@ -671,6 +671,7 @@ sub build {
                 ) {
                     $add_dep->($dep, "perl$plv");
                     say "  - $dep->{module} in core; skipping" if $self->{verbose} > 1;
+                    $mod_seen{ $dep->{module} }++;
                     next;
                 }
             }
