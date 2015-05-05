@@ -41,7 +41,11 @@ Requires:       perl%{plv}
 Requires:       httpd-mmn = %(cat %{sysincludedir}/httpd/.mmn || echo missing)
 Requires:       perl%{plv}(Linux::Pid)
 Requires:       perl%{plv}(IPC::Run3)
+%if "%{plv}" == ""
+Requires:       perl%{plv}(:MODULE_COMPAT_%{plfullv})
+%endif
 Conflicts:      mod_perl
+Conflicts:      mod_perl-devel
 
 %define _use_internal_dependency_generator 0
 %define __find_provides bin/filter-provides perl%{plv}

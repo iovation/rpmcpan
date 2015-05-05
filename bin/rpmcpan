@@ -546,6 +546,7 @@ sub rpmbuild {
             '--define' => '_topdir ' . cwd,
             '--define' => "sitemandir $self->{prefix}/man/site_perl",
             '--define' => "vendormandir $self->{prefix}/man/vendor_perl",
+            '--define' => "plfullv $self->{plfullv}",
             ($self->{plv} ?   ('--define' => "plv $self->{plv}") : ()),
             ($self->{epoch} ? ('--define' => "epoch $self->{epoch}") : ()),
         ] },

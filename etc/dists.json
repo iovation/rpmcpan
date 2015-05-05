@@ -58,6 +58,32 @@
     "Encode-Locale": { "exclude_requires": ["Win32::Console"] },
     "ExtUtils-MakeMaker": { "environment": { "BUILDING_AS_PACKAGE": 1 } },
     "Error": {},
+    "libapreq2": {
+        "missing_prereqs": [{
+            "module": "ExtUtils::XSBuilder",
+            "version": "0.23",
+            "phase": "build",
+            "relationship": "requires"
+        },
+        {
+            "module": "ExtUtils::MakeMaker",
+            "version": "6.15",
+            "phase": "build",
+            "relationship": "requires"
+        },
+        {
+            "module": "Test::More",
+            "version": "0.47",
+            "phase": "test",
+            "relationship": "requires"
+        },
+        {
+            "module": "mod_perl",
+            "version": "1.999022",
+            "phase": "runtime",
+            "relationship": "requires"
+        }]
+    },
     "List-MoreUtils": {},
     "Locale-Codes": {},
     "GSSAPI": {
