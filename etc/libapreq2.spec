@@ -114,7 +114,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/apreq2/
 %{_libdir}/libapreq2.so*
 %if "%{plv}" == ""
-%{_libdir}/httpd/modules/%{sname}.so
 %{_libdir}/httpd/modules/mod_apreq2.so
 %{_includedir}/httpd/apreq2/
 %else
