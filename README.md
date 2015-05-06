@@ -105,10 +105,14 @@ included spec files in preference to generating one of its own. You can use any
 of the following macros in the spec file to customize the build:
 
 * `%version`: The version of the distribution.
-* `%dist`: The Unix epoch time in seconds since 1970.
+* `%etime`: The Unix epoch time in seconds since 1970.
 * `%__perl`: The path to the perl against which the RPM will be built.
 * `%plv`: A simple Perl version prefix, such as "520" for 5.20.x or
-  "518" for 5.18.x.
+  "518" for 5.18.x. Not set when building against the system Perl.
+* `%plfullv`: The full version of Perl, including major, minor, and patch
+   version, e.g., "5.18.3".
+* `%epoch`: The value do to use for the Epoch label. Set to the Perl minor
+  version when building aginst the system Perl, and undefined otherwise.
 * `%_prefix`: Path to the directory into which the distrbiution should be
   installed.
 * `%sitemandir`: Directory into which site builds of modules should install

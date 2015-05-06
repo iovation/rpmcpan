@@ -362,7 +362,7 @@ sub write_spec {
 
     print $fh qq{Name:           perl$self->{plv}-$rel->{distribution}
 Version:        $rel->{version}
-Release:        1.%{dist}
+Release:        1.%{etime}%{dist}
 }, ($self->{epoch} ? "\nEpoch:          $self->{epoch}" : ()), qq{
 Summary:        $descr
 License:        $license
@@ -539,7 +539,7 @@ sub rpmbuild {
     my $def = $spec->{define} || {};
     my @params = (
         '--define' => "version $rel->{version}",
-        '--define' => 'dist ' . scalar time,
+        '--define' => 'etime ' . scalar time,
         @{ $self->{params} ||= [
             '--define' => "__perl $self->{perl}",
             '--define' => "_prefix $self->{prefix}",

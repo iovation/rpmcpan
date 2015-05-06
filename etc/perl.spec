@@ -3,7 +3,7 @@
 
 Name:           perl%{plv}
 Version:        %(echo %{version})
-Release:        3.%{?dist}
+Release:        3.%{etime}%{dist}
 Summary:        Practical Extraction and Reporting Language
 
 Group:          Development/Languages

@@ -9,7 +9,7 @@
 
 Name:           perl%{plv}-%{sname}
 Version:        %(echo %{version})
-Release:        1.%{dist}
+Release:        1.%{etime}%{dist}
 
 Summary:        Methods for dealing with client request data
 License:        GPL+ or Artistic
