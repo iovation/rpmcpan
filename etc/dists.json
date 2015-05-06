@@ -27,23 +27,63 @@
     },
     "Class-Accessor-Chained": {},
     "Class-Date": {},
+    "CPAN-Meta": { "exclude_build_requires": ["CPAN::Meta"] },
+    "CPAN-Meta-Requirements": { "exclude_build_requires": ["CPAN::Meta"] },
+    "CPAN-Meta-YAML": { "exclude_build_requires": ["CPAN::Meta"] },
     "Crypt-DES": {},
     "Crypt-RC4": {},
-    "Crypt-Rijndael": {},
+    "Crypt-Rijndael": {
+        "missing_prereqs": [{
+            "module": "Test::More",
+            "version": "0",
+            "phase": "test",
+            "relationship": "requires"
+        }, {
+            "module": "Test::Manifest",
+            "version": "1.14",
+            "phase": "test",
+            "relationship": "requires"
+        }]
+    },
     "Crypt-SSLeay": {},
     "Data-UUID": {},
     "Data-Structure-Util": {},
     "Data-Validate-URI": {},
     "DBI": {},
     "DBD-Pg": {
-        "build_requires": ["postgresql93-devel", "postgresql93"],
-        "environment": { "POSTGRES_HOME": "/usr/pgsql-9.3" }
+        "build_requires": ["postgresql-devel", "postgresql"]
     },
     "DIME-Tools": { "patch": ["dime-tools-rt11080.patch"] },
     "Email-Valid": {},
     "Encode-Locale": { "exclude_requires": ["Win32::Console"] },
     "ExtUtils-MakeMaker": { "environment": { "BUILDING_AS_PACKAGE": 1 } },
     "Error": {},
+    "libapreq2": {
+        "missing_prereqs": [{
+            "module": "ExtUtils::XSBuilder",
+            "version": "0.23",
+            "phase": "build",
+            "relationship": "requires"
+        },
+        {
+            "module": "ExtUtils::MakeMaker",
+            "version": "6.15",
+            "phase": "build",
+            "relationship": "requires"
+        },
+        {
+            "module": "Test::More",
+            "version": "0.47",
+            "phase": "test",
+            "relationship": "requires"
+        },
+        {
+            "module": "mod_perl",
+            "version": "1.999022",
+            "phase": "runtime",
+            "relationship": "requires"
+        }]
+    },
     "List-MoreUtils": {},
     "Locale-Codes": {},
     "GSSAPI": {
@@ -57,8 +97,15 @@
     "JSON-PP": { "provides": ["json_pp"] },
     "JSON-XS": { "provides": ["json_xs"] },
     "Log-Dispatch": {},
-    "Log-Log4perl": {},
-    "LWP-Protocol-https": {},
+    "Log-Log4perl": {
+        "missing_prereqs": [{
+            "module": "File::Path",
+            "version": "2.09",
+            "phase": "runtime",
+            "relationship": "requires"
+        }]
+    },
+    "LWP-Protocol-https": { "patch": ["lwp-protocol-https-rt104150.patch"] },
     "libwww-perl": { "exclude_requires": [ "LWP::Protocol::https", "HTTP::GHTTP" ] },
     "libxml-perl": {
         "missing_prereqs": [{
@@ -71,13 +118,32 @@
     "MIME-Base64-URLSafe": {},
     "Module-Build": {},
     "mod_perl": {
+        "download_url": "http://pkgs.fedoraproject.org/repo/pkgs/mod_perl/mod_perl-2.0.8-svn1665777.tar.gz/d56d2fc60574c50c427eb9f336a563c9/mod_perl-2.0.8-svn1665777.tar.gz",
+        "archive": "mod_perl-2.0.8-svn1665777.tar.gz",
         "build_requires": [
             "httpd-devel >= 2.2.0",
+            "perl-devel",
             "httpd",
             "gdbm-devel",
             "apr-devel >= 1.2.0",
             "apr-util-devel"
         ],
+        "missing_prereqs": [{
+            "module": "Linux::Pid",
+            "version": "0",
+            "phase": "runtime",
+            "relationship": "recommends"
+        }, {
+            "module": "IPC::Run3",
+            "version": "0",
+            "phase": "runtime",
+            "relationship": "recommends"
+        }, {
+            "module": "Tie::IxHash",
+            "version": "0",
+            "phase": "build",
+            "relationship": "recommends"
+        }],
         "requires": [
             "http-mmn = %(cat %{sysincludedir}/httpd/.mmn || echo missing)"
         ]

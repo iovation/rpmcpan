@@ -1,6 +1,6 @@
---- a/t/response/TestAPI/server_const.pm	2014-08-14 12:03:38.543794463 -0700
-+++ b/t/response/TestAPI/server_const.pm	2014-08-14 12:35:02.042581864 -0700
-@@ -45,6 +45,7 @@
+--- a/t/response/TestAPI/server_const.pm	2014-06-12 02:29:09.000000000 -0700
++++ b/t/response/TestAPI/server_const.pm	2015-05-01 21:54:48.036834975 -0700
+@@ -46,6 +46,7 @@
               'Apache2::ServerUtil::get_server_description() -- component');
  
      # assuming ServerTokens Full (default) the banner equals description

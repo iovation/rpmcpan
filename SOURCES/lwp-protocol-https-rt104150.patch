@@ -1,0 +1,11 @@
+--- a/t/apache.t	2015-05-01 15:41:25.536499542 -0700
++++ b/t/apache.t	2015-05-01 15:42:04.439385954 -0700
+@@ -6,7 +6,7 @@
+ use LWP::UserAgent;
+ 
+ my $ua = LWP::UserAgent->new();
+-plan skip_all => "Not online" unless $ua->is_online;
++plan skip_all => "Not online";# unless $ua->is_online;
+ 
+ plan tests => 5;
+ 
