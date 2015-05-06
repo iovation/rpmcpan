@@ -100,15 +100,16 @@ make install \
     MODPERL_AP_LIBEXECDIR=$RPM_BUILD_ROOT%{syslibdir}/httpd/modules \
     MODPERL_AP_INCLUDEDIR=$RPM_BUILD_ROOT%{sysincludedir}/httpd
 
-# Remove the temporary files.
+# Remove temporary and empty bootstrap files.
 find $RPM_BUILD_ROOT -type f -name perllocal.pod -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name '*.bs' -a -size 0 -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type d -depth -exec rmdir {} 2>/dev/null ';'
 
 # Grab and tweak the .packlist file.
 find $RPM_BUILD_ROOT -type f -name .packlist -exec mv {} . \;
-perl -i -pe "s{^\Q$RPM_BUILD_ROOT}{}g" .packlist
 perl -i -pe 's/[.]([13](?:pm)?)$/.$1*/g' .packlist
+perl -i -pe '$_ = "" if /[.]bs/ && do { my $f = $_; chomp $f; !-e $f }' .packlist
+perl -i -pe "s{^\Q$RPM_BUILD_ROOT}{}g" .packlist
 
 # Fix permissions to avoid strip failures on non-root builds.
 chmod -R u+w $RPM_BUILD_ROOT/*
