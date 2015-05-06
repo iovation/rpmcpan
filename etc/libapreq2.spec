@@ -1,4 +1,8 @@
-%global sname   libapreq2
+%global sname         libapreq2
+%define sysprefix     /usr
+%define syslibdir     %{sysprefix}/%{_lib}
+%define sysincludedir %{sysprefix}/include
+
 %if %{undefined plv}
 %define plv %{nil}
 %endif
@@ -72,6 +76,7 @@ Methods for dealing with client request data
     --disable-dependency-tracking \
     --disable-static \
     --enable-perl-glue \
+    --with-perl=%{__perl} \
     --with-mm-opts="INSTALLDIRS=vendor"
 %{__make} %{?_smp_mflags} OPTIMIZE="%{optflags}"
 
@@ -92,6 +97,8 @@ find $RPM_BUILD_ROOT -type f -name perllocal.pod -exec rm -f {} ';'
 %{_fixperms} $RPM_BUILD_ROOT/*
 
 %check
+# Test just doesn't work for various reasons not worth patching. Maybe fixed
+# in next release?
 #%{__make} test
 
 %post -n perl%{plv}-%{sname} -p /sbin/ldconfig
@@ -103,12 +110,17 @@ rm -rf $RPM_BUILD_ROOT
 %files -f .packlist
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/apreq.conf
-%{_libdir}/libapreq2.so.*
-%{_libdir}/httpd/modules/mod_apreq2.so
 %{_bindir}/apreq2-config
 %{_includedir}/apreq2/
+%{_libdir}/libapreq2.so*
+%if "%{plv}" == ""
+%{_libdir}/httpd/modules/%{sname}.so
+%{_libdir}/httpd/modules/mod_apreq2.so
 %{_includedir}/httpd/apreq2/
-%{_libdir}/libapreq2.so
+%else
+%{syslibdir}/*
+%{sysincludedir}/*
+%endif
 
 %changelog
 * Tue May 05 2015 David Wheeler <dwheeler@pdxdvddb01.iovationnp.com> 2.13-1
