@@ -372,7 +372,7 @@ Source0:        $src},
     (map { "\nPatch$_:         $patches[$_]" } 0..$#patches), qq{
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 AutoReqProv:    no
-}, ($info->{noarch} ? "\nBuildArch:      noarch" : ()), qq{
+}, ($info->{arch} ? () : "\nBuildArch:      noarch"), qq{
 BuildRequires:  perl$self->{plv} >= $self->{plmajv}},
     ( map {; "\nBuildRequires:  $_" } @{ $spec->{build_requires} } ), qq{
 Requires:       perl$self->{plv} >= $self->{plmajv}},
@@ -390,10 +390,10 @@ $descr
 
 %build
 %{__perl} }, ($info->{use_mb} ? (
-    "Build.PL --installdirs=vendor" . ($info->{noarch} ? '' : ' --optimize="$RPM_OPT_FLAGS"')
+    "Build.PL --installdirs=vendor" . ($info->{arch} ? ' --optimize="$RPM_OPT_FLAGS"' : '')
     . "\n./Build"
 ) : (
-    "Makefile.PL INSTALLDIRS=vendor" . ($info->{noarch} ? '' : ' OPTIMIZE="$RPM_OPT_FLAGS"')
+    "Makefile.PL INSTALLDIRS=vendor" . ($info->{arch} ? ' OPTIMIZE="$RPM_OPT_FLAGS"' : '')
     . "\nmake %{?_smp_mflags}"
 )), qq{
 
