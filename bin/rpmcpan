@@ -406,7 +406,7 @@ rm -rf \$RPM_BUILD_ROOT
 )), qq{
 find \$RPM_BUILD_ROOT -type f -name .packlist -exec mv {} . \\;
 perl -i -pe "s{^\\Q\$RPM_BUILD_ROOT}{}g" .packlist
-}, ($self->{plv} ? '' : qq{perl -i -pe 's/[.]([13](?:pm)?)\$/.\$1.gz/g' .packlist\n}), qq{
+perl -i -pe 's/[.]([13](?:pm)?)\$/.\$1*/g' .packlist
 %{_fixperms} \$RPM_BUILD_ROOT/*
 
 %check

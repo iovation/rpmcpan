@@ -88,9 +88,7 @@ install -Dpm 644 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d/apreq.con
 # Grab and tweak the .packlist file.
 find $RPM_BUILD_ROOT -type f -name .packlist -exec mv {} . \;
 perl -i -pe "s{^\Q$RPM_BUILD_ROOT}{}g" .packlist
-%if "%{plv}" == ""
-perl -i -pe 's/[.]([13](?:pm)?)$/.$1.gz/g' .packlist
-%endif
+perl -i -pe 's/[.]([13](?:pm)?)$/.$1*/g' .packlist
 
 find $RPM_BUILD_ROOT -type f -name '*.la' -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name perllocal.pod -exec rm -f {} ';'

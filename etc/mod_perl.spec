@@ -108,9 +108,7 @@ find $RPM_BUILD_ROOT -type d -depth -exec rmdir {} 2>/dev/null ';'
 # Grab and tweak the .packlist file.
 find $RPM_BUILD_ROOT -type f -name .packlist -exec mv {} . \;
 perl -i -pe "s{^\Q$RPM_BUILD_ROOT}{}g" .packlist
-%if "%{plv}" == ""
-perl -i -pe 's/[.]([13](?:pm)?)$/.$1.gz/g' .packlist
-%endif
+perl -i -pe 's/[.]([13](?:pm)?)$/.$1*/g' .packlist
 
 # Fix permissions to avoid strip failures on non-root builds.
 chmod -R u+w $RPM_BUILD_ROOT/*
