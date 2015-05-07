@@ -157,6 +157,7 @@
     "Net-IP": {},
     "Net-Stomp": {},
     "Number-Phone": {},
+    "Perl-Tidy": { "conflicts": ["perltidy"] },
     "PerlIO-utf8_strict": {},
     "Scalar-List-Utils": {},
     "SOAP-Lite": { "exclude_requires": [ "Apache", "SOAP::Transport::MQ" ] },
@@ -173,7 +174,7 @@
        ]
     },
     "Test-Harness": { "provides": ["prove"] },
-    "Test-Simple": { "conflicts": ["Test-Tester"] },
+    "Test-Simple": { "cpan_conflicts": ["Test-Tester"] },
     "Test-XML": { "patch": ["test-xml-sax-parsers.patch"] },
     "Try-Tiny": {},
     "Type-Tiny": { "exclude_requires": ["Type::Tiny::XS" ] },
