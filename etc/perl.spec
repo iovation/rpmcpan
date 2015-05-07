@@ -68,8 +68,8 @@ sh Configure -des \
   -Duseshrplib \
   -Dusemultiplicity \
   -Duseithreads
-# Remove the version from @INC paths.
-%{__perl} -i -pe 's{/\Q%{version}}{}g' config.sh
+# Remove the version from @INC paths. Must be system Perl.
+/usr/bin/perl -i -pe 's{/\Q%{version}}{}g' config.sh
 make %{?_smp_mflags}
 
 %check
