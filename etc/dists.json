@@ -91,6 +91,8 @@
         "build_requires": ["krb5-devel"],
         "patch": ["gssapi-rt73293.patch"]
     },
+    "HTML-Format": {},
+    "HTML-Tree": { "exclude_requires": ["HTML::FormatText"] },
     "HTTP-Lite": {},
     "Inline-C": {},
     "IO-Socket-SSL": {},
