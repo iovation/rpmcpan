@@ -22,8 +22,8 @@ URL:            http://perl.apache.org/
 # Source0:        http://apache.osuosl.org/perl/%{sname}-%{version}.tar.gz
 Source0:        http://pkgs.fedoraproject.org/repo/pkgs/mod_perl/mod_perl-2.0.8-svn1665777.tar.gz/d56d2fc60574c50c427eb9f336a563c9/mod_perl-2.0.8-svn1665777.tar.gz
 Source1:        perl.conf
-%if "%{apxs}" == "/usr/sbin/apxs"
 Patch0:         mod_perl-undef_args.patch
+%if "%{apxs}" == "/usr/sbin/apxs"
 Patch1:         mod_perl-centos.patch
 %endif
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
