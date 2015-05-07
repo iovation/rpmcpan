@@ -59,6 +59,7 @@
     "Encode-Locale": { "exclude_requires": ["Win32::Console"] },
     "ExtUtils-MakeMaker": { "environment": { "BUILDING_AS_PACKAGE": 1 } },
     "Error": {},
+    "File-Find-Rule-Perl": { "patch": ["file-find-rule-perl-rt104302.patch"] },
     "libapreq2": {
         "missing_prereqs": [{
             "module": "ExtUtils::XSBuilder",
