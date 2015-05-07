@@ -152,6 +152,7 @@
         ]
     },
     "Moo": {},
+    "Moose": {},
     "Net-Jabber": { "patch": ["net-jabber-rt87436.patch"] },
     "Net-IP": {},
     "Net-Stomp": {},
@@ -161,6 +162,16 @@
     "SOAP-Lite": { "exclude_requires": [ "Apache", "SOAP::Transport::MQ" ] },
     "SOAP-Transport-JABBER": { "exclude_requires": [ "SOAP::Lite" ] },
     "Test-Class": {},
+    "Test-CleanNamespaces": {
+       "exclude_build_requires": [
+          "Class::MOP::Class",
+          "metaclass",
+          "Moose",
+          "Moose::Exporter",
+          "Moose::Role",
+          "MooseX::Role::Parameterized"
+       ]
+    },
     "Test-Harness": { "provides": ["prove"] },
     "Test-Simple": { "conflicts": ["Test-Tester"] },
     "Test-XML": { "patch": ["test-xml-sax-parsers.patch"] },

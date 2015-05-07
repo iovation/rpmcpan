@@ -90,6 +90,7 @@ The JSON object after the distribution name supports a number of keys:
       "configure", "build", "test", "runtime", or "develop".
     * `relationship`: The dependency relationship for the module. Must be one
        of "requires", "recommends", "suggests", or "conflicts".
+
 `rpmcpan` will use this information to download the required distributions,
 determine their dependencies, create RPM spec files in the `SPECS` directory,
 and build RPMs for all the distributions and their CPAN dependencies. Most of
