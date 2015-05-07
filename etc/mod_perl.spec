@@ -65,8 +65,8 @@ like for it to directly incorporate a Perl interpreter.
 
 %prep
 %setup -q -n %{sname}-%{version}-svn1665777
-%if "%{apxs}" == "/usr/sbin/apxs"
 %patch0 -p1
+%if "%{apxs}" == "/usr/sbin/apxs"
 %patch1 -p1
 %endif
 
