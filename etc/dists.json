@@ -176,6 +176,8 @@
     "Test-Simple": { "conflicts": ["Test-Tester"] },
     "Test-XML": { "patch": ["test-xml-sax-parsers.patch"] },
     "Try-Tiny": {},
+    "Type-Tiny": { "exclude_requires": ["Type::Tiny::XS" ] },
+    "Type-Tiny-XS": {},
     "URI": { "exclude_requires": [ "Business::ISBN" ] },
     "UUID": { "build_requires": ["libuuid-devel"] },
     "XML-Simple": {},
