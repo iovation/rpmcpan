@@ -26,6 +26,7 @@
         }]
     },
     "Class-Accessor-Chained": {},
+    "Class-XSAccessor": {},
     "Class-Date": {},
     "CPAN-Meta": { "exclude_build_requires": ["CPAN::Meta"] },
     "CPAN-Meta-Requirements": { "exclude_build_requires": ["CPAN::Meta"] },
@@ -148,10 +149,12 @@
             "http-mmn = %(cat %{sysincludedir}/httpd/.mmn || echo missing)"
         ]
     },
+    "Moo": {},
     "Net-Jabber": { "patch": ["net-jabber-rt87436.patch"] },
     "Net-IP": {},
     "Net-Stomp": {},
     "Number-Phone": {},
+    "PerlIO-utf8_strict": {},
     "Scalar-List-Utils": {},
     "SOAP-Lite": { "exclude_requires": [ "Apache", "SOAP::Transport::MQ" ] },
     "SOAP-Transport-JABBER": { "exclude_requires": [ "SOAP::Lite" ] },
