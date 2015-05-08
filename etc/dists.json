@@ -182,7 +182,7 @@
     "Number-Phone": {},
     "Perl-Tidy": { "conflicts": ["perltidy"] },
     "PerlIO-utf8_strict": {},
-    "Plack": {},
+    "Plack": { "build_requires": ["perl-CGI"] },
     "Regexp-Common": {},
     "Redis": {},
     "Scalar-List-Utils": {},
