@@ -51,6 +51,7 @@
     "Data-Structure-Util": {},
     "Data-Validate-URI": {},
     "DateTime": {},
+    "DateTime-Format-Strptime": {},
     "DBI": {},
     "DBD-Pg": {
         "build_requires": ["postgresql-devel", "postgresql"]
