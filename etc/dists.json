@@ -26,6 +26,7 @@
             "relationship": "requires"
         }]
     },
+    "CGI-Compile": { "patch": ["cgi-compile-signal.patch"] },
     "Class-Accessor-Chained": {},
     "Class-XSAccessor": {},
     "Class-Date": {},
