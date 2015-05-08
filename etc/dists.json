@@ -170,7 +170,10 @@
     "Moose": {},
     "Net-Jabber": { "patch": ["net-jabber-rt87436.patch"] },
     "Net-IP": {},
-    "Net-SSH2": {},
+    "Net-SSH2": {
+        "requires": ["libssh2", "zlib", "openssl"],
+        "build_requires": ["libssh2-devel", "zlib-devel", "openssl-devel"]
+    },
     "Net-Stomp": {},
     "Number-Phone": {},
     "Perl-Tidy": { "conflicts": ["perltidy"] },
