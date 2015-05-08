@@ -3,7 +3,7 @@
 
 Name:           perl%{plv}
 Version:        %(echo %{version})
-Release:        3.%{etime}%{dist}
+Release:        4.%{etime}%{dist}
 Summary:        Practical Extraction and Reporting Language
 
 Group:          Development/Languages
@@ -27,7 +27,7 @@ Requires(postun): %{syssbindir}/update-alternatives
 
 # List of dual-life bin files. Update %ghost entries in %files if you update
 # this list.
-%define dualbin config_data corelist cpan json_pp pod2usage podchecker podselect prove shasum
+%define dualbin config_data corelist cpan json_pp pod2usage podchecker podselect prove shasum xsubpp enc2xs piconv
 
 # Filter requires on RPM 4.8.
 # http://www.redhat.com/archives/rpm-list/2005-August/msg00034.html
@@ -116,9 +116,16 @@ rm -rf $RPM_BUILD_ROOT
 %ghost %{_bindir}/podselect
 %ghost %{_bindir}/prove
 %ghost %{_bindir}/shasum
+%ghost %{_bindir}/xsubpp
+%ghost %{_bindir}/enc2xs
+%ghost %{_bindir}/piconv
 %{_prefix}/*
 
 %changelog
+* Fri May 8 2015 David E. Wheeler <david.wheeler@iovation.com> - %{version}-4
+- Ghost dual-life scripts xsubpp, enc2xs, and piconv, provided by
+  ExtUtils-ParseXS and Encode.
+
 * Fri May 1 2015 David E. Wheeler <david.wheeler@iovation.com> - %{version}-3
 - Remove version from @INC paths so that any minor version uses the same
   modules.
