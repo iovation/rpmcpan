@@ -167,6 +167,7 @@
             "http-mmn = %(cat %{sysincludedir}/httpd/.mmn || echo missing)"
         ]
     },
+    "Mojolicious": {},
     "Moo": {},
     "Moose": {},
     "Net-Jabber": { "patch": ["net-jabber-rt87436.patch"] },
@@ -184,6 +185,7 @@
     "Regexp-Common": {},
     "Redis": {},
     "Scalar-List-Utils": {},
+    "Search-Elasticsearch": {},
     "SOAP-Lite": { "exclude_requires": [ "Apache", "SOAP::Transport::MQ" ] },
     "SOAP-Transport-JABBER": { "exclude_requires": [ "SOAP::Lite" ] },
     "TAP-Parser-SourceHandler-pgTAP": {},
