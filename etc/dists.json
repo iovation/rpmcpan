@@ -50,6 +50,7 @@
     "Data-UUID": {},
     "Data-Structure-Util": {},
     "Data-Validate-URI": {},
+    "DateTime": {},
     "DBI": {},
     "DBD-Pg": {
         "build_requires": ["postgresql-devel", "postgresql"]
