@@ -30,7 +30,9 @@
     "Class-Accessor-Chained": {},
     "Class-XSAccessor": {},
     "Class-Date": {},
+    "Clone": {},
     "Config-IniFiles": {},
+    "Config-GitLike": {},
     "CPAN-Meta": { "exclude_build_requires": ["CPAN::Meta"] },
     "CPAN-Meta-Requirements": { "exclude_build_requires": ["CPAN::Meta"] },
     "CPAN-Meta-YAML": { "exclude_build_requires": ["CPAN::Meta"] },
@@ -128,17 +130,20 @@
         "build_requires": ["krb5-devel"],
         "patch": ["gssapi-rt73293.patch"]
     },
+    "Hash-Merge": {},
     "Hijk": {},
     "HTML-Format": {},
     "HTML-Tree": { "exclude_requires": ["HTML::FormatText"] },
     "HTTP-Lite": {},
     "Inline-C": {},
+    "IO-Pager": {},
     "IO-Socket-INET6": {},
     "IO-Socket-SSL": {},
     "IO-String": {},
     "JSON": {},
     "JSON-PP": { "provides": ["json_pp"] },
     "JSON-XS": { "provides": ["json_xs"] },
+    "libintl-perl": {},
     "Log-Dispatch": {},
     "Log-Dispatch-FileRotate": {},
     "Log-Log4perl": {
@@ -196,6 +201,8 @@
     "Mojolicious": {},
     "Moo": {},
     "Moose": {},
+    "MySQL-Config": {},
+    "namespace-autoclean": {},
     "Net-Jabber": { "patch": ["net-jabber-rt87436.patch"] },
     "Net-IP": {},
     "Net-Ping": {},
@@ -214,7 +221,11 @@
     "Search-Elasticsearch": {},
     "SOAP-Lite": { "exclude_requires": [ "Apache", "SOAP::Transport::MQ" ] },
     "SOAP-Transport-JABBER": { "exclude_requires": [ "SOAP::Lite" ] },
+    "String-Formatter": {},
+    "String-ShellQuote": {},
     "TAP-Parser-SourceHandler-pgTAP": {},
+    "Template-Toolkit": {},
+    "Template-Tiny": {},
     "Test-Class": {},
     "Test-CleanNamespaces": {
        "exclude_build_requires": [
@@ -226,6 +237,31 @@
           "MooseX::Role::Parameterized"
        ]
     },
+    "Test-Dir": {},
+    "Test-File": {
+        "missing_prereqs": [{
+            "module": "Test::More",
+            "version": "0.95",
+            "phase": "test",
+            "relationship": "requires"
+        }, {
+            "module": "Test::Builder",
+            "version": "1.001006",
+            "phase": "runtime",
+            "relationship": "requires"
+        }, {
+            "module": "Test::Builder::Tester",
+            "version": "1.04",
+            "phase": "test",
+            "relationship": "requires"
+        }, {
+            "module": "Test::utf8",
+            "version": "0",
+            "phase": "test",
+            "relationship": "requires"
+        }]
+    },
+    "Test-File-Contents": {},
     "Test-Harness": { "provides": ["prove"] },
     "Test-MockModule": {},
     "Test-Simple": { "cpan_conflicts": ["Test-Tester"] },
@@ -234,10 +270,12 @@
     "Text-CSV_XS": {},
     "Test-CPAN-Meta": {},
     "Test-CPAN-Meta-JSON": { "exclude_build_requires": ["Test::CPAN::Meta"] },
+    "Throwable": {},
     "Try-Tiny": {},
     "Type-Tiny": { "exclude_requires": ["Type::Tiny::XS" ] },
     "Type-Tiny-XS": {},
     "URI": { "exclude_requires": [ "Business::ISBN" ] },
+    "URI-db": {},
     "UUID": { "build_requires": ["libuuid-devel"] },
     "XML-Simple": {},
     "XML-DOM": {},
