@@ -102,6 +102,7 @@
         "build_requires": ["krb5-devel"],
         "patch": ["gssapi-rt73293.patch"]
     },
+    "Hijk": {},
     "HTML-Format": {},
     "HTML-Tree": { "exclude_requires": ["HTML::FormatText"] },
     "HTTP-Lite": {},
@@ -170,6 +171,7 @@
     "Moose": {},
     "Net-Jabber": { "patch": ["net-jabber-rt87436.patch"] },
     "Net-IP": {},
+    "Net-Ping": {},
     "Net-SSH2": {
         "requires": ["libssh2", "zlib", "openssl"],
         "build_requires": ["libssh2-devel", "zlib-devel", "openssl-devel"]
@@ -178,6 +180,7 @@
     "Number-Phone": {},
     "Perl-Tidy": { "conflicts": ["perltidy"] },
     "PerlIO-utf8_strict": {},
+    "Plack": {},
     "Regexp-Common": {},
     "Redis": {},
     "Scalar-List-Utils": {},
