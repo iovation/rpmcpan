@@ -55,6 +55,8 @@ so:
 
 The JSON object after the distribution name supports a number of keys:
 
+* `rpm_name`: The name to use for the RPM, after the prefixed "perl-".
+  Defaults to the distribution name.
 * `provides`: A list of additional features provided by the RPM, in case the
   list fetched from MetaCPAN is incomplete. Mostly used to name programs,
   since MetaCPAN is aware only of modules.

@@ -262,7 +262,8 @@ sub download {
 
 sub is_built {
     my ($self, $mod) = @_;
-    my $rpm = join '-', "perl$self->{plv}", @{ $mod }{qw(distribution version)};
+    my $name = $mod->{rpm_name} || $mod->{distribution};
+    my $rpm = join '-', "perl$self->{plv}", $name, $mod->{version};
     say "  - Looking for $rpm" if $self->{verbose} > 1;
     my $match = 0;
     find sub { $match += /^\Q$rpm\E-\d/ }, $self->{repo};
@@ -355,13 +356,14 @@ sub write_spec {
     my @conflicts = @{ $spec->{conflicts} || [] },
         map {; "perl$self->{plv}-$_" } @{ $spec->{cpan_conflicts} || [] };
     my $descr = $rel->{abstract} || $rel->{metadata}{abstract} || 'unknown';
+    my $name = $spec->{rpm_name} || $rel->{distribution};
 
     say "- Generating $specfile" if $self->{verbose};
     open my $fh, '>:encoding(UTF-8)', $specfile or return $self->vent(
         "Cannot open $specfile: $!"
     );
 
-    print $fh qq{Name:           perl$self->{plv}-$rel->{distribution}
+    print $fh qq{Name:           perl$self->{plv}-$name
 Version:        $rel->{version}
 Release:        1.%{etime}%{dist}
 }, ($self->{epoch} ? "\nEpoch:          $self->{epoch}" : ()), qq{
@@ -612,7 +614,7 @@ sub build {
     say "- Version: $rel->{version}" if $self->{verbose};
 
     # Integrate overrides.
-    for my $key (qw(download_url archive)) {
+    for my $key (qw(download_url archive rpm_name)) {
         if (my $val = $spec->{$key}) {
             $rel->{$key} = $val;
         }

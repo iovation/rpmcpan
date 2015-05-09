@@ -143,7 +143,7 @@
     "JSON": {},
     "JSON-PP": { "provides": ["json_pp"] },
     "JSON-XS": { "provides": ["json_xs"] },
-    "libintl-perl": {},
+    "libintl-perl": { "rpm_name": "libintl" },
     "Log-Dispatch": {},
     "Log-Dispatch-FileRotate": {},
     "Log-Log4perl": {
@@ -221,6 +221,7 @@
     "Search-Elasticsearch": {},
     "SOAP-Lite": { "exclude_requires": [ "Apache", "SOAP::Transport::MQ" ] },
     "SOAP-Transport-JABBER": { "exclude_requires": [ "SOAP::Lite" ] },
+    "App-Sqitch": { "rpm_name": "sqitch" },
     "String-Formatter": {},
     "String-ShellQuote": {},
     "TAP-Parser-SourceHandler-pgTAP": {},
