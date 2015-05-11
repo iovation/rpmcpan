@@ -257,7 +257,7 @@ Requires:       perl%{plv}(DBI)
 Requires:       perl%{plv}(DBD::Firebird) >= 1.11
 Requires:       perl%{plv}(Time::HiRes)
 Requires:       perl%{plv}(Time::Local)
-BuildRequires:  firebird-classic >= 2.5.0
+BuildRequires:  firebird >= 2.5.0
 Provides:       sqitch-firebird
 
 %description firebird
