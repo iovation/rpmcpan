@@ -229,7 +229,7 @@
           "sqlite",
           "oracle-instantclient11.2-sqlplus",
           "mysql",
-          "firebird"
+          "firebird",
           "vertica-client"
        ]
     },
