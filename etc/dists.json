@@ -221,7 +221,18 @@
     "Search-Elasticsearch": {},
     "SOAP-Lite": { "exclude_requires": [ "Apache", "SOAP::Transport::MQ" ] },
     "SOAP-Transport-JABBER": { "exclude_requires": [ "SOAP::Lite" ] },
-    "App-Sqitch": { "rpm_name": "sqitch", "no_system_prefix": true },
+    "App-Sqitch": {
+       "rpm_name": "sqitch",
+       "no_system_prefix": true,
+       "build_requires": [
+          "postgresql",
+          "sqlite",
+          "oracle-instantclient11.2-sqlplus",
+          "mysql",
+          "firebird"
+          "vertica-client"
+       ]
+    },
     "String-Formatter": {},
     "String-ShellQuote": {},
     "TAP-Parser-SourceHandler-pgTAP": {},
