@@ -1,4 +1,10 @@
+%if %{undefined plv}
+%global plv %{nil}
+Name:           sqitch
+%else
 Name:           perl%{plv}-sqitch
+%endif
+
 Version:        %(echo %{version})
 Release:        1.%{etime}%{dist}
 Summary:        Sane database change management
@@ -180,6 +186,7 @@ Requires:       sqitch >= %{version}
 Requires:       postgresql >= 8.4.0
 Requires:       perl%{plv}(DBI)
 Requires:       perl%{plv}(DBD::Pg) >= 2.0.0
+Provides:       sqitch-pg
 
 %description pg
 Sqitch provides a simple yet robust interface for database change
@@ -196,6 +203,7 @@ Requires:       sqitch >= %{version}
 Requires:       sqlite
 Requires:       perl%{plv}(DBI)
 Requires:       perl%{plv}(DBD::SQLite) >= 1.37
+Provides:       sqitch-sqlite
 
 %description sqlite
 Sqitch provides a simple yet robust interface for database change
@@ -212,6 +220,7 @@ Requires:       sqitch >= %{version}
 Requires:       oracle-instantclient11.2-sqlplus
 Requires:       perl%{plv}(DBI)
 Requires:       perl%{plv}(DBD::Oracle) >= 1.23
+Provides:       sqitch-oracle
 
 %description oracle
 Sqitch provides a simple yet robust interface for database change
@@ -229,6 +238,7 @@ Requires:       mysql >= 5.1.0
 Requires:       perl%{plv}(DBI)
 Requires:       perl%{plv}(DBD::mysql) >= 4.018
 Requires:       perl%{plv}(MySQL::Config)
+Provides:       sqitch-mysql
 
 %description mysql
 Sqitch provides a simple yet robust interface for database change
@@ -248,6 +258,7 @@ Requires:       perl%{plv}(DBD::Firebird) >= 1.11
 Requires:       perl%{plv}(Time::HiRes)
 Requires:       perl%{plv}(Time::Local)
 BuildRequires:  firebird-classic >= 2.5.0
+Provides:       sqitch-firebird
 
 %description firebird
 Sqitch provides a simple yet robust interface for database change
@@ -264,6 +275,7 @@ Requires:       sqitch >= %{version}
 Requires:       vertica-client >= 7.0.0
 Requires:       perl%{plv}(DBI)
 Requires:       perl%{plv}(DBD::ODBC) >= 1.43
+Provides:       sqitch-vertica
 
 %description vertica
 Sqitch provides a simple yet robust interface for database change management.

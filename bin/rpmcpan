@@ -263,7 +263,8 @@ sub download {
 sub is_built {
     my ($self, $mod) = @_;
     my $name = $mod->{rpm_name} || $mod->{distribution};
-    my $rpm = join '-', "perl$self->{plv}", $name, $mod->{version};
+    my $prefix = !$self->{plv} && $mod->{no_system_prefix} ? '' : "perl$self->{plv}-";
+    my $rpm = "$prefix$name-$mod->{version}";
     say "  - Looking for $rpm" if $self->{verbose} > 1;
     my $match = 0;
     find sub { $match += /^\Q$rpm\E-\d/ }, $self->{repo};
@@ -357,13 +358,14 @@ sub write_spec {
         map {; "perl$self->{plv}-$_" } @{ $spec->{cpan_conflicts} || [] };
     my $descr = $rel->{abstract} || $rel->{metadata}{abstract} || 'unknown';
     my $name = $spec->{rpm_name} || $rel->{distribution};
+    $name = "perl$self->{plv}-$name" if $self->{plv} || !$spec->{no_system_prefix};
 
     say "- Generating $specfile" if $self->{verbose};
     open my $fh, '>:encoding(UTF-8)', $specfile or return $self->vent(
         "Cannot open $specfile: $!"
     );
 
-    print $fh qq{Name:           perl$self->{plv}-$name
+    print $fh qq{Name:           $name
 Version:        $rel->{version}
 Release:        1.%{etime}%{dist}
 }, ($self->{epoch} ? "\nEpoch:          $self->{epoch}" : ()), qq{
@@ -614,7 +616,7 @@ sub build {
     say "- Version: $rel->{version}" if $self->{verbose};
 
     # Integrate overrides.
-    for my $key (qw(download_url archive rpm_name)) {
+    for my $key (qw(download_url archive rpm_name no_system_prefix)) {
         if (my $val = $spec->{$key}) {
             $rel->{$key} = $val;
         }

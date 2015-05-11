@@ -221,7 +221,7 @@
     "Search-Elasticsearch": {},
     "SOAP-Lite": { "exclude_requires": [ "Apache", "SOAP::Transport::MQ" ] },
     "SOAP-Transport-JABBER": { "exclude_requires": [ "SOAP::Lite" ] },
-    "App-Sqitch": { "rpm_name": "sqitch" },
+    "App-Sqitch": { "rpm_name": "sqitch", "no_system_prefix": true },
     "String-Formatter": {},
     "String-ShellQuote": {},
     "TAP-Parser-SourceHandler-pgTAP": {},
