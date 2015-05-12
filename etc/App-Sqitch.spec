@@ -272,7 +272,8 @@ package bundles the Sqitch Firebird support.
 Summary:        Sane database change management for Vertica
 Group:          Development/Libraries
 Requires:       sqitch >= %{version}
-Requires:       vertica-client >= 7.0.0
+Requires:       libverticaodbc.so
+Requires:       /opt/vertica/bin/vsql
 Requires:       perl%{plv}(DBI)
 Requires:       perl%{plv}(DBD::ODBC) >= 1.43
 Provides:       sqitch-vertica

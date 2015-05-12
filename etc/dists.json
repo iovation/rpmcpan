@@ -230,7 +230,7 @@
           "oracle-instantclient11.2-sqlplus",
           "mysql",
           "firebird",
-          "vertica-client"
+          "vertica"
        ]
     },
     "String-Formatter": {},
