@@ -229,8 +229,7 @@
           "sqlite",
           "oracle-instantclient11.2-sqlplus",
           "mysql",
-          "firebird",
-          "vertica"
+          "firebird"
        ]
     },
     "String-Formatter": {},
