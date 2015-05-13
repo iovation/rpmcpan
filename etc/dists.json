@@ -168,8 +168,8 @@
     "MIME-Base64-URLSafe": {},
     "Module-Build": {},
     "mod_perl": {
-        "download_url": "http://pkgs.fedoraproject.org/repo/pkgs/mod_perl/mod_perl-2.0.8-svn1665777.tar.gz/d56d2fc60574c50c427eb9f336a563c9/mod_perl-2.0.8-svn1665777.tar.gz",
-        "archive": "mod_perl-2.0.8-svn1665777.tar.gz",
+        "download_url": "http://people.apache.org/~stevehay/mod_perl-2.0.9-rc1.tar.gz",
+        "archive": "mod_perl-2.0.9-rc1.tar.gz",
         "build_requires": [
             "httpd-devel >= 2.2.0",
             "perl-devel",

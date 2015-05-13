@@ -11,8 +11,8 @@
 %endif
 
 Name:           perl%{plv}-%{sname}
-Version:        %(echo %{version})
-Release:        2.svn1665777.%{etime}%{dist}
+Version:        2.0.9
+Release:        0.%{etime}%{dist}
 Summary:        An embedded Perl interpreter for the Apache HTTP Server
 
 Group:          System Environment/Daemons
@@ -20,9 +20,8 @@ License:        ASL 2.0
 URL:            http://perl.apache.org/
 # Source0:        http://perl.apache.org/dist/%{sname}-%{version}.tar.gz
 # Source0:        http://apache.osuosl.org/perl/%{sname}-%{version}.tar.gz
-Source0:        http://pkgs.fedoraproject.org/repo/pkgs/mod_perl/mod_perl-2.0.8-svn1665777.tar.gz/d56d2fc60574c50c427eb9f336a563c9/mod_perl-2.0.8-svn1665777.tar.gz
+Source0:        http://people.apache.org/~stevehay/mod_perl-2.0.9-rc1.tar.gz
 Source1:        perl.conf
-Patch0:         mod_perl-undef_args.patch
 %if "%{apxs}" == "/usr/sbin/apxs"
 Patch1:         mod_perl-centos.patch
 %endif
@@ -64,8 +63,7 @@ like for it to directly incorporate a Perl interpreter.
 
 
 %prep
-%setup -q -n %{sname}-%{version}-svn1665777
-%patch0 -p1
+%setup -q -n %{sname}-2.0.9-rc1
 %if "%{apxs}" == "/usr/sbin/apxs"
 %patch1 -p1
 %endif
