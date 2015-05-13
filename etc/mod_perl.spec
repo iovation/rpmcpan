@@ -133,6 +133,9 @@ rm -rf $RPM_BUILD_ROOT
 %{sysincludedir}/httpd/*
 
 %changelog
+* Wed May 13 2015 David E. Wheeler <david.wheeler@iovation.com> - 2.0.9-0
+- Updated to the 2.0.9 release candidate.
+
 * Fri May 1 2015 David E. Wheeler <david.wheeler@iovation.com> - %{version}-2
 - Updated to build from Subversion-derived tarball provided by the Fedora project.
 - Require Linux::Pid and IPC::Run3
