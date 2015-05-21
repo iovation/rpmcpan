@@ -12,8 +12,8 @@ from the same Git branch, then only updated CPAN modules or modules for which
 no RPM exists in the `repo` directory will be built. This is to keep the
 number of things that get built on each run to a minimum.
 
-The RPMs built by `rpmcpan` will have names like `perl520` and
-`perl520-Try-Tiny` and will all be installed in `/usr/local/perl520`. You can
+The RPMs built by `rpmcpan` will have names like `perl521` and
+`perl521-Try-Tiny` and will all be installed in `/usr/local/perl521`. You can
 modify the version of Perl to build with the `--version` option, and the
 prefix with the `--prefix` options, e.g.:
 
