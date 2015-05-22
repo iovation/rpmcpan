@@ -59,7 +59,7 @@ The JSON object after the distribution name supports a number of keys:
   Defaults to the distribution name.
 
 * `no_system_prefix`: Set to true to suppress the `perl-` prefix in the name
-  of the RPM when building against the systerm Perl. Builds against other
+  of the RPM when building against the system Perl. Builds against other
   versions will still get the `perl5xx-` prefix.
 * `provides`: A list of additional features provided by the RPM, in case the
   list fetched from MetaCPAN is incomplete. Mostly used to name programs,
@@ -67,7 +67,7 @@ The JSON object after the distribution name supports a number of keys:
 * `requires`: A list of non-CPAN-derived RPMs required for the resulting RPM
   to be used. Normally needed only for third-party RPMS, such as `libxml2` or
   `httpd`.
-* `conflicts`: A list of non-CPAN-derived RPMs with which thge resulting RPM
+* `conflicts`: A list of non-CPAN-derived RPMs with which the resulting RPM
   conflicts.
 * `exclude_requires`: A list of CPAN modules to exclude from the list of
   runtime prereqs returned by the MetaCPAN API. Useful for excluding
@@ -80,15 +80,15 @@ The JSON object after the distribution name supports a number of keys:
   incompatible or circular dependencies.
 * `cpan_conflicts`: An array of CPAN distributions with which the resulting
    RPM for the distribution will conflict.
-* `envrionment`: An object defining environment variables required to build
+* `environment`: An object defining environment variables required to build
    the RPM. Keys should be environment variable names, and values their
    values.
-* `patch`: A list of patches to be applied to the source before buildling.
+* `patch`: A list of patches to be applied to the source before building.
   Each will be applied with `patch -p1`, so make sure your prefixes are
   correct.
 * `download_url`: The URL from which to download the source code. Probably need
   to also set `archive` if you set this key.
-* `archive`: The name of the downloadaed archive. Probably needs to be
+* `archive`: The name of the downloaded archive. Probably needs to be
   set to the base name of the `download_url` if `download_url` is set.
 * `missing_prereqs`: A list of JSON objects describing required modules
    missing from the metadata downloaded from MetaCPAN. Requires these keys:
@@ -109,7 +109,7 @@ Customizing Builds
 
 In some cases, the installation will be more complicated than the generated
 RPM spec file can handle. In those cases, you can create a custom spec file
-named for the distribiution in the `etc` directory. `rpmcpan` will use such
+named for the distribution in the `etc` directory. `rpmcpan` will use such
 included spec files in preference to generating one of its own. You can use any
 of the following macros in the spec file to customize the build:
 
@@ -121,8 +121,8 @@ of the following macros in the spec file to customize the build:
 * `%plfullv`: The full version of Perl, including major, minor, and patch
    version, e.g., "5.18.3".
 * `%epoch`: The value do to use for the Epoch label. Set to the Perl minor
-  version when building aginst the system Perl, and undefined otherwise.
-* `%_prefix`: Path to the directory into which the distrbiution should be
+  version when building against the system Perl, and undefined otherwise.
+* `%_prefix`: Path to the directory into which the distribution should be
   installed.
 * `%sitemandir`: Directory into which site builds of modules should install
   their man pages.
@@ -140,12 +140,12 @@ Dependencies on other CPAN modules should use a `perl%{plv}` prefix, like so:
 
     Requires:       perl%{plv}(App::Info)
 
-CPAN Build depenencies should require RPMs rather than provided modules,
+CPAN Build dependencies should require RPMs rather than provided modules,
 again with the `perl%{plv}` prefix:
 
     BuildRequires   perl%{plv}-DBD-Pg
 
-Auto-generation of required and provided details should be fitered through the
+Auto-generation of required and provided details should be filtered through the
 included `bin/filter-requires` and `bin/filter-provides` scripts, to ensure
 that all are properly prefixed, like so:
 
@@ -156,7 +156,7 @@ that all are properly prefixed, like so:
 Note that `__find_requires` can take an additional argument, a regular
 expression to be passed to `grep` to filter out any bogusly-detected prerequisites.
 
-The build should gnerally use the vendor installation directories. A
+The build should generally use the vendor installation directories. A
 `Makefile.PL`-based build does it like this:
 
     %{__perl} Makefile.PL INSTALLDIRS=vendor OPTIMIZE="$RPM_OPT_FLAGS"
