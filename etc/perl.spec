@@ -24,6 +24,9 @@ BuildRequires:  gdbm-devel
 
 Requires(post): %{syssbindir}/update-alternatives
 Requires(postun): %{syssbindir}/update-alternatives
+Provides: iov-%{sname}
+Provides: %{sname}%{plv}(:WITH_ITHREADS)
+Provides: %{sname}%{plv}(:WITH_PERLIO)
 
 # List of dual-life bin files. Update %ghost entries in %files if you update
 # this list.
@@ -44,10 +47,6 @@ it is used to do a lot of different things, Perl's most common applications
 are system administration utilities and web programming. A large proportion of
 the CGI scripts on the web are written in Perl. You need the perl package
 installed on your system so that your system can handle Perl scripts.
-
-Provides: iov-%{sname}
-Provides: %{sname}%{plv}(:WITH_ITHREADS)
-Provides: %{sname}%{plv}(:WITH_PERLIO)
 
 %prep
 %setup -q -n %{sname}-%{version}
