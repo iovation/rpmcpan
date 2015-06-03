@@ -407,7 +407,7 @@ rm -rf \$RPM_BUILD_ROOT
 }, ($info->{use_mb} ? (
     "./Build install --destdir=\$RPM_BUILD_ROOT create_packlist=1"
 ) : (
-    "make pure_install PERL_INSTALL_ROOT=\$RPM_BUILD_ROOT\n",
+    "make pure_install DESTDIR=\$RPM_BUILD_ROOT\n",
 )), qq{
 find \$RPM_BUILD_ROOT -type f -name .packlist -exec mv {} . \\;
 perl -i -pe "s{^\\Q\$RPM_BUILD_ROOT}{}g" .packlist

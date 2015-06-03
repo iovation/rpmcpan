@@ -94,7 +94,7 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 install -d -m 755 $RPM_BUILD_ROOT%{syslibdir}/httpd/modules
 make install \
-    PERL_INSTALL_ROOT=$RPM_BUILD_ROOT \
+    DESTDIR=$RPM_BUILD_ROOT \
     MODPERL_AP_LIBEXECDIR=$RPM_BUILD_ROOT%{syslibdir}/httpd/modules \
     MODPERL_AP_INCLUDEDIR=$RPM_BUILD_ROOT%{sysincludedir}/httpd
 
