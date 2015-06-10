@@ -20,7 +20,7 @@ License:        ASL 2.0
 URL:            http://perl.apache.org/
 # Source0:        http://perl.apache.org/dist/%{sname}-%{version}.tar.gz
 # Source0:        http://apache.osuosl.org/perl/%{sname}-%{version}.tar.gz
-Source0:        http://people.apache.org/~stevehay/mod_perl-2.0.9-rc2.tar.gz
+Source0:        http://people.apache.org/~stevehay/mod_perl-2.0.9-rc3.tar.gz
 Source1:        perl.conf
 %if "%{apxs}" == "/usr/sbin/apxs"
 Patch1:         mod_perl-centos.patch
@@ -63,7 +63,7 @@ like for it to directly incorporate a Perl interpreter.
 
 
 %prep
-%setup -q -n %{sname}-2.0.9-rc2
+%setup -q -n %{sname}-2.0.9-rc3
 %if "%{apxs}" == "/usr/sbin/apxs"
 %patch1 -p1
 %endif
