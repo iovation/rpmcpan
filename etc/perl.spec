@@ -33,7 +33,7 @@ Provides: %{sname}%{plv}(:WITH_PERLIO)
 %if 0%{?plv} >= 522
 %define dualbin corelist cpan json_pp pod2usage podchecker podselect prove shasum xsubpp enc2xs piconv encguess
 %else
-%define dualbin config_data corelist cpan json_pp pod2usage podchecker podselect prove shasum xsubpp enc2xs piconv
+%define dualbin config_data corelist cpan json_pp pod2usage podchecker podselect prove shasum xsubpp enc2xs piconv encguess
 %endif
 
 # Filter requires on RPM 4.8.
@@ -122,6 +122,7 @@ rm -rf $RPM_BUILD_ROOT
 %ghost %{_bindir}/xsubpp
 %ghost %{_bindir}/enc2xs
 %ghost %{_bindir}/piconv
+%ghost %{_bindir}/enguess
 %{_prefix}/*
 
 %changelog
