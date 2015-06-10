@@ -1,10 +1,14 @@
 %if %{undefined plv}
 %global plv %{nil}
-Name:           sqitch
-%else
-Name:           perl%{plv}-sqitch
 %endif
 
+%if "%{plv}" == ""
+%define rpmname sqitch
+%else
+%define rpmname perl%{plv}-sqitch
+%endif
+
+Name:           %{rpmname}
 Version:        %(echo %{version})
 Release:        1.%{etime}%{dist}
 Summary:        Sane database change management
