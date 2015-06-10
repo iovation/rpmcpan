@@ -122,7 +122,7 @@ rm -rf $RPM_BUILD_ROOT
 %ghost %{_bindir}/xsubpp
 %ghost %{_bindir}/enc2xs
 %ghost %{_bindir}/piconv
-%ghost %{_bindir}/enguess
+%ghost %{_bindir}/encguess
 %{_prefix}/*
 
 %changelog
