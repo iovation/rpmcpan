@@ -31,7 +31,7 @@ Provides: %{sname}%{plv}(:WITH_PERLIO)
 # List of dual-life bin files. Update %ghost entries in %files if you update
 # this list.
 %if 0%{?plv} >= 522
-%define dualbin corelist cpan json_pp pod2usage podchecker podselect prove shasum xsubpp enc2xs piconv
+%define dualbin corelist cpan json_pp pod2usage podchecker podselect prove shasum xsubpp enc2xs piconv encguess
 %else
 %define dualbin config_data corelist cpan json_pp pod2usage podchecker podselect prove shasum xsubpp enc2xs piconv
 %endif
