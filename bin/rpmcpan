@@ -684,7 +684,7 @@ sub build {
 
             $mod_seen{ $dep->{module} }++;
             my $mod = $self->call( module => $dep->{module} ) or do {
-                push @failed => $dep->{module};
+                push @failed => $dep->{module} if $dep->{relationship} ne 'suggests';
                 next;
             };
 
@@ -697,8 +697,11 @@ sub build {
 
             # Build this one.
             $self->build( $depdist, $self->{dists}{$depdist} || {} ) or do {
-                push @failed => $depdist;
-                push @{ $self->{failed} } => $depdist;
+                if ($dep->{relationship} ne 'suggests') {
+                    push @failed => $depdist;
+                    push @{ $self->{failed} } => $depdist;
+                }
+                next;
             };
 
             # Record it as a dependency.

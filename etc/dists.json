@@ -1,6 +1,7 @@
 {
     "aliased": {},
     "Array-Diff": {},
+    "B-C": { "patch": ["b-c-issue376.patch"] },
     "Business-IBAN": {},
     "Capture-Tiny": {},
     "CGI": {
