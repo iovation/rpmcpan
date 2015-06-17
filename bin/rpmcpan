@@ -394,6 +394,7 @@ $descr
     ( map { "\n%patch$_ -p1" } 0..$#patches ), qq{
 
 %build
+rm -f README.pod
 %{__perl} }, ($info->{use_mb} ? (
     "Build.PL --installdirs=vendor" . ($info->{arch} ? ' --optimize="$RPM_OPT_FLAGS"' : '')
     . "\n./Build"
