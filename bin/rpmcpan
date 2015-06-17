@@ -699,8 +699,12 @@ sub build {
             # Build this one.
             $self->build( $depdist, $self->{dists}{$depdist} || {} ) or do {
                 if ($dep->{relationship} ne 'suggests') {
-                    push @failed => $depdist;
                     push @{ $self->{failed} } => $depdist;
+                    # If no other version installed, mark as failed for this dist.
+                    my $v = $dep->{version} || 0;
+                    if (system("$self->{perl} -e 'use $dep->{module} $v' 2> /dev/null") != 0) {
+                        push @failed => $depdist;
+                    }
                 }
                 next;
             };
