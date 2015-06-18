@@ -1,6 +1,7 @@
 {
     "aliased": {},
     "Array-Diff": {},
+    "boolean": {},
     "Business-IBAN": {},
     "Capture-Tiny": {},
     "CGI": {
@@ -145,6 +146,7 @@
     "JSON-PP": { "provides": ["json_pp"] },
     "JSON-XS": { "provides": ["json_xs"] },
     "libintl-perl": { "rpm_name": "libintl" },
+    "Locale-Codes": {},
     "Log-Dispatch": {},
     "Log-Dispatch-FileRotate": {},
     "Log-Log4perl": {
@@ -166,6 +168,8 @@
         }]
     },
     "Mail-Sender": {},
+    "Math-BigInt": {},
+    "Math-Int64": {},
     "MIME-Base64-URLSafe": {},
     "Module-Build": {},
     "mod_perl": {
@@ -219,6 +223,7 @@
     "Regexp-Common": {},
     "Redis": {},
     "Scalar-List-Utils": {},
+    "Scalar-Util-Numeric": {},
     "Search-Elasticsearch": {},
     "SOAP-Lite": { "exclude_requires": [ "Apache", "SOAP::Transport::MQ" ] },
     "SOAP-Transport-JABBER": { "exclude_requires": [ "SOAP::Lite" ] },
@@ -288,6 +293,7 @@
     "Test-CPAN-Meta": {},
     "Test-CPAN-Meta-JSON": { "exclude_build_requires": ["Test::CPAN::Meta"] },
     "Throwable": {},
+    "Time-Moment": {},
     "Try-Tiny": {},
     "Type-Tiny": { "exclude_requires": ["Type::Tiny::XS" ] },
     "Type-Tiny-XS": {},
