@@ -101,6 +101,7 @@
     "ExtUtils-ParseXS": { "provides": ["xsubpp"] },
     "Error": {},
     "File-Find-Rule-Perl": { "patch": ["file-find-rule-perl-rt104302.patch"] },
+    "Hash-SharedMem": {},
     "libapreq2": {
         "missing_prereqs": [{
             "module": "ExtUtils::XSBuilder",
@@ -240,6 +241,7 @@
           "vertica"
        ]
     },
+    "Sereal": {},
     "String-Formatter": {},
     "String-ShellQuote": {},
     "TAP-Parser-SourceHandler-pgTAP": {},
