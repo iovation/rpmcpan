@@ -3,6 +3,7 @@
     "Array-Diff": {},
     "boolean": {},
     "Business-IBAN": {},
+    "Cache-FastMmap": {},
     "Capture-Tiny": {},
     "CGI": {
         "missing_prereqs": [{
