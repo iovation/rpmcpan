@@ -289,6 +289,7 @@
     "Test-File-Contents": {},
     "Test-Harness": { "provides": ["prove"] },
     "Test-MockModule": {},
+    "Test-MockTime": {},
     "Test-Simple": { "cpan_conflicts": ["Test-Tester"] },
     "Test-TCP": { "patch": ["test-tcp-rt72779.patch"] },
     "Test-XML": { "patch": ["test-xml-sax-parsers.patch"] },
