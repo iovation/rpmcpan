@@ -663,12 +663,21 @@ sub build {
                 && $dep->{phase} eq 'runtime';
             next if $exclude_build_requires{ $dep->{module} }
                 && $dep->{phase} ne 'runtime';
-            next if $mod_seen{ $dep->{module} };
             next if $dep->{phase} eq 'develop';
             next if $dep->{relationship} eq 'conflicts'; # XXX Add to spec file?
 
             say "  - $dist $dep->{relationship} $dep->{module} for its $dep->{phase} phase"
                 if $self->{verbose} > 1;
+
+            my $phase_seen = $mod_seen{ $dep->{module} };
+            if ($phase_seen) {
+                # We've already seen it for this distribution, but maybe this is
+                # a different phase.
+                $add_dep->($dep, "perl$plv") unless $phase_seen->{ $dep->{phase} }++;
+                next;
+            } else {
+                $phase_seen = $mod_seen{ $dep->{module} } = {};
+            }
 
             if ( exists $corelist->{ $dep->{module} } ) {
                 # It's in core. Is it new enough?
@@ -678,12 +687,12 @@ sub build {
                 ) {
                     $add_dep->($dep, "perl$plv");
                     say "  - $dep->{module} in core; skipping" if $self->{verbose} > 1;
-                    $mod_seen{ $dep->{module} }++;
+                    $phase_seen->{ $dep->{phase} }++;
                     next;
                 }
             }
 
-            $mod_seen{ $dep->{module} }++;
+            $phase_seen->{ $dep->{phase} }++;
             my $mod = $self->call( module => $dep->{module} ) or do {
                 push @failed => $dep->{module} if $dep->{relationship} ne 'suggests';
                 next;
