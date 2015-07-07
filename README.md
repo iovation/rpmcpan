@@ -90,6 +90,9 @@ The JSON object after the distribution name supports a number of keys:
   to also set `archive` if you set this key.
 * `archive`: The name of the downloaded archive. Probably needs to be
   set to the base name of the `download_url` if `download_url` is set.
+* `name`: The name of the downloaded distribution. Useful when the `archive`
+  value is different from the name -- that is, when the tarball name is
+  different from the name of the directory in which it's unpacked.
 * `missing_prereqs`: A list of JSON objects describing required modules
    missing from the metadata downloaded from MetaCPAN. Requires these keys:
     * `module`: Name of the required module.

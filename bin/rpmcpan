@@ -617,7 +617,7 @@ sub build {
     say "- Version: $rel->{version}" if $self->{verbose};
 
     # Integrate overrides.
-    for my $key (qw(download_url archive rpm_name no_system_prefix)) {
+    for my $key (qw(name download_url archive rpm_name no_system_prefix)) {
         if (my $val = $spec->{$key}) {
             $rel->{$key} = $val;
         }
