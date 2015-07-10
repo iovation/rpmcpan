@@ -144,6 +144,7 @@
     "HTML-Tree": { "exclude_requires": ["HTML::FormatText"] },
     "HTTP-Lite": {},
     "Inline-C": {},
+    "PerlIO-gzip": {},
     "IO-Pager": {},
     "IO-Socket-INET6": {},
     "IO-Socket-SSL": {},
