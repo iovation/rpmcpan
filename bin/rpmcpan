@@ -658,13 +658,14 @@ sub build {
     if ( my @deps = ( @{ $spec->{missing_prereqs} || []}, @{ $rel->{dependency} } ) ) {
         say "- Checking dependencies" if $self->{verbose};
         for my $dep (@deps) {
-            # Skip excluded, development, conflicting, or seen dependencies.
+            # Skip excluded, development, conflicting, perl, or seen dependencies.
             next if $exclude_requires{ $dep->{module} }
                 && $dep->{phase} eq 'runtime';
             next if $exclude_build_requires{ $dep->{module} }
                 && $dep->{phase} ne 'runtime';
             next if $dep->{phase} eq 'develop';
             next if $dep->{relationship} eq 'conflicts'; # XXX Add to spec file?
+            next if $dep->{module} eq 'perl';
 
             say "  - $dist $dep->{relationship} $dep->{module} for its $dep->{phase} phase"
                 if $self->{verbose} > 1;
@@ -700,7 +701,7 @@ sub build {
 
             my $depdist = $mod->{distribution};
             if ($depdist eq 'perl') {
-                $add_dep->($dep, "perl$plv") if $dep->{module} ne 'perl';
+                $add_dep->($dep, "perl$plv");
                 say "  - $dep->{module} in core; skipping" if $self->{verbose} > 1;
                 next;
             }

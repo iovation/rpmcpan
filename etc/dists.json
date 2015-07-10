@@ -2,6 +2,7 @@
     "aliased": {},
     "Array-Diff": {},
     "boolean": {},
+    "Business-CCCheck": {},
     "Business-CreditCard":{},
     "Business-CreditCard-Object":{},
     "Business-IBAN": {},
@@ -92,6 +93,7 @@
         "build_requires": ["postgresql-devel", "postgresql"]
     },
     "DBD-SQLite": {},
+    "Devel-NYTProf": {},
     "DIME-Tools": { "patch": ["dime-tools-rt11080.patch"] },
     "Email-Date-Format": {},
     "Email-Send": {},
@@ -222,6 +224,7 @@
     },
     "Net-Stomp": {},
     "Number-Phone": {},
+    "Parallel-Loops": {},
     "Perl-Tidy": { "conflicts": ["perltidy"] },
     "PerlIO-utf8_strict": {},
     "Plack": { "build_requires": ["perl-CGI"] },
