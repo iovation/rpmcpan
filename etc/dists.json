@@ -234,7 +234,7 @@
     "Scalar-List-Utils": {},
     "Scalar-Util-Numeric": {},
     "Search-Elasticsearch": {},
-    "SOAP-Lite": { "exclude_requires": [ "Apache", "SOAP::Transport::MQ" ] },
+    "SOAP-Lite": { "exclude_requires": [ "Apache", "SOAP::Transport::MQ" ], "patch": ["soap-lite-rt106051.patch"] },
     "SOAP-Transport-JABBER": { "exclude_requires": [ "SOAP::Lite" ] },
     "App-Sqitch": {
        "rpm_name": "sqitch",
