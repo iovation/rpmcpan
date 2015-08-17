@@ -614,6 +614,7 @@ sub build {
 
     # Get the latest release.
     my $rel = $self->call(release => $dist) or return 0;
+    $rel->{version} =~ s/^v//;
     say "- Version: $rel->{version}" if $self->{verbose};
 
     # Integrate overrides.
@@ -669,6 +670,7 @@ sub build {
 
             say "  - $dist $dep->{relationship} $dep->{module} for its $dep->{phase} phase"
                 if $self->{verbose} > 1;
+            $dep->{version} =~ s/^v// if $dep->{version};
 
             my $phase_seen = $mod_seen{ $dep->{module} };
             if ($phase_seen) {
