@@ -32,6 +32,7 @@
         }]
     },
     "CGI-Compile": { "patch": ["cgi-compile-signal.patch"] },
+    "Class-Accessor": {},
     "Class-Accessor-Chained": {},
     "Class-XSAccessor": {},
     "Class-Date": {},
