@@ -33,7 +33,7 @@ Provides: %{sname}%{plv}(:WITH_PERLIO)
 %if 0%{?plv} >= 522
 %define dualbin corelist cpan json_pp pod2usage podchecker podselect prove shasum xsubpp enc2xs piconv encguess zipdetails
 %else
-%define dualbin config_data corelist cpan json_pp pod2usage podchecker podselect prove shasum xsubpp enc2xs piconv encguess zipdetails
+%define dualbin config_data corelist cpan json_pp pod2usage podchecker podselect prove shasum xsubpp enc2xs piconv zipdetails
 %endif
 
 # Filter requires on RPM 4.8.
