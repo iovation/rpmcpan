@@ -3,7 +3,7 @@
 
 Name:           perl%{plv}
 Version:        %(echo %{version})
-Release:        4.%{etime}%{dist}
+Release:        5.%{etime}%{dist}
 Summary:        Practical Extraction and Reporting Language
 
 Group:          Development/Languages
@@ -31,9 +31,9 @@ Provides: %{sname}%{plv}(:WITH_PERLIO)
 # List of dual-life bin files. Update %ghost entries in %files if you update
 # this list.
 %if 0%{?plv} >= 522
-%define dualbin corelist cpan json_pp pod2usage podchecker podselect prove shasum xsubpp enc2xs piconv encguess
+%define dualbin corelist cpan json_pp pod2usage podchecker podselect prove shasum xsubpp enc2xs piconv encguess zipdetails
 %else
-%define dualbin config_data corelist cpan json_pp pod2usage podchecker podselect prove shasum xsubpp enc2xs piconv encguess
+%define dualbin config_data corelist cpan json_pp pod2usage podchecker podselect prove shasum xsubpp enc2xs piconv encguess zipdetails
 %endif
 
 # Filter requires on RPM 4.8.
@@ -123,9 +123,13 @@ rm -rf $RPM_BUILD_ROOT
 %ghost %{_bindir}/enc2xs
 %ghost %{_bindir}/piconv
 %ghost %{_bindir}/encguess
+%ghost %{_bindir}/zipdetails
 %{_prefix}/*
 
 %changelog
+* Mon Aug 24 2015 David E. Wheeler <david.wheeler@iovation.com> - %{version}-5
+- Ghost dual-life zipdetails script, provided by IO-Compress.
+
 * Fri May 8 2015 David E. Wheeler <david.wheeler@iovation.com> - %{version}-4
 - Ghost dual-life scripts xsubpp, enc2xs, and piconv, provided by
   ExtUtils-ParseXS and Encode.
