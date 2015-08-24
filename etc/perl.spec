@@ -109,7 +109,11 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %doc Artistic AUTHORS Copying README Changes
+%if 0%{?plv} >= 522
+%ghost %{_bindir}/encguess
+%else
 %ghost %{_bindir}/config_data
+%endif
 %ghost %{_bindir}/corelist
 %ghost %{_bindir}/cpan
 %ghost %{_bindir}/instmodsh
@@ -122,13 +126,14 @@ rm -rf $RPM_BUILD_ROOT
 %ghost %{_bindir}/xsubpp
 %ghost %{_bindir}/enc2xs
 %ghost %{_bindir}/piconv
-%ghost %{_bindir}/encguess
 %ghost %{_bindir}/zipdetails
 %{_prefix}/*
 
 %changelog
 * Mon Aug 24 2015 David E. Wheeler <david.wheeler@iovation.com> - %{version}-5
-- Ghost dual-life zipdetails script, provided by IO-Compress.
+- Ghost dual-life script zipdetails, provided by IO-Compress.
+- Only ghost dual-life script encguess on 5.22 and higher.
+- Only ghost dual-life script config_data on 5.20 and lower.
 
 * Fri May 8 2015 David E. Wheeler <david.wheeler@iovation.com> - %{version}-4
 - Ghost dual-life scripts xsubpp, enc2xs, and piconv, provided by
