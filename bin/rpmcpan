@@ -356,6 +356,7 @@ sub write_spec {
     my @patches = @{ $spec->{patch} || [] };
     my @conflicts = @{ $spec->{conflicts} || [] },
         map {; "perl$self->{plv}-$_" } @{ $spec->{cpan_conflicts} || [] };
+    my @obsoletes = @{ $spec->{obsoletes} || [] },
     my $descr = $rel->{abstract} || $rel->{metadata}{abstract} || 'unknown';
     my $name = $spec->{rpm_name} || $rel->{distribution};
     $name = "perl$self->{plv}-$name" if $self->{plv} || !$spec->{no_system_prefix};
@@ -384,7 +385,8 @@ Requires:       perl$self->{plv} >= $self->{plmajv}},
     ($self->{plv} ? '' : qq{\nRequires:       perl(:MODULE_COMPAT_$self->{plfullv})}),
     ( map {; "\nRequires:       $_" } @{ $spec->{requires} } ),
     ( map {; "\nProvides:       $_" } @provides ),
-    ( map {; "\nConflicts:      $_" } @conflicts ), qq{
+    ( map {; "\nConflicts:      $_" } @conflicts ),
+    ( map {; "\nObsoletes:      $_" } @obsoletes ), qq{
 
 %description
 $descr

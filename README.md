@@ -69,6 +69,8 @@ The JSON object after the distribution name supports a number of keys:
   `httpd`.
 * `conflicts`: A list of non-CPAN-derived RPMs with which the resulting RPM
   conflicts.
+* `obsoletes`: A list of obsoleted by the resulting RPM. Useful for renamed
+  distributions.
 * `exclude_requires`: A list of CPAN modules to exclude from the list of
   runtime prereqs returned by the MetaCPAN API. Useful for excluding
   incompatible or circular dependencies.
