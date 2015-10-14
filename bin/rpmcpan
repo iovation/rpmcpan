@@ -354,9 +354,14 @@ sub write_spec {
     my $found = $self->provides($rel) or return 0;
     my @provides = (@{ $spec->{provides} || [] }, @{ $found });
     my @patches = @{ $spec->{patch} || [] };
-    my @conflicts = @{ $spec->{conflicts} || [] },
-        map {; "perl$self->{plv}-$_" } @{ $spec->{cpan_conflicts} || [] };
-    my @obsoletes = @{ $spec->{obsoletes} || [] },
+    my @conflicts = (
+        @{ $spec->{conflicts} || [] },
+        map {; "perl$self->{plv}-$_" } @{ $spec->{cpan_conflicts} || [] }
+    );
+    my @obsoletes = (
+        @{ $spec->{obsoletes} || [] },
+        map {; "perl$self->{plv}-$_" } @{ $spec->{cpan_obsoletes} || [] }
+    );
     my $descr = $rel->{abstract} || $rel->{metadata}{abstract} || 'unknown';
     my $name = $spec->{rpm_name} || $rel->{distribution};
     $name = "perl$self->{plv}-$name" if $self->{plv} || !$spec->{no_system_prefix};

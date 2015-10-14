@@ -57,7 +57,6 @@ The JSON object after the distribution name supports a number of keys:
 
 * `rpm_name`: The name to use for the RPM, after the prefixed "perl-".
   Defaults to the distribution name.
-
 * `no_system_prefix`: Set to true to suppress the `perl-` prefix in the name
   of the RPM when building against the system Perl. Builds against other
   versions will still get the `perl5xx-` prefix.
@@ -69,8 +68,8 @@ The JSON object after the distribution name supports a number of keys:
   `httpd`.
 * `conflicts`: A list of non-CPAN-derived RPMs with which the resulting RPM
   conflicts.
-* `obsoletes`: A list of obsoleted by the resulting RPM. Useful for renamed
-  distributions.
+* `obsoletes`: A list of non-CPAN-derived RPMs that the resulting RPM
+  obsoletes.
 * `exclude_requires`: A list of CPAN modules to exclude from the list of
   runtime prereqs returned by the MetaCPAN API. Useful for excluding
   incompatible or circular dependencies.
@@ -82,6 +81,8 @@ The JSON object after the distribution name supports a number of keys:
   incompatible or circular dependencies.
 * `cpan_conflicts`: An array of CPAN distributions with which the resulting
    RPM for the distribution will conflict.
+* `cpan_obsoletes`: An array of CPAN distributions with that the resulting
+   RPM for the distribution obsoletes.
 * `environment`: An object defining environment variables required to build
    the RPM. Keys should be environment variable names, and values their
    values.

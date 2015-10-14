@@ -142,7 +142,7 @@
     },
     "Hash-Merge": {},
     "Hijk": {},
-    "HTML-Formatter": {"obsoletes": ["HTML-Format"]},
+    "HTML-Formatter": {"cpan_obsoletes": ["HTML-Format"]},
     "HTML-Tree": { "exclude_requires": ["HTML::FormatText"] },
     "HTTP-Lite": {},
     "HTTP-Tiny": {},
