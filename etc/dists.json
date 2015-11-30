@@ -252,7 +252,7 @@
           "vertica"
        ]
     },
-    "Sereal": {},
+    "Sereal": { "patch": ["Sereal-118.patch"] },
     "String-Formatter": {},
     "String-ShellQuote": {},
     "TAP-Parser-SourceHandler-pgTAP": {},
