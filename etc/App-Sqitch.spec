@@ -28,6 +28,7 @@ BuildRequires:  perl%{plv}(Config)
 BuildRequires:  perl%{plv}(Config::GitLike) >= 1.11
 BuildRequires:  perl%{plv}(constant)
 BuildRequires:  perl%{plv}(DateTime)
+BuildRequires:  perl%{plv}(DateTime::TimeZone)
 BuildRequires:  perl%{plv}(DBI)
 BuildRequires:  perl%{plv}(Devel::StackTrace) >= 1.30
 BuildRequires:  perl%{plv}(Digest::SHA)
@@ -96,6 +97,7 @@ Requires:       perl%{plv}(Config)
 Requires:       perl%{plv}(Config::GitLike) >= 1.11
 Requires:       perl%{plv}(constant)
 Requires:       perl%{plv}(DateTime)
+Requires:       perl%{plv}(DateTime::TimeZone)
 Requires:       perl%{plv}(Devel::StackTrace) >= 1.30
 Requires:       perl%{plv}(Digest::SHA)
 Requires:       perl%{plv}(Encode)
@@ -240,7 +242,7 @@ package bundles the Sqitch Oracle support.
 Summary:        Sane database change management for MySQL
 Group:          Development/Libraries
 Requires:       sqitch >= %{version}
-Requires:       mysql >= 5.1.0
+Requires:       mysql >= 5.0.0
 Requires:       perl%{plv}(DBI)
 Requires:       perl%{plv}(DBD::mysql) >= 4.018
 Requires:       perl%{plv}(MySQL::Config)
@@ -293,6 +295,25 @@ Sqitch Vertica support.
 # No additional files required.
 
 %changelog
+* Thu Feb 11 2016 David E. Wheeler <david.wheeler@iovation.com> 0.9994-2
+- Add perl(Pod::Escapes) to work around missing dependencies in Pod::Simple.
+  https://github.com/perl-pod/pod-simple/issues/84.
+
+* Fri Jan 8 2016 David E. Wheeler <david.wheeler@iovation.com> 0.9994-1
+- Reduced required MySQL version to 5.0.
+- Upgrade to v0.9994.
+
+* Mon Aug 17 2015 David E. Wheeler <david.wheeler@iovation.com> 0.9993-1
+- Upgrade to v0.9993.
+
+* Wed May 20 2015 David E. Wheeler <david.wheeler@iovation.com> 0.9992-1
+- Upgrade to v0.9992.
+- Add perl(DateTime::TimeZone).
+- Add Provides.
+- Replace requirement for firebird-classic with firebird.
+- Replace requirement for vertica-client with /opt/vertica/bin/vsql and
+  libverticaodbc.so.
+
 * Fri Mar 3 2015 David E. Wheeler <david.wheeler@iovation.com> 0.9991-1
 - Upgrade to v0.9991.
 - Reduced required MySQL version to 5.1.
