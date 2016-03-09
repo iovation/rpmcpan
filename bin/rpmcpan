@@ -32,7 +32,7 @@ BEGIN {
 
 sub nv {
     my ($self, $str, $format) = @_;
-    $str =~ s/\Zv//;
+    $str =~ s/\Av//;
     return $str unless $format;
 
     my @version = split /[.]/ => $str;
