@@ -227,7 +227,7 @@
         "build_requires": ["libssh2-devel", "zlib-devel", "openssl-devel"]
     },
     "Net-Stomp": {},
-    "Number-Phone": {},
+    "Number-Phone": {"version_format": "1.1111"},
     "Parallel-Loops": {},
     "Perl-Tidy": { "conflicts": ["perltidy"] },
     "PerlIO-utf8_strict": {},

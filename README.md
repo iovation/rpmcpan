@@ -96,6 +96,19 @@ The JSON object after the distribution name supports a number of keys:
 * `name`: The name of the downloaded distribution. Useful when the `archive`
   value is different from the name -- that is, when the tarball name is
   different from the name of the directory in which it's unpacked.
+* `version_format`: A string specifying the format to use for RPM version
+  numbers. Normally should not be set, as the CPAN distribution version is
+  generally sufficient. However, because RPM's `repmvercmp()` routine employs
+  a segmented (by ".") `strcmp` to compare versions a release using a decimal
+  version can sometimes screw up. For example, Number-Phone 3.0014 was
+  followed by 3.1, but RPM though that 3.0014 was newer, as it evaluates it as
+  3.14. The solution was to specify `version_format` as `1.1111`, which is to
+  say "at least one digit, a decimal point, and at least 4 digits`, which
+  causes 3.1 to resolve to 3.1000. The format affects only the RPM version and
+  the version for main module in the "provides" metadata. The format may use
+  any character other than a dot (".") to specify version parts; it's only the
+  number of characters that matters: `x.xxxx`, `0.0000`, or `a.abcd` would
+  work equally well.
 * `missing_prereqs`: A list of JSON objects describing required modules
    missing from the metadata downloaded from MetaCPAN. Requires these keys:
     * `module`: Name of the required module.

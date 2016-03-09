@@ -18,6 +18,7 @@ use File::Path qw(make_path remove_tree);
 use List::Util qw(first);
 use Config;
 use Cwd;
+use version 0.77;
 
 our $VERSION = '1.1';
 my $true;
@@ -27,6 +28,38 @@ BEGIN {
     die "Could not load JSON parser\n" unless $pkg;
     $pkg->import(qw(decode_json encode_json));
     $true = $pkg->true;
+}
+
+sub nv {
+    my ($self, $str, $format) = @_;
+    $str =~ s/\Zv//;
+    return $str unless $format;
+
+    my @version = split /[.]/ => $str;
+    my @format = split /[.]/ => $format;
+
+    my @ret;
+    for my $f (@format) {
+        my $len = length $f || 1;
+        my $part = shift @version || 0;
+        my $rep = $len - length $part;
+        if ($rep <= 0) {
+            push @ret => $part;
+        } else {
+            push @ret => $part . ('0' x $rep);
+        }
+    }
+
+    if (@version) {
+        # There are bits left over!
+        $self->vent(
+            "Format '$format' cannot fully format version '$str'; appending .",
+            join('.', @version)
+        );
+        push @ret => @version;
+    }
+
+    return join '.', @ret;
 }
 
 sub new {
@@ -51,7 +84,7 @@ sub new {
     if (my $perlver = $p{version}) {
         my @parts = split /[.]/ => $perlver;
         push @parts => 0 if @parts < 3;
-        $p{version} = version->new(join '.' => @parts);
+        $p{version} = version->parse(join '.' => @parts);
     } else {
         $p{version} = $^V;
     }
@@ -196,16 +229,16 @@ sub get_modules {
 }
 
 sub provides {
-    my ($self, $rel) = @_;
+    my ($self, $rel, $vfmt) = @_;
     # Just use the release list if we have them.
     my %seen;
+    my $main = $rel->{main_module};
     my $pl = "perl$self->{plv}";
     if (my $p = $rel->{metadata}{provides}) {
         return [map {
-            "$pl($_)" . ($p->{$_}{version} ? do {
-                (my $v = $p->{$_}{version}) =~ s/^v//;
-                " = $v";
-            } : '')
+            "$pl($_)" . ($p->{$_}{version} ? ' = ' . $self->nv(
+                $p->{$_}{version}, $_ eq $main ? $vfmt : undef
+            ) : '')
         } grep { !$seen{$_}++ } keys %{ $p }];
     }
 
@@ -222,10 +255,9 @@ sub provides {
             ? $f->{'module.version'}
             : [$f->{'module.version'}];
         map {
-            "$pl($mods->[$_])" . ($vers->[$_] ? do {
-                (my $v = $vers->[$_]) =~ s/^v//;
-                " = $v";
-            } : '')
+            "$pl($mods->[$_])" . ($vers->[$_] ? ' = ' . $self->nv(
+                $vers->[$_], $mods->[$_] eq $main ? $vfmt : undef
+            ) : '')
         } 0..$#$mods;
     }  grep { !$seen{ $_->{fields}{'module.name'} }++ } @{ $mods->{hits}{hits} }];
 }
@@ -351,7 +383,7 @@ sub write_spec {
           || "https://metacpan.org/release/$rel->{name}";
     my $info = $self->inspect($tgz);
     my $src  = basename $rel->{archive};
-    my $found = $self->provides($rel) or return 0;
+    my $found = $self->provides($rel, $spec->{version_format}) or return 0;
     my @provides = (@{ $spec->{provides} || [] }, @{ $found });
     my @patches = @{ $spec->{patch} || [] };
     my @conflicts = (
@@ -621,7 +653,7 @@ sub build {
 
     # Get the latest release.
     my $rel = $self->call(release => $dist) or return 0;
-    $rel->{version} =~ s/^v//;
+    $rel->{version} = $self->nv($rel->{version}, $spec->{version_format});
     say "- Version: $rel->{version}" if $self->{verbose};
 
     # Integrate overrides.
@@ -677,7 +709,6 @@ sub build {
 
             say "  - $dist $dep->{relationship} $dep->{module} for its $dep->{phase} phase"
                 if $self->{verbose} > 1;
-            $dep->{version} =~ s/^v// if $dep->{version};
 
             my $phase_seen = $mod_seen{ $dep->{module} };
             if ($phase_seen) {
@@ -716,7 +747,8 @@ sub build {
             }
 
             # Build this one.
-            $self->build( $depdist, $self->{dists}{$depdist} || {} ) or do {
+            my $depspec = $self->{dists}{$depdist} || {};
+            $self->build( $depdist, $depspec ) or do {
                 if ($dep->{relationship} ne 'suggests') {
                     push @{ $self->{failed} } => $depdist;
                     # If no other version installed, mark as failed for this dist.
