@@ -219,7 +219,7 @@
     "Moose": {},
     "MySQL-Config": {},
     "namespace-autoclean": {},
-    "Net-DNS": { "patch": ["net-dns-rt112860.patch"] },
+    "Net-DNS": { "patch": ["net-dns-rt112860.patch", "net-dns-rt113020.patch"] },
     "Net-Jabber": { "patch": ["net-jabber-rt87436.patch"] },
     "Net-IP": {},
     "Net-Ping": {},
