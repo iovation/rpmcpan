@@ -180,7 +180,7 @@
     "Mail-Sender": {},
     "Math-BigInt": {},
     "Math-Int64": {},
-    "MIME-Base32": { "name": "MIME-Base32-1.02" },
+    "MIME-Base32": {},
     "MIME-Base64-URLSafe": {},
     "Module-Build": {},
     "mod_perl": {
