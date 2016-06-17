@@ -192,7 +192,7 @@ sub run {
 
 sub call {
     my ($self, $api, $path) = @_;
-    my $uri = "http://api.metacpan.org/v0/$api/$path";
+    my $uri = "https://api-v1.metacpan.org/$api/$path";
     say "  - Calling $uri" if $self->{verbose} > 1;
     my $res = $self->{http}->get($uri);
     return $self->vent(
