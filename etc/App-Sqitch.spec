@@ -27,7 +27,7 @@ BuildRequires:  perl%{plv}(Clone)
 BuildRequires:  perl%{plv}(Config)
 BuildRequires:  perl%{plv}(Config::GitLike) >= 1.11
 BuildRequires:  perl%{plv}(constant)
-BuildRequires:  perl%{plv}(DateTime)
+BuildRequires:  perl%{plv}(DateTime) > 1.04
 BuildRequires:  perl%{plv}(DateTime::TimeZone)
 BuildRequires:  perl%{plv}(DBI)
 BuildRequires:  perl%{plv}(Devel::StackTrace) >= 1.30
@@ -96,7 +96,7 @@ Requires:       perl%{plv}(Clone)
 Requires:       perl%{plv}(Config)
 Requires:       perl%{plv}(Config::GitLike) >= 1.11
 Requires:       perl%{plv}(constant)
-Requires:       perl%{plv}(DateTime)
+Requires:       perl%{plv}(DateTime) >= 1.04
 Requires:       perl%{plv}(DateTime::TimeZone)
 Requires:       perl%{plv}(Devel::StackTrace) >= 1.30
 Requires:       perl%{plv}(Digest::SHA)
@@ -295,6 +295,10 @@ Sqitch Vertica support.
 # No additional files required.
 
 %changelog
+* Tue Jul 27 2016 David E. Wheeler <david.wheeler@iovation.com> 0.9995-1
+- Require DateTime v1.04.
+- Upgrade to v0.9995.
+
 * Thu Feb 11 2016 David E. Wheeler <david.wheeler@iovation.com> 0.9994-2
 - Add perl(Pod::Escapes) to work around missing dependencies in Pod::Simple.
   https://github.com/perl-pod/pod-simple/issues/84.
