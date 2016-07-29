@@ -19,6 +19,7 @@ Source0:        http://www.cpan.org/modules/by-module/App/App-Sqitch-%{version}.
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 Provides:       sqitch
+AutoReqProv:    no
 BuildRequires:  perl >= 1:v5.10.0
 BuildRequires:  perl%{plv}(Capture::Tiny) >= 0.12
 BuildRequires:  perl%{plv}(Carp)
