@@ -22,6 +22,8 @@ use version 0.77;
 
 our $VERSION = '1.1';
 my $true;
+my $api_uri = 'https://fastapi.metacpan.org/v1';
+my $web_uri = 'https://cpan.metacpan.org';
 
 BEGIN {
     my $pkg = first { eval "require $_" } qw(JSON::XS JSON::PP JSON);
@@ -192,7 +194,7 @@ sub run {
 
 sub call {
     my ($self, $api, $path) = @_;
-    my $uri = "http://api.metacpan.org/v0/$api/$path";
+    my $uri = "$api_uri/$api/$path";
     say "  - Calling $uri" if $self->{verbose} > 1;
     my $res = $self->{http}->get($uri);
     return $self->vent(
@@ -219,7 +221,7 @@ sub get_modules {
         fields => [ qw(module.name module.version) ],
     };
     my $res = $self->{http}->post(
-        'http://api.metacpan.org/v0/file/_search',
+        "$api_uri/file/_search",
         { content => $body }
     );
     return $self->vent(
@@ -380,7 +382,7 @@ sub write_spec {
     $specfile = File::Spec->catfile('SPECS', "$rel->{distribution}.spec");
     my $license = $self->license_for($rel);
     my $url = $rel->{metadata}{'meta-spec'}{url}
-          || "https://metacpan.org/release/$rel->{name}";
+          || "$web_uri/release/$rel->{name}";
     my $info = $self->inspect($tgz);
     my $src  = basename $rel->{archive};
     my $found = $self->provides($rel, $spec->{version_format}) or return 0;
@@ -535,7 +537,7 @@ sub build_perl {
     my $rel = {
         name         => 'perl',
         version      => $v,
-        download_url => "http://cpan.metacpan.org/src/$archive",
+        download_url => "$web_uri/src/$archive",
         archive      => $archive,
     };
 
