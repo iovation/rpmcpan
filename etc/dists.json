@@ -230,7 +230,6 @@
     "Net-Stomp": {},
     "Number-Phone": {"version_format": "1.1111"},
     "Parallel-Loops": {},
-    "Parse-CPAN-Meta": {},
     "Perl-Tidy": { "conflicts": ["perltidy"] },
     "PerlIO-utf8_strict": {},
     "Plack": { "build_requires": ["perl-CGI"] },
