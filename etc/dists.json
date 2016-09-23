@@ -61,7 +61,7 @@
     "Data-UUID": {},
     "Data-Structure-Util": {},
     "Data-Validate-URI": {},
-    "Date-Manip": {"patch": ["Date-Manip-rt117404.patch"]},
+    "Date-Manip": {},
     "DateTime": {},
     "DateTime-Format-Strptime": {},
     "DBI": {},
