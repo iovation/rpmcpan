@@ -315,6 +315,7 @@
     "URI": { "exclude_requires": [ "Business::ISBN" ] },
     "URI-db": {},
     "UUID": { "build_requires": ["libuuid-devel"] },
+    "WWW-Mechanize": {"version_format": "1.11"},
     "XML-Simple": {},
     "XML-DOM": {},
     "XML-Parser": {
