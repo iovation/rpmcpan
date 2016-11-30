@@ -169,34 +169,6 @@
     },
     "LWP-Protocol-https": { "patch": ["lwp-protocol-https-rt104150.patch"] },
     "libwww-perl": { "exclude_requires": [ "LWP::Protocol::https", "HTTP::GHTTP" ] },
-    "libxml-enno": {
-        "missing_prereqs": [{
-            "module": "XML::Parser",
-            "version": "2.19",
-            "phase": "runtime",
-            "relationship": "requires"
-        }, {
-            "module": "Date::Manip",
-            "version": "5.33",
-            "phase": "runtime",
-            "relationship": "requires"
-        }, {
-            "module": "Parse::Yapp",
-            "version": "0",
-            "phase": "runtime",
-            "relationship": "requires"
-        }, {
-            "module": "LWP::UserAgent",
-            "version": "0",
-            "phase": "runtime",
-            "relationship": "requires"
-        }, {
-            "module": "XML::Parser::PerlSAX",
-            "version": "0",
-            "phase": "test",
-            "relationship": "requires"
-        }]
-    },
     "libxml-perl": {
         "missing_prereqs": [{
             "module": "XML::Parser",
@@ -345,6 +317,7 @@
     "UUID": { "build_requires": ["libuuid-devel"] },
     "WWW-Mechanize": {"version_format": "1.11"},
     "XML-Simple": {},
+    "XML-RegExp": {},
     "XML-DOM": {},
     "XML-Parser": {
         "build_requires": ["expat-devel"]
