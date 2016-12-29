@@ -58,6 +58,7 @@
         }]
     },
     "Crypt-SSLeay": {},
+    "Data-Dump": {},
     "Data-UUID": {},
     "Data-Structure-Util": {},
     "Data-Validate-URI": {},
@@ -255,6 +256,7 @@
     "Sereal": {},
     "String-Formatter": {},
     "String-ShellQuote": {},
+    "Sys-RunAlone": {},
     "TAP-Parser-SourceHandler-pgTAP": {},
     "Template-Toolkit": {},
     "Template-Tiny": {},
