@@ -222,6 +222,10 @@
     "namespace-autoclean": {},
     "Net-DNS": {},
     "Net-Jabber": { "patch": ["net-jabber-rt87436.patch"] },
+    "Net-LibIDN": {
+        "requires": ["libidn"],
+        "build_requires": ["libidn-devel"]
+    },
     "Net-IP": {},
     "Net-Ping": {},
     "Net-SSH2": {
