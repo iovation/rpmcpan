@@ -193,9 +193,10 @@ sub run {
 }
 
 sub call {
-    my ($self, $api, $path) = @_;
+    my ($self, $api, $path, $prefix) = @_;
     my $uri = "$api_uri/$api/$path";
-    say "  - Calling $uri" if $self->{verbose} > 1;
+    $prefix ||= '  -';
+    say "$prefix Calling $uri" if $self->{verbose} > 1;
     my $res = $self->{http}->get($uri);
     return $self->vent(
         "Request for $api/$path failed: $res->{status} $res->{reason}"
@@ -729,14 +730,14 @@ sub build {
                     || version->parse($dep->{version}) <= version->parse($corelist->{ $dep->{module} } || 0)
                 ) {
                     $add_dep->($dep, "perl$plv");
-                    say "  - $dep->{module} in core; skipping" if $self->{verbose} > 1;
+                    say "    + $dep->{module} in core; skipping" if $self->{verbose} > 1;
                     $phase_seen->{ $dep->{phase} }++;
                     next;
                 }
             }
 
             $phase_seen->{ $dep->{phase} }++;
-            my $mod = $self->call( module => $dep->{module} ) or do {
+            my $mod = $self->call( module => $dep->{module}, '    +' ) or do {
                 push @failed => $dep->{module} if $dep->{relationship} ne 'suggests';
                 next;
             };
@@ -744,11 +745,13 @@ sub build {
             my $depdist = $mod->{distribution};
             if ($depdist eq 'perl') {
                 $add_dep->($dep, "perl$plv");
-                say "  - $dep->{module} in core; skipping" if $self->{verbose} > 1;
+                say "    + $dep->{module} in core; skipping" if $self->{verbose} > 1;
                 next;
             }
 
             # Build this one.
+            say "    + $dep->{module} provided by the $depdist distribution"
+                if $self->{verbose} > 1;
             my $depspec = $self->{dists}{$depdist} || {};
             $self->build( $depdist, $depspec ) or do {
                 if ($dep->{relationship} ne 'suggests') {
