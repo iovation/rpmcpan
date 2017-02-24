@@ -22,8 +22,8 @@ use version 0.77;
 
 our $VERSION = '1.1';
 my $true;
-#my $api_uri = 'https://fastapi.metacpan.org/v1';
-my $api_uri = 'https://api.metacpan.org/v0';
+my $api_uri = 'https://fastapi.metacpan.org/v1';
+#my $api_uri = 'https://api.metacpan.org/v0';
 my $web_uri = 'https://cpan.metacpan.org';
 
 BEGIN {

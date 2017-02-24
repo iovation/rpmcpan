@@ -104,6 +104,7 @@
     "Email-Valid": {},
     "Encode": { "provides": ["enc2xs", "encguess", "piconv", "ucm2table", "ucmlint", "ucmsort", "unidump"] },
     "Encode-Locale": { "exclude_requires": ["Win32::Console"] },
+    "ExtUtils-Depends": {},
     "ExtUtils-MakeMaker": { "environment": { "BUILDING_AS_PACKAGE": 1 } },
     "ExtUtils-ParseXS": { "provides": ["xsubpp"] },
     "Error": {},
