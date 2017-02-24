@@ -170,7 +170,7 @@
             "relationship": "requires"
         }]
     },
-    "LWP-Protocol-https": { "patch": ["lwp-protocol-https-rt104150.patch"] },
+    "LWP-Protocol-https": {},
     "libwww-perl": { "exclude_requires": [ "LWP::Protocol::https", "HTTP::GHTTP" ] },
     "libxml-perl": {
         "missing_prereqs": [{
