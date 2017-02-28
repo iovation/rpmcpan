@@ -32,7 +32,7 @@
             "relationship": "requires"
         }]
     },
-    "CGI-Compile": { "patch": ["cgi-compile-signal.patch"] },
+    "CGI-Compile": {},
     "Class-Accessor": {},
     "Class-Accessor-Chained": {},
     "Class-XSAccessor": {},
