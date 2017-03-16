@@ -42,6 +42,7 @@ Options
 * `--admin`: Email address to use for the Perl admin contact info.
 * `-p` `--packager`: Name and email address of the packager.
 * `-d` `--dist`: Distribution to build. May be specified multiple times.
+* `-s` `--skip`: Distribution not to build. May be specified multiple times.
 * `--die`: Die on first error.
 * `--no-perl`: Don't check or build Perl itself. Used internally.
 

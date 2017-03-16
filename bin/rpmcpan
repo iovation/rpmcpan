@@ -71,6 +71,7 @@ sub new {
     $p{config}   //= File::Spec->catfile(qw(etc dists.json));
     $p{repo}     //= 'repo';
     $p{no_perl}  //= delete $p{'no-perl'} // 0;
+    $p{skip}       = { map { $_ => undef } @{ $p{skip} || [] } };
     $p{packager} //= do {
         require User::pwent;
         my $sysname = $ENV{USER};
@@ -131,6 +132,7 @@ sub go {
         'dist|d=s@',
         'die!',
         'no-perl',
+        'skip|s=s@',
     );
     return $class->new(%opts)->run;
 }
@@ -652,6 +654,11 @@ my %seen = (perl => 1);
 sub build {
     my ($self, $dist, $spec) = @_;
     return 1 if $seen{$dist}++;
+
+    if ( exists $self->{skip}{$dist} ) {
+        say "Skipping $dist" if $self->{verbose};
+        return 1;
+    }
 
     say "Processing $dist" if $self->{verbose};
 
