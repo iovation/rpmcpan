@@ -11,16 +11,14 @@
 %endif
 
 Name:           perl%{plv}-%{sname}
-Version:        2.0.9
-Release:        0.%{etime}%{dist}
+Version:        %(echo %{version})
+Release:        1.%{etime}%{dist}
 Summary:        An embedded Perl interpreter for the Apache HTTP Server
 
 Group:          System Environment/Daemons
 License:        ASL 2.0
 URL:            http://perl.apache.org/
-# Source0:        http://perl.apache.org/dist/%{sname}-%{version}.tar.gz
-# Source0:        http://apache.osuosl.org/perl/%{sname}-%{version}.tar.gz
-Source0:        http://people.apache.org/~stevehay/mod_perl-2.0.9-rc3.tar.gz
+Source0:        http://perl.apache.org/dist/%{sname}-%{version}.tar.gz
 Source1:        perl.conf
 %if "%{apxs}" == "/usr/sbin/apxs"
 Patch1:         mod_perl-centos.patch
@@ -63,7 +61,7 @@ like for it to directly incorporate a Perl interpreter.
 
 
 %prep
-%setup -q -n %{sname}-2.0.9-rc3
+%setup -q -n %{sname}-%{version}
 %if "%{apxs}" == "/usr/sbin/apxs"
 %patch1 -p1
 %endif
@@ -133,6 +131,9 @@ rm -rf $RPM_BUILD_ROOT
 %{sysincludedir}/httpd/*
 
 %changelog
+* Fri Mar 17 2017 David E. Wheeler <david.wheeler@iovation.com> - 2.0.10-1
+- Updated to the current release, no more release candidate!
+
 * Wed May 13 2015 David E. Wheeler <david.wheeler@iovation.com> - 2.0.9-0
 - Updated to the 2.0.9 release candidate.
 
