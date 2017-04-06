@@ -111,6 +111,7 @@
     "ExtUtils-ParseXS": { "provides": ["xsubpp"] },
     "Error": {},
     "File-Find-Rule-Perl": { "patch": ["file-find-rule-perl-rt104302.patch"] },
+    "File-HomeDir": { "exclude_requires": ["Mac::SystemDirectory"] },
     "Hash-SharedMem": {},
     "libapreq2": {
         "missing_prereqs": [{
