@@ -157,7 +157,7 @@
     "IO-Socket-SSL": {},
     "IO-String": {},
     "JSON": {},
-    "JSON-PP": { "provides": ["json_pp"] },
+    "JSON-PP": { "provides": ["json_pp"], "version_format": "1.11111" },
     "JSON-XS": { "provides": ["json_xs"] },
     "libintl-perl": { "rpm_name": "libintl" },
     "Locale-Codes": {},
