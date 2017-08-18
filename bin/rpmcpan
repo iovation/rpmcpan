@@ -408,6 +408,7 @@ sub write_spec {
     open my $fh, '>:encoding(UTF-8)', $specfile or return $self->vent(
         "Cannot open $specfile: $!"
     );
+    my $jobs = $spec->{jobs} ? "-j$spec->{jobs}" : '%{?_smp_mflags}';
 
     print $fh qq{Name:           $name
 Version:        $rel->{version}
@@ -445,7 +446,7 @@ rm -f README.pod
     . "\n./Build"
 ) : (
     "Makefile.PL INSTALLDIRS=vendor" . ($info->{arch} ? ' OPTIMIZE="$RPM_OPT_FLAGS"' : '')
-    . "\nmake %{?_smp_mflags}"
+    . "\nmake $jobs"
 )), qq{
 
 %install

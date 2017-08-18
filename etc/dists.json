@@ -259,6 +259,7 @@
        ]
     },
     "Sereal": {},
+    "Sereal-Path": { "jobs": 1 },
     "String-Formatter": {},
     "String-ShellQuote": {},
     "Sys-RunAlone": {},
