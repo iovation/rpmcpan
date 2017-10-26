@@ -227,6 +227,10 @@
         "requires": ["libidn"],
         "build_requires": ["libidn-devel"]
     },
+    "Net-LibIDN2": {
+        "requires": ["libidn2"],
+        "build_requires": ["libidn2-devel"]
+    },
     "Net-IP": {},
     "Net-Ping": {},
     "Net-SSH2": {
