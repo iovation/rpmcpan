@@ -262,7 +262,9 @@
           "vertica"
        ]
     },
-    "Sereal": {},
+    "Sereal": { "jobs": 1 },
+    "Sereal-Decoder": { "jobs": 1 },
+    "Sereal-Encoder": { "jobs": 1 },
     "Sereal-Path": { "jobs": 1 },
     "String-Formatter": {},
     "String-ShellQuote": {},
