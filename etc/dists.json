@@ -111,6 +111,14 @@
     "File-Find-Rule-Perl": { "patch": ["file-find-rule-perl-rt104302.patch"] },
     "File-HomeDir": { "exclude_requires": ["Mac::SystemDirectory"] },
     "Hash-SharedMem": {},
+    "PPI": {
+        "missing_prereqs": [{
+            "module": "File::Spec",
+            "version": "3.74",
+            "phase": "runtime",
+            "relationship": "requires"
+        }]
+    },
     "libapreq2": {
         "missing_prereqs": [{
             "module": "ExtUtils::XSBuilder",
