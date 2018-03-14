@@ -58,7 +58,10 @@
             "relationship": "requires"
         }]
     },
-    "Crypt-SSLeay": {},
+    "Crypt-SSLeay": {
+        "requires": ["openssl"],
+        "build_requires": ["openssl-devel"]
+    },
     "Data-Dump": {},
     "Data-UUID": {},
     "Data-Structure-Util": {},
@@ -219,6 +222,10 @@
     "Mojolicious": {},
     "Moo": {},
     "Moose": {},
+    "MooseX-ConfigFromFile": {"exclude_build_requires": ["MooseX::Getopt"]},
+    "MooseX-Getopt": {"exclude_build_requires": ["MooseX::ConfigFromFile", "MooseX::SimpleConfig"]},
+    "MooseX-SimpleConfig": {"exclude_build_requires": ["MooseX::Getopt"]},
+    "MooseX-Types-Path-Tiny": {"exclude_build_requires": ["MooseX::Getopt"]},
     "MySQL-Config": {},
     "namespace-autoclean": {},
     "Net-DNS": {},
@@ -233,6 +240,10 @@
     },
     "Net-IP": {},
     "Net-Ping": {},
+    "Net-SSLeay": {
+        "requires": ["openssl"],
+        "build_requires": ["openssl-devel"]
+    },
     "Net-SSH2": {
         "requires": ["libssh2", "zlib", "openssl"],
         "build_requires": ["libssh2-devel", "zlib-devel", "openssl-devel"]
