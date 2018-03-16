@@ -716,7 +716,7 @@ sub build {
             next if $exclude_build_requires{ $dep->{module} }
                 && $dep->{phase} ne 'runtime';
             next if $dep->{phase} eq 'develop';
-            next if $dep->{phase} ~ /^[xX]_/;
+            next if $dep->{phase} =~ /^[xX]_/;
             next if $dep->{relationship} eq 'conflicts'; # XXX Add to spec file?
             next if $dep->{module} eq 'perl';
 
