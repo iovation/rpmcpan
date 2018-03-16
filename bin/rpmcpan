@@ -695,8 +695,6 @@ sub build {
     my %dist_seen = ( "perl$plv" => 1 );
     my $add_dep  = sub {
         my ($dep, $dist) = @_;
-        # Ignore custom phases.
-        return if $dep->{phase} =~ /^[Xx]_/;
         if ($dep->{phase} eq 'runtime') {
             # It's a runtime dependency; require the module.
             push @{ $requires } => "perl$self->{plv}($dep->{module})"
@@ -718,6 +716,7 @@ sub build {
             next if $exclude_build_requires{ $dep->{module} }
                 && $dep->{phase} ne 'runtime';
             next if $dep->{phase} eq 'develop';
+            next if $dep->{phase} ~ /^[xX]_/;
             next if $dep->{relationship} eq 'conflicts'; # XXX Add to spec file?
             next if $dep->{module} eq 'perl';
 
