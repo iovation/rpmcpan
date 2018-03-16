@@ -349,6 +349,7 @@
     "URI-db": {},
     "UUID": { "build_requires": ["libuuid-devel"] },
     "WWW-Mechanize": {"version_format": "1.11"},
+    "WWW-Pastebin-PastebinCom-Create": {"patch": ["www-pastebin-pastebincom-create-rt121265.patch"] },
     "XML-Simple": {},
     "XML-RegExp": {},
     "XML-DOM": {},

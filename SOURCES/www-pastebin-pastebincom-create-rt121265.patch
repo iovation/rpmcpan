@@ -1,0 +1,18 @@
+--- a/t/01-paste.t
++++ b/t/01-paste.t
+@@ -51,7 +51,7 @@
+ 
+     like(
+         $paste_uri,
+-        qr{\Ahttp://pastebin\.com/\w+\z},
++        qr{\Ahttps?://pastebin\.com/\w+\z},
+         'paste URI looks like a proper paste URI',
+     );
+ 
+@@ -66,4 +66,4 @@
+         'Paste text is empty',
+         '->error return an error when it should',
+     );
+-}
+\ No newline at end of file
++}
