@@ -253,7 +253,10 @@
     "Parallel-Loops": {},
     "Perl-Tidy": { "conflicts": ["perltidy"] },
     "PerlIO-utf8_strict": {},
-    "Plack": { "build_requires": ["perl-CGI"] },
+    "Plack": {
+        "build_requires": ["perl-CGI"],
+        "patch": ["plack-gh618.patch"]
+    },
     "PPI": {
         "missing_prereqs": [{
             "module": "File::Spec",
