@@ -605,10 +605,14 @@ sub rpmbuild {
         ( map {; '--define' => "$_ $def->{$_}" } sort keys %{ $def } ),
     );
 
-    # Set up environment variables.
+    # Set up environment variables, making sure to delete local::lib config.
     local %ENV = (
         %ENV,
         PERL_MM_USE_DEFAULT => 1,
+        PERL_MB_OPT         => '',
+        PERL_MM_OPT         => '',
+        PERL5LIB            => '',
+        PERL_LOCAL_LIB_ROOT => '',
         %{ $spec->{environment} || {} }
     );
 

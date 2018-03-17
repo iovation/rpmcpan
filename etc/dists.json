@@ -270,6 +270,7 @@
     "Scalar-List-Utils": {},
     "Scalar-Util-Numeric": {},
     "Search-Elasticsearch": {},
+    "SemVer": {},
     "SOAP-Lite": { "exclude_requires": [ "Apache", "SOAP::Transport::MQ" ] },
     "SOAP-Transport-JABBER": { "exclude_requires": [ "SOAP::Lite" ] },
     "App-Sqitch": {
