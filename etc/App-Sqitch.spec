@@ -10,7 +10,7 @@
 
 Name:           %{rpmname}
 Version:        %(echo %{version})
-Release:        2.%{etime}%{dist}
+Release:        1.%{etime}%{dist}
 Summary:        Sane database change management
 License:        MIT
 Group:          Development/Libraries
@@ -28,7 +28,7 @@ BuildRequires:  perl%{plv}(Clone)
 BuildRequires:  perl%{plv}(Config)
 BuildRequires:  perl%{plv}(Config::GitLike) >= 1.11
 BuildRequires:  perl%{plv}(constant)
-BuildRequires:  perl%{plv}(DateTime) > 1.04
+BuildRequires:  perl%{plv}(DateTime) >= 1.04
 BuildRequires:  perl%{plv}(DateTime::TimeZone)
 BuildRequires:  perl%{plv}(DBI)
 BuildRequires:  perl%{plv}(Devel::StackTrace) >= 1.30
@@ -178,7 +178,7 @@ perl -i -pe "s{^\Q$RPM_BUILD_ROOT}{}g" .packlist
 %{_fixperms} $RPM_BUILD_ROOT/*
 
 %check
-#./Build test
+./Build test
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -296,7 +296,10 @@ Sqitch Vertica support.
 # No additional files required.
 
 %changelog
-* Wed Jul 29 2017 David E. Wheeler <david.wheeler@iovation.com> 0.9996-2
+* Thu Mar 15 2018 David E. Wheeler <david.wheeler@iovation.com> 0.9997-1
+- Upgrade to v0.9997.
+
+* Wed Jul 19 2017 David E. Wheeler <david.wheeler@iovation.com> 0.9996-2
 - Require File::Find and Module::Runtime at build time.
 - Remove Moo::sification.
 
