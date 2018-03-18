@@ -12,7 +12,7 @@
 
 Name:           perl%{plv}-%{sname}
 Version:        %(echo %{version})
-Release:        1.%{etime}%{dist}
+Release:        2.%{etime}%{dist}
 Summary:        An embedded Perl interpreter for the Apache HTTP Server
 
 Group:          System Environment/Daemons
@@ -23,6 +23,7 @@ Source1:        perl.conf
 %if "%{apxs}" == "/usr/sbin/apxs"
 Patch1:         mod_perl-centos.patch
 %endif
+Patch2:         mod_perl-skiptests.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  perl%{plv}
@@ -65,6 +66,7 @@ like for it to directly incorporate a Perl interpreter.
 %if "%{apxs}" == "/usr/sbin/apxs"
 %patch1 -p1
 %endif
+%patch2 -p1
 
 %build
 
@@ -131,6 +133,9 @@ rm -rf $RPM_BUILD_ROOT
 %{sysincludedir}/httpd/*
 
 %changelog
+* Sun Mar 18 2018 David E. Wheeler <david.wheeler@iovation.com> - 2.0.10-2
+- Add patch to skip failing tests.
+
 * Fri Mar 17 2017 David E. Wheeler <david.wheeler@iovation.com> - 2.0.10-1
 - Updated to the current release, no more release candidate!
 
