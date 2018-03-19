@@ -33,6 +33,11 @@ BEGIN {
     $true = $pkg->true;
 }
 
+sub _tls_ok {
+    eval { HTTP::Tiny::Handle->_assert_ssl };
+    return !$@;
+}
+
 sub nv {
     my ($self, $str, $format) = @_;
     $str =~ s/\Av//;
@@ -202,21 +207,24 @@ sub run {
 sub call {
     my ($self, $api, $path, $prefix) = @_;
     my $uri = "$api_uri/$api/$path";
+    $uri =~ s/^https:/http:/ unless _tls_ok;
+
     $prefix ||= '  -';
     say "$prefix Calling $uri" if $self->{verbose} > 1;
     my $res = $self->{http}->get($uri);
     return decode_json $res->{content} if $res->{success};
-    if (
-        $res->{status} == 599
-        && $res->{content} =~ /\bIO::Socket::SSL\b/
-        && $api_uri =~ /^https:/
-    ) {
-        # No SSL support; try non-https.
-        $api_uri =~ s/^https:/http:/;
-        my $ret = $self->call($api, $path, $prefix);
-        $api_uri =~ s/^http:/https:/;
-        return $ret;
-    }
+    return $self->vent(
+        "Request for $api/$path failed: $res->{status} $res->{reason}"
+    );
+}
+
+sub post {
+    my ($self, $api, $path, $options,) = @_;
+    my $uri = "$api_uri/$api/$path";
+    $uri =~ s/^https:/http:/ unless _tls_ok;
+
+    my $res = $self->{http}->post($uri, $options);
+    return decode_json $res->{content} if $res->{success};
     return $self->vent(
         "Request for $api/$path failed: $res->{status} $res->{reason}"
     );
@@ -239,14 +247,7 @@ sub get_modules {
         },
         fields => [ qw(module.name module.version) ],
     };
-    my $res = $self->{http}->post(
-        "$api_uri/file/_search",
-        { content => $body }
-    );
-    return $self->vent(
-        "Request for file/_search failed: $res->{status} $res->{reason}"
-    ) unless $res->{success};
-    return decode_json $res->{content};
+    return $self->post(qw(file _search), { content => $body });
 }
 
 sub provides {
@@ -287,9 +288,7 @@ sub url_from {
     my ($self, $rel) = @_;
     my $url  = $rel->{download_url};
     return $url unless $url =~ /^https:/;
-    eval { $self->{http}->_assert_ssl };
-    # Try using http if SSL is not supported.
-    $url =~ s/^https:/http:/ if $@;
+    $url =~ s/^https:/http:/ unless _tls_ok;
     return $url
 }
 
