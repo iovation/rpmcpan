@@ -298,15 +298,27 @@ sub download {
     return $file;
 }
 
-sub is_built {
+sub rpmname {
     my ($self, $mod) = @_;
     my $name = $mod->{rpm_name} || $mod->{distribution};
     my $prefix = !$self->{plv} && $mod->{no_system_prefix} ? '' : "perl$self->{plv}-";
-    my $rpm = "$prefix$name-$mod->{version}";
+    return "$prefix$name-$mod->{version}";
+}
+
+sub is_built {
+    my ($self, $mod) = @_;
+    my $rpm = $self->rpmname($mod);
     say "  - Looking for $rpm" if $self->{verbose} > 1;
-    my $match = 0;
-    find sub { $match += /^\Q$rpm\E-\d/ }, $self->{repo};
-    return $match > 0;
+    my @files;
+    find sub { push @files, $File::Find::name if /^\Q$rpm\E-\d/ }, $self->{repo};
+    return @files;
+}
+
+sub is_installed {
+    my ($self, $mod) = @_;
+    my $rpm = $self->rpmname($mod);
+    say "  - Querying $rpm install status" if $self->{verbose} > 1;
+    system (qw(sudo rpm --quiet -q), $rpm) == 0;
 }
 
 sub inspect {
@@ -796,8 +808,18 @@ sub build {
     }
 
     # Do we already have a RPM for this release?
-    if ( $self->is_built($rel) ) {
-        say "- $dist-$rel->{version} already built; skipping\n" if $self->{verbose};
+    if ( my @files = $self->is_built($rel) ) {
+        # Is it already installed?
+        if ( !$self->is_installed($rel) ) {
+            say "- $dist-$rel->{version} already built; installing\n" if $self->{verbose};
+            for my $rpmfile ( @files ) {
+                return $self->vent("Could not install $rpmfile") unless system(
+                    qw(sudo rpm -Uvh), $rpmfile,
+                ) == 0;
+            }
+        } else {
+            say "- $dist-$rel->{version} already built; skipping\n" if $self->{verbose};
+        }
         return 1;
     }
 
