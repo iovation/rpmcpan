@@ -281,8 +281,7 @@
           "sqlite",
           "oracle-instantclient11.2-sqlplus",
           "mysql",
-          "firebird",
-          "vertica"
+          "firebird"
        ]
     },
     "Sereal": { "jobs": 1 },
