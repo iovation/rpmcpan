@@ -180,7 +180,11 @@ sub run {
             push @{ $failed } => $dist unless $self->build($dist, $spec);
         }
     } else {
-        # Iterate over complete list of distributions.
+        # Iterate over complete list of distributions, starting with IO-Socket-SSL.
+        my $ssl = 'IO-Socket-SSL';
+        if (my $spec = delete $dists->{$ssl}) {
+            push @{ $failed } => $ssl unless $self->build($ssl, $spec);
+        }
         while (my ($dist, $spec) = each %{ $dists }) {
             push @{ $failed } => $dist unless $self->build($dist, $spec);
         }
@@ -201,10 +205,21 @@ sub call {
     $prefix ||= '  -';
     say "$prefix Calling $uri" if $self->{verbose} > 1;
     my $res = $self->{http}->get($uri);
+    return decode_json $res->{content} if $res->{success};
+    if (
+        $res->{status} == 599
+        && $res->{content} =~ /\bIO::Socket::SSL\b/
+        && $api_uri =~ /^https:/
+    ) {
+        # No SSL support; try non-https.
+        $api_uri =~ s/^https:/http:/;
+        my $ret = $self->call($api, $path, $prefix);
+        $api_uri =~ s/^http:/https:/;
+        return $ret;
+    }
     return $self->vent(
         "Request for $api/$path failed: $res->{status} $res->{reason}"
-    ) unless $res->{success};
-    return decode_json $res->{content};
+    );
 }
 
 sub get_modules {
