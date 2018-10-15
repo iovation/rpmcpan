@@ -101,6 +101,10 @@ The JSON object after the distribution name supports a number of keys:
 * `name`: The name of the downloaded distribution. Useful when the `archive`
   value is different from the name -- that is, when the tarball name is
   different from the name of the directory in which it's unpacked.
+* `dirname`: Name of the directory into which the archive is unpacked. Useful
+  for when the `name` must not be changed (for purposes of looking things up
+  in the MetaCPAN API) but the directory name is unexpeted (see IO-Pager-0.40
+  for an example).
 * `version_format`: A string specifying the format to use for RPM version
   numbers. Normally should not be set, as the CPAN distribution version is
   generally sufficient. However, because RPM's `repmvercmp()` routine employs

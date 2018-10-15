@@ -435,6 +435,7 @@ sub write_spec {
         "Cannot open $specfile: $!"
     );
     my $jobs = $spec->{jobs} ? "-j$spec->{jobs}" : '%{?_smp_mflags}';
+    my $dir = $spec->{dirname} || $rel->{name};
 
     print $fh qq{Name:           $name
 Version:        $rel->{version}
@@ -462,7 +463,7 @@ Requires:       perl$self->{plv} >= $self->{plmajv}},
 $descr
 
 %prep
-%setup -q -n $rel->{name}},
+%setup -q -n $dir},
     ( map { "\n%patch$_ -p1" } 0..$#patches ), qq{
 
 %build

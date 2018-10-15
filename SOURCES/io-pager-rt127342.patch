@@ -1,0 +1,39 @@
+--- a//META.json
++++ b//META.json
+@@ -49,6 +49,6 @@
+       }
+    },
+    "release_status" : "stable",
+-   "version" : 0.4,
++   "version" : "0.40",
+    "x_serialization_backend" : "JSON::PP version 2.97001"
+ }
+--- a/META.yml
++++ b/META.yml
+@@ -31,5 +31,5 @@
+   Symbol: '0'
+   Tie::Handle: '0'
+   base: '0'
+-version: 0.4
++version: "0.40"
+ x_serialization_backend: 'CPAN::Meta::YAML version 0.018'
+diff -Naur IO-Pager-0.4.orig/lib/IO/Pager/Buffered.pm lib/IO/Pager/Buffered.pm
+--- a/lib/IO/Pager/Buffered.pm
++++ b/lib/IO/Pager/Buffered.pm
+@@ -1,5 +1,5 @@
+ package IO::Pager::Buffered;
+-our $VERSION = 0.40;
++our $VERSION = '0.40';
+ 
+ use strict;
+ use base qw( IO::Pager );
+diff -Naur IO-Pager-0.4.orig/lib/IO/Pager.pm lib/IO/Pager.pm
+--- a/lib/IO/Pager.pm
++++ b/lib/IO/Pager.pm
+@@ -1,5 +1,5 @@
+ package IO::Pager;
+-our $VERSION = 0.40; #Untouched since 0.40
++our $VERSION = '0.40'; #Untouched since 0.40
+ 
+ use 5.008; #At least, for decent perlio, and other modernisms
+ use strict;
