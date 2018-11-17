@@ -92,8 +92,7 @@
         }
     },
     "DBD-mysql": {
-        "build_requires": ["mysql", "mysql-devel", "zlib-devel"],
-        "patch": ["dbd-mysql-gh262.patch"]
+        "build_requires": ["mysql", "mysql-devel", "zlib-devel"]
     },
     "DBD-Pg": {
         "build_requires": ["postgresql-devel", "postgresql"]
