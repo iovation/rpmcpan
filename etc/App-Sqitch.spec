@@ -16,6 +16,7 @@ License:        MIT
 Group:          Development/Libraries
 URL:            https://sqitch.org/
 Source0:        https://www.cpan.org/modules/by-module/App/App-Sqitch-%{version}.tar.gz
+Patch0:         sqitch-b6e645b5.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 Provides:       sqitch
@@ -161,6 +162,7 @@ Git.
 
 %prep
 %setup -q -n App-Sqitch-%{version}
+%patch0 -p1
 
 %build
 %{__perl} Build.PL installdirs=vendor destdir=$RPM_BUILD_ROOT

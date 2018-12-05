@@ -1,0 +1,36 @@
+--- a/lib/App/Sqitch/Engine.pm
++++ b/lib/App/Sqitch/Engine.pm
+@@ -650,11 +650,13 @@ sub change_id_for_depend {
+           || defined $dep->change
+           || defined $dep->tag;
+ 
++    # Return the first one.
+     return $self->change_id_for(
+         change_id => $dep->id,
+         change    => $dep->change,
+         tag       => $dep->tag,
+         project   => $dep->project,
++        first     => 1,
+     );
+ }
+ 
+--- a/lib/App/Sqitch/Engine/firebird.pm
++++ b/lib/App/Sqitch/Engine/firebird.pm
+@@ -687,6 +687,7 @@ sub change_id_for {
+         }, undef, $project, $change);
+ 
+         # Return the ID.
++        return $ids->[0] if $p{first};
+         return $self->_handle_lookup_index($change, $ids);
+     }
+ 
+--- a/lib/App/Sqitch/Role/DBIEngine.pm
++++ b/lib/App/Sqitch/Role/DBIEngine.pm
+@@ -928,6 +928,7 @@ sub change_id_for {
+         }, undef, $project, $change);
+ 
+         # Return the ID.
++        return $ids->[0] if $p{first};
+         return $self->_handle_lookup_index($change, $ids);
+     }
+ 
