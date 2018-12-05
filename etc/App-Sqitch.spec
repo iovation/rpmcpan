@@ -10,7 +10,7 @@
 
 Name:           %{rpmname}
 Version:        %(echo %{version})
-Release:        1.%{etime}%{dist}
+Release:        2.%{etime}%{dist}
 Summary:        Sane database change management
 License:        MIT
 Group:          Development/Libraries
@@ -318,6 +318,9 @@ also be installed.
 # No additional files required.
 
 %changelog
+* Wed Dec 5 2018 David E. Wheeler <david.wheeler@iovation.com> 0.9998-2
+- Patch for forthcoming cross-project dependency
+
 * Wed Oct 3 2018 David E. Wheeler <david.wheeler@iovation.com> 0.9998-1
 - Upgrade to v0.9998.
 - Added sqitch-snowflake package.
