@@ -1,0 +1,35 @@
+--- a/t/x02_error.t
++++ b/t/x02_error.t
+@@ -1,6 +1,6 @@
+ use strict;
+ use Test::More;
+-BEGIN { plan tests => 31 };
++BEGIN { plan tests => 32 };
+ 
+ BEGIN { $ENV{PERL_JSON_BACKEND} ||= 1; }
+ 
+@@ -28,7 +28,12 @@ eval { JSON->new->allow_nonref (1)->decode ('"\u1234\udc00"') }; ok $@ =~ /missi
+ eval { JSON->new->allow_nonref->decode ('"\ud800"') }; ok $@ =~ /missing low /;
+ eval { JSON->new->allow_nonref (1)->decode ('"\ud800\u1234"') }; ok $@ =~ /surrogate pair /;
+ 
+-eval { JSON->new->decode ('null') }; ok $@ =~ /allow_nonref/;
++eval { JSON->new->allow_nonref (0)->decode ('null') }; ok $@ =~ /allow_nonref/;
++SKIP: {
++    skip "test only for older JSON::XS (< 4.0)", 1
++	if ($JSON::BackendModule ne 'JSON::XS' || $JSON::XS::VERSION >= 4.0);
++    eval { JSON->new->decode ('null') }; ok $@ =~ /allow_nonref/;
++}
+ eval { JSON->new->allow_nonref (1)->decode ('+0') }; ok $@ =~ /malformed/;
+ eval { JSON->new->allow_nonref->decode ('.2') }; ok $@ =~ /malformed/;
+ eval { JSON->new->allow_nonref (1)->decode ('bare') }; ok $@ =~ /malformed/;
+--- a/t/xe20_croak_message.t
++++ b/t/xe20_croak_message.t
+@@ -13,7 +13,7 @@ use JSON -support_by_pp;
+ SKIP: {
+     skip "can't use JSON::XS.", 1, unless( JSON->backend->is_xs );
+ 
+-    my $json = JSON->new;
++    my $json = JSON->new->allow_nonref(0);
+ 
+     eval q{ $json->encode( undef ) };
+     like( $@, qr/line 1\./ );

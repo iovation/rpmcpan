@@ -1,0 +1,20 @@
+--- a/t/x02_error.t
++++ b/t/x02_error.t
+@@ -1,6 +1,7 @@
+ use strict;
+ use Test::More;
+-BEGIN { plan tests => 32 };
++my $tests; BEGIN { $tests = 32 };
++BEGIN { plan tests => $tests };
+ 
+ BEGIN { $ENV{PERL_JSON_BACKEND} ||= 1; }
+ 
+@@ -15,7 +16,7 @@ use utf8;
+ use JSON;
+ 
+ SKIP: {
+-    skip "can't use JSON::XS.", 31, unless( JSON->backend->is_xs );
++    skip "can't use JSON::XS.", $tests, unless( JSON->backend->is_xs );
+ 
+ eval { JSON->new->encode ([\-1]) }; ok $@ =~ /cannot encode reference/;
+ eval { JSON->new->encode ([\undef]) }; ok $@ =~ /cannot encode reference/;
