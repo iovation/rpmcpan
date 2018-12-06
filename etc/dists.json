@@ -240,7 +240,8 @@
     },
     "Net-LibIDN2": {
         "requires": ["libidn2"],
-        "build_requires": ["libidn2-devel"]
+        "build_requires": ["libidn2-devel"],
+        "patch": ["net-libidn2-rt125440.patch"]
     },
     "Net-IP": {},
     "Net-Ping": {},
