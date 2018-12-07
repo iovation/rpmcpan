@@ -163,7 +163,7 @@
     "IO-Socket-INET6": {},
     "IO-Socket-SSL": {},
     "IO-String": {},
-    "JSON": {"patch": ["json-rt127741.patch", "json-rt127741-2.patch"]},
+    "JSON": {},
     "JSON-PP": { "provides": ["json_pp"], "version_format": "1.11111" },
     "JSON-XS": { "provides": ["json_xs"] },
     "libintl-perl": { "rpm_name": "libintl" },
