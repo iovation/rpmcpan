@@ -85,7 +85,7 @@ The JSON object after the distribution name supports a number of keys:
 * `cpan_obsoletes`: An array of CPAN distributions with that the resulting
    RPM for the distribution obsoletes.
 * `jobs`: An integer specifying the number of `make` jobs to run
-  simultaneously. Nomally defaults to the value provided by the `_smp_mflags`
+  simultaneously. Normally defaults to the value provided by the `_smp_mflags`
   RPM variable, but some distributions may require that parts be built
   serially, in a specific order, so specify `"jobs": 1` to allow for that.
 * `environment`: An object defining environment variables required to build
