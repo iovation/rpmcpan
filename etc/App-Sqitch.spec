@@ -10,13 +10,12 @@
 
 Name:           %{rpmname}
 Version:        %(echo %{version})
-Release:        2.%{etime}%{dist}
+Release:        1.%{etime}%{dist}
 Summary:        Sane database change management
 License:        MIT
 Group:          Development/Libraries
 URL:            https://sqitch.org/
 Source0:        https://www.cpan.org/modules/by-module/App/App-Sqitch-%{version}.tar.gz
-Patch0:         sqitch-b6e645b5.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 Provides:       sqitch
@@ -45,7 +44,7 @@ BuildRequires:  perl%{plv}(File::Spec)
 BuildRequires:  perl%{plv}(File::Temp)
 BuildRequires:  perl%{plv}(Getopt::Long)
 BuildRequires:  perl%{plv}(Hash::Merge)
-BuildRequires:  perl%{plv}(IO::Pager)
+BuildRequires:  perl%{plv}(IO::Pager) >= 0.34
 BuildRequires:  perl%{plv}(IPC::Run3)
 BuildRequires:  perl%{plv}(IPC::System::Simple) >= 1.17
 BuildRequires:  perl%{plv}(List::Util)
@@ -83,6 +82,7 @@ BuildRequires:  perl%{plv}(Test::File::Contents) >= 0.20
 BuildRequires:  perl%{plv}(Test::MockModule) >= 0.05
 BuildRequires:  perl%{plv}(Test::More) >= 0.94
 BuildRequires:  perl%{plv}(Test::NoWarnings) >= 0.083
+BuildRequires:  perl%{plv}(Test::Warn)
 BuildRequires:  perl%{plv}(Throwable) >= 0.200009
 BuildRequires:  perl%{plv}(Time::HiRes)
 BuildRequires:  perl%{plv}(Try::Tiny)
@@ -113,7 +113,7 @@ Requires:       perl%{plv}(File::Path)
 Requires:       perl%{plv}(File::Temp)
 Requires:       perl%{plv}(Getopt::Long)
 Requires:       perl%{plv}(Hash::Merge)
-Requires:       perl%{plv}(IO::Pager)
+Requires:       perl%{plv}(IO::Pager) >= 0.34
 Requires:       perl%{plv}(IPC::Run3)
 Requires:       perl%{plv}(IPC::System::Simple) >= 1.17
 Requires:       perl%{plv}(List::Util)
@@ -162,7 +162,6 @@ Git.
 
 %prep
 %setup -q -n App-Sqitch-%{version}
-%patch0 -p1
 
 %build
 %{__perl} Build.PL installdirs=vendor destdir=$RPM_BUILD_ROOT
@@ -318,6 +317,12 @@ also be installed.
 # No additional files required.
 
 %changelog
+* Fri Feb 1 2019 David E. Wheeler <david.wheeler@iovation.com> 0.9999-1
+- Upgrade to v0.9999.
+- Added requirement for IO::Pager 0.34 or higher.
+- Added Test::Warn build requirement.
+- Removed cross-project dependency patch, since it's part of v0.99999.
+
 * Wed Dec 5 2018 David E. Wheeler <david.wheeler@iovation.com> 0.9998-2
 - Patch for forthcoming cross-project dependency
 
