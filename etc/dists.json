@@ -147,7 +147,7 @@
         "patch": ["gssapi-rt73293.patch"]
     },
     "Hash-Merge": {},
-    "Hijk": {},
+    "Hijk": {"patch": ["hijk-27.patch"]},
     "HTML-Formatter": {"cpan_obsoletes": ["HTML-Format"]},
     "HTML-Tree": { "exclude_requires": ["HTML::FormatText"] },
     "HTTP-Lite": {},
