@@ -150,6 +150,7 @@
     "Hijk": {"patch": ["hijk-27.patch"]},
     "HTML-Formatter": {"cpan_obsoletes": ["HTML-Format"]},
     "HTML-Tree": { "exclude_requires": ["HTML::FormatText"] },
+    "HTTP-Headers-Fast": { "patch": ["http-headers-fast-gh12.patch"]},
     "HTTP-Lite": {},
     "HTTP-Tiny": {},
     "Inline-C": {},
