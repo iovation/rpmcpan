@@ -301,7 +301,8 @@
     "Template-Tiny": {},
     "Term-ReadLine-Gnu": {
         "requires": ["readline"],
-        "build_requires": ["readline-devel"]
+        "build_requires": ["readline-devel"],
+        "environment": { "TERM": "xterm-256color" }
     },
     "Test-Class": {},
     "Test-CleanNamespaces": {
