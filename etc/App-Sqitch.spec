@@ -11,7 +11,7 @@
 Name:           %{rpmname}
 Version:        %(echo %{version})
 Release:        1.%{etime}%{dist}
-Summary:        Sane database change management
+Summary:        Sensible database change management
 License:        MIT
 Group:          Development/Libraries
 URL:            https://sqitch.org/
@@ -26,7 +26,7 @@ BuildRequires:  perl%{plv}(Carp)
 BuildRequires:  perl%{plv}(Class::XSAccessor) >= 1.18
 BuildRequires:  perl%{plv}(Clone)
 BuildRequires:  perl%{plv}(Config)
-BuildRequires:  perl%{plv}(Config::GitLike) >= 1.11
+BuildRequires:  perl%{plv}(Config::GitLike) >= 1.15
 BuildRequires:  perl%{plv}(constant)
 BuildRequires:  perl%{plv}(DateTime) >= 1.04
 BuildRequires:  perl%{plv}(DateTime::TimeZone)
@@ -38,7 +38,6 @@ BuildRequires:  perl%{plv}(Encode::Locale)
 BuildRequires:  perl%{plv}(File::Basename)
 BuildRequires:  perl%{plv}(File::Copy)
 BuildRequires:  perl%{plv}(File::Find)
-BuildRequires:  perl%{plv}(File::HomeDir)
 BuildRequires:  perl%{plv}(File::Path)
 BuildRequires:  perl%{plv}(File::Spec)
 BuildRequires:  perl%{plv}(File::Temp)
@@ -79,7 +78,7 @@ BuildRequires:  perl%{plv}(Test::Dir)
 BuildRequires:  perl%{plv}(Test::Exception)
 BuildRequires:  perl%{plv}(Test::File)
 BuildRequires:  perl%{plv}(Test::File::Contents) >= 0.20
-BuildRequires:  perl%{plv}(Test::MockModule) >= 0.05
+BuildRequires:  perl%{plv}(Test::MockModule) >= 0.17
 BuildRequires:  perl%{plv}(Test::More) >= 0.94
 BuildRequires:  perl%{plv}(Test::NoWarnings) >= 0.083
 BuildRequires:  perl%{plv}(Test::Warn)
@@ -98,7 +97,7 @@ BuildRequires:  perl%{plv}(warnings)
 Requires:       perl%{plv}(Class::XSAccessor) >= 1.18
 Requires:       perl%{plv}(Clone)
 Requires:       perl%{plv}(Config)
-Requires:       perl%{plv}(Config::GitLike) >= 1.11
+Requires:       perl%{plv}(Config::GitLike) >= 1.15
 Requires:       perl%{plv}(constant)
 Requires:       perl%{plv}(DateTime) >= 1.04
 Requires:       perl%{plv}(DateTime::TimeZone)
@@ -108,7 +107,6 @@ Requires:       perl%{plv}(Encode)
 Requires:       perl%{plv}(Encode::Locale)
 Requires:       perl%{plv}(File::Basename)
 Requires:       perl%{plv}(File::Copy)
-Requires:       perl%{plv}(File::HomeDir)
 Requires:       perl%{plv}(File::Path)
 Requires:       perl%{plv}(File::Temp)
 Requires:       perl%{plv}(Getopt::Long)
@@ -192,7 +190,7 @@ rm -rf $RPM_BUILD_ROOT
 %config %{etcdir}/*
 
 %package pg
-Summary:        Sane database change management for PostgreSQL
+Summary:        Sensible database change management for PostgreSQL
 Group:          Development/Libraries
 Requires:       sqitch >= %{version}
 Requires:       postgresql >= 8.4.0
@@ -209,7 +207,7 @@ package bundles the Sqitch PostgreSQL support.
 # No additional files required.
 
 %package sqlite
-Summary:        Sane database change management for SQLite
+Summary:        Sensible database change management for SQLite
 Group:          Development/Libraries
 Requires:       sqitch >= %{version}
 Requires:       sqlite
@@ -226,7 +224,7 @@ package bundles the Sqitch SQLite support.
 # No additional files required.
 
 %package oracle
-Summary:        Sane database change management for Oracle
+Summary:        Sensible database change management for Oracle
 Group:          Development/Libraries
 Requires:       sqitch >= %{version}
 Requires:       oracle-instantclient11.2-sqlplus
@@ -243,7 +241,7 @@ package bundles the Sqitch Oracle support.
 # No additional files required.
 
 %package mysql
-Summary:        Sane database change management for MySQL
+Summary:        Sensible database change management for MySQL
 Group:          Development/Libraries
 Requires:       sqitch >= %{version}
 Requires:       mysql >= 5.0.0
@@ -261,7 +259,7 @@ package bundles the Sqitch MySQL support.
 # No additional files required.
 
 %package firebird
-Summary:        Sane database change management for Firebird
+Summary:        Sensible database change management for Firebird
 Group:          Development/Libraries
 Requires:       sqitch >= %{version}
 Requires:       firebird >= 2.5.0
@@ -281,7 +279,7 @@ package bundles the Sqitch Firebird support.
 # No additional files required.
 
 %package vertica
-Summary:        Sane database change management for Vertica
+Summary:        Sensible database change management for Vertica
 Group:          Development/Libraries
 Requires:       sqitch >= %{version}
 Requires:       libverticaodbc.so
@@ -299,7 +297,7 @@ Sqitch Vertica support.
 # No additional files required.
 
 %package snowflake
-Summary:        Sane database change management for Snowflake
+Summary:        Sensible database change management for Snowflake
 Group:          Development/Libraries
 Requires:       sqitch >= %{version}
 #Requires:       snowflake-odbc
@@ -315,6 +313,13 @@ also be installed.
 
 %files snowflake
 # No additional files required.
+
+* Tue Jun 4 2019 David E. Wheeler <david.wheeler@iovation.com> 1.0.0-1
+- Upgrade to v1.0.0.
+- Config::GitLike now requires v1.15.
+- Test::MockModule now requires v0.17.
+- Removed File::HomeDir.
+- Changed "sane" to "sensible" in the summary.
 
 %changelog
 * Fri Feb 1 2019 David E. Wheeler <david.wheeler@iovation.com> 0.9999-1
