@@ -15,7 +15,7 @@ Summary:        Sensible database change management
 License:        MIT
 Group:          Development/Libraries
 URL:            https://sqitch.org/
-Source0:        https://www.cpan.org/modules/by-module/App/App-Sqitch-%{version}.tar.gz
+Source0:        https://www.cpan.org/modules/by-module/App/App-Sqitch-v%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 Provides:       sqitch
@@ -159,7 +159,7 @@ database change management. The philosophy and functionality is inspired by
 Git.
 
 %prep
-%setup -q -n App-Sqitch-%{version}
+%setup -q -n App-Sqitch-v%{version}
 
 %build
 %{__perl} Build.PL installdirs=vendor destdir=$RPM_BUILD_ROOT
