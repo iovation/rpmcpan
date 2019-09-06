@@ -156,11 +156,7 @@
     "Inline-C": {},
     "PerlIO-gzip": {},
     "IO-Compress": {},
-    "IO-Pager": {
-        "dirname": "IO-Pager-0.4",
-        "version_format": "1.11",
-        "patch": ["io-pager-rt127342.patch"]
-    },
+    "IO-Pager": {},
     "IO-Socket-INET6": {},
     "IO-Socket-SSL": {},
     "IO-String": {},
