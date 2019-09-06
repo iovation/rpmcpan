@@ -829,7 +829,7 @@ sub build {
             say "- $dist-$rel->{version} already built; installing\n" if $self->{verbose};
             for my $rpmfile ( @files ) {
                 return $self->vent("Could not install $rpmfile") unless system(
-                    qw(sudo rpm -Uvh), $rpmfile,
+                    qw(sudo yum install -y), $rpmfile,
                 ) == 0;
             }
         } else {
