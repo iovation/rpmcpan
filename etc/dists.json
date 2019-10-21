@@ -75,22 +75,6 @@
         "requires": ["unixODBC"],
         "build_requires": ["unixODBC-devel"]
     },
-    "DBD-Oracle": {
-        "requires": [
-           "oracle-instantclient11.2-basic",
-           "oracle-instantclient11.2-devel",
-           "oracle-instantclient11.2-sqlplus"
-        ],
-        "build_requires": [
-           "oracle-instantclient11.2-basic",
-           "oracle-instantclient11.2-devel",
-           "oracle-instantclient11.2-sqlplus"
-        ],
-        "environment": {
-           "ORACLE_HOME": "/usr/lib/oracle/11.2/client64",
-           "LD_LIBRARY_PATH": "/usr/lib/oracle/11.2/client64/lib"
-        }
-    },
     "DBD-mysql": {
         "build_requires": ["mysql", "mysql-devel", "zlib-devel"]
     },

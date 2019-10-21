@@ -206,7 +206,9 @@ you can use the `site` versions of those macros, instead.
 
 Copyright & License
 -------------------
-Copyright 2014 [iovation, Inc.](http://iovation.com/) Some Rights Reserved.
+
+Copyright 2014-2019 [iovation, Inc.](http://iovation.com/).
+Some Rights Reserved.
 
 This program is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.
